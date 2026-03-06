@@ -1,19 +1,13 @@
 ﻿package core
 
-type IAccountService interface {
-}
+type IAccountService interface{}
 
-type ICardService interface {
-}
+type ICardService interface{}
 
-type ICreditService interface {
-}
+type ICreditService interface{}
 
-type ICurrencyService interface {
-}
+type ICurrencyService interface{}
 
-type IDepositService interface {
-}
+type IDepositService interface{}
 
-type IUserService interface {
-}
+type IUserService interface{}

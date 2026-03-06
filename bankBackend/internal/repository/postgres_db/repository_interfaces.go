@@ -1,19 +1,13 @@
 ﻿package core
 
-type IAccountRepository interface {
-}
+type IAccountRepository interface{}
 
-type ICardRepository interface {
-}
+type ICardRepository interface{}
 
-type ICreditRepository interface {
-}
+type ICreditRepository interface{}
 
-type ICurrencyRepository interface {
-}
+type ICurrencyRepository interface{}
 
-type IDepositRepository interface {
-}
+type IDepositRepository interface{}
 
-type IUserRepository interface {
-}
+type IUserRepository interface{}
