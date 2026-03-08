@@ -1,6 +1,8 @@
 ﻿package core
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type IUserHandler interface {
 	GetAll(*gin.Context)
@@ -19,8 +21,8 @@ type IAccountHandler interface {
 	GetByUser(*gin.Context)
 	GetById(*gin.Context)
 	GetByCreateTime(*gin.Context)
-	UpdateById(*gin.Context)
 	Create(*gin.Context)
+	UpdateById(*gin.Context)
 	DeleteById(*gin.Context)
 }
 
@@ -67,4 +69,9 @@ type ICurrencyHandler interface {
 	Create(*gin.Context)
 	UpdateById(*gin.Context)
 	DeleteById(*gin.Context)
+}
+
+type IExchangeRateHandler interface {
+	GetAll(*gin.Context)
+	GetForCurrencies(*gin.Context)
 }
