@@ -68,6 +68,7 @@ type ICurrencyService interface {
 	GetByIsoCod(ctx context.Context, isoCode string) (*core.Currency, error)
 	GetByNumberCod(ctx context.Context, numberCode string) (*core.Currency, error)
 	GetBySymbol(ctx context.Context, symbol string) (*core.Currency, error)
+	Convert(ctx context.Context, currencyIdFrom string, amount float64, currencyIdTo string) (float64, error)
 	Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error)
 	Update(ctx context.Context, id string, input *core.CurrencyUpdateInput) (*core.Currency, error)
 	Delete(ctx context.Context, id string) error
