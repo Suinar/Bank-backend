@@ -11,7 +11,7 @@ type IUserService interface {
 	GetAll(ctx context.Context) ([]core.User, error)
 	GetById(ctx context.Context, id string) (*core.User, error)
 	GetByEmail(ctx context.Context, email string) (*core.User, error)
-	GetByPhoneNumber(ctx context.Context, phone string) (*core.User, error)
+	GetByPhoneNumber(ctx context.Context, phoneNumber string) (*core.User, error)
 	GetMe(ctx context.Context, id string) (core.User, error)
 	Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error)
 	Update(ctx context.Context, id string, input *core.UserUpdateInput) (*core.User, error)
@@ -35,7 +35,7 @@ type ICardService interface {
 	GetById(ctx context.Context, id string) (*core.Card, error)
 	GetByNumber(ctx context.Context, number string) (*core.Card, error)
 	GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Card, error)
-	Blocked(ctx context.Context, id string) error
+	Blocking(ctx context.Context, id string) error
 	Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -67,7 +67,7 @@ type ICurrencyService interface {
 	GetById(ctx context.Context, id string) (*core.Currency, error)
 	GetByIsoCod(ctx context.Context, isoCode string) (*core.Currency, error)
 	GetByNumberCod(ctx context.Context, numberCode string) (*core.Currency, error)
-	GetBySymbol(ctx context.Context, symbol string) (*core.Currency, error)
+	GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error)
 	Convert(ctx context.Context, currencyIdFrom string, amount float64, currencyIdTo string) (float64, error)
 	Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error)
 	Update(ctx context.Context, id string, input *core.CurrencyUpdateInput) (*core.Currency, error)
