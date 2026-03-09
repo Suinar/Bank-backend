@@ -65,7 +65,7 @@ type ICurrencyHandler interface {
 	GetByIsoCod(*gin.Context)
 	GetByNumberCod(*gin.Context)
 	GetBySymbol(*gin.Context)
-	GetExchangeRates(*gin.Context)
+	CurrencyConvert(*gin.Context)
 	Create(*gin.Context)
 	UpdateById(*gin.Context)
 	DeleteById(*gin.Context)
