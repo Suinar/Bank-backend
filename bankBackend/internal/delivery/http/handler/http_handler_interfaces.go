@@ -22,6 +22,8 @@ type IAccountHandler interface {
 	GetById(*gin.Context)
 	GetByCreateTime(*gin.Context)
 	Create(*gin.Context)
+	BlockingById(*gin.Context)
+	CloseById(*gin.Context)
 	UpdateById(*gin.Context)
 	DeleteById(*gin.Context)
 }
@@ -69,9 +71,7 @@ type ICurrencyHandler interface {
 	Create(*gin.Context)
 	UpdateById(*gin.Context)
 	DeleteById(*gin.Context)
-}
 
-type IExchangeRateHandler interface {
-	GetAll(*gin.Context)
-	GetForCurrencies(*gin.Context)
+	GetAllRanking(*gin.Context)
+	GetRelativeRanking(*gin.Context)
 }

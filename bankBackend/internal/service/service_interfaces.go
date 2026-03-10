@@ -25,6 +25,8 @@ type IAccountService interface {
 	GetById(ctx context.Context, id string) (*core.Account, error)
 	GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Account, error)
 	Create(ctx context.Context, input *core.AccountCreateInput) (*core.Account, error)
+	Blocking(ctx context.Context, id string) error
+	Close(ctx context.Context, id string) error
 	Update(ctx context.Context, id string, input *core.AccountUpdateInput) (*core.Account, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -72,9 +74,7 @@ type ICurrencyService interface {
 	Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error)
 	Update(ctx context.Context, id string, input *core.CurrencyUpdateInput) (*core.Currency, error)
 	Delete(ctx context.Context, id string) error
-}
 
-type IExchangeRateService interface {
-	GetAll(ctx context.Context) ([]core.ExchangeRate, error)
-	GetForCurrencies(ctx context.Context, currencyIdFrom string, currencyIdTo string) (*core.ExchangeRate, error)
+	GetAllRanking(ctx context.Context, currencyIdFrom string) ([]core.ExchangeRate, error)
+	GetRelativeRanking(ctx context.Context, currencyIdFrom string, currencyIdTo string) (*core.ExchangeRate, error)
 }
