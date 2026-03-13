@@ -34,8 +34,8 @@ type ICardHandler interface {
 	GetById(*gin.Context)
 	GetByNumber(*gin.Context)
 	GetByCreateTime(*gin.Context)
-	BlockingById(*gin.Context)
 	Create(*gin.Context)
+	BlockingById(*gin.Context)
 	DeleteById(*gin.Context)
 }
 
@@ -64,8 +64,8 @@ type IDebitHandler interface {
 type ICurrencyHandler interface {
 	GetAll(*gin.Context)
 	GetById(*gin.Context)
-	GetByIsoCod(*gin.Context)
-	GetByNumberCod(*gin.Context)
+	GetByIsoCode(*gin.Context)
+	GetByNumberCode(*gin.Context)
 	GetBySymbol(*gin.Context)
 	Convert(*gin.Context)
 	Create(*gin.Context)
