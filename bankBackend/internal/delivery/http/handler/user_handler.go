@@ -1,15 +1,15 @@
 ﻿package core
 
 import (
-	core "github.com/Suinar/Bank-backend/bankBackend/internal/service"
+	service "github.com/Suinar/Bank-backend/bankBackend/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
-	service core.UserService
+	service service.IUserService
 }
 
-func NewUserHandler(service core.UserService) *UserHandler {
+func NewUserHandler(service service.IUserService) *UserHandler {
 	return &UserHandler{service: service}
 }
 

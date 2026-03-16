@@ -1,15 +1,15 @@
 ﻿package core
 
 import (
-	core "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	service "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 	"github.com/gin-gonic/gin"
 )
 
 type CardHandler struct {
-	service core.CardRepository
+	service service.ICardRepository
 }
 
-func NewCardHandler(service core.CardRepository) *CardHandler {
+func NewCardHandler(service service.ICardRepository) *CardHandler {
 	return &CardHandler{service: service}
 }
 

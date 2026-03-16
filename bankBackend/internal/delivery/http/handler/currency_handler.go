@@ -1,16 +1,16 @@
 ﻿package core
 
 import (
-	core "github.com/Suinar/Bank-backend/bankBackend/internal/service"
+	service "github.com/Suinar/Bank-backend/bankBackend/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type CurrencyHandler struct {
-	service core.CurrencyService
+	service service.ICurrencyService
 }
 
-func NewCurrencyHandler(service core.CurrencyService) *CurrencyHandler {
-	return &CurrencyHandler{}
+func NewCurrencyHandler(service service.ICurrencyService) *CurrencyHandler {
+	return &CurrencyHandler{service: service}
 }
 
 func (h *CurrencyHandler) GetAll(*gin.Context) {}

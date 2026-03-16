@@ -1,15 +1,15 @@
 ﻿package core
 
 import (
-	core "github.com/Suinar/Bank-backend/bankBackend/internal/service"
+	service "github.com/Suinar/Bank-backend/bankBackend/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type CreditHandler struct {
-	service core.CreditService
+	service service.ICreditService
 }
 
-func NewCreditHandler(service core.CreditService) *CreditHandler {
+func NewCreditHandler(service service.ICreditService) *CreditHandler {
 	return &CreditHandler{service: service}
 }
 
@@ -17,7 +17,7 @@ func (h *CreditHandler) GetAll(*gin.Context) {}
 
 func (h *CreditHandler) GetByUser(*gin.Context) {}
 
-func (h *CreditHandler) GetById (*gin.Context) {}
+func (h *CreditHandler) GetById(*gin.Context) {}
 
 func (h *CreditHandler) GetByCreateTime(*gin.Context) {}
 

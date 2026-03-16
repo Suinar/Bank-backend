@@ -5,14 +5,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func Connect(databaseUrl string) (*sqlx.DB, error) {
+func Connect(databaseUrl string, maxOpenConns int, maxIdleConns int) (*sqlx.DB, error) {
 	db, err := sqlx.Connect("postgres", databaseUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(15)
-	db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(maxOpenConns)
+	db.SetMaxIdleConns(maxIdleConns)
 
 	return db, nil
 }

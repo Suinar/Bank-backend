@@ -1,15 +1,15 @@
 ﻿package core
 
 import (
-	core "github.com/Suinar/Bank-backend/bankBackend/internal/service"
+	service "github.com/Suinar/Bank-backend/bankBackend/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type AccountHandler struct {
-	service core.AccountService
+	service service.IAccountService
 }
 
-func NewAccountHandler(service core.AccountService) *AccountHandler {
+func NewAccountHandler(service service.IAccountService) *AccountHandler {
 	return &AccountHandler{}
 }
 

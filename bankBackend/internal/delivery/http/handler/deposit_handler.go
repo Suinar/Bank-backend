@@ -1,15 +1,15 @@
 ﻿package core
 
 import (
-	core "github.com/Suinar/Bank-backend/bankBackend/internal/service"
+	service "github.com/Suinar/Bank-backend/bankBackend/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type DepositHandler struct {
-	service core.DepositService
+	service service.IDepositService
 }
 
-func NewDepositHandler(service core.DepositService) *DepositHandler {
+func NewDepositHandler(service service.IDepositService) *DepositHandler {
 	return &DepositHandler{service: service}
 }
 
