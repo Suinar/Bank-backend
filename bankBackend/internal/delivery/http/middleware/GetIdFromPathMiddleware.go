@@ -17,7 +17,7 @@ func GetIdFromPathMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		ctx.Set("user_id", id)
+		ctx.Set("idForHandler", id)
 
 		ctx.Next()
 	}
