@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
 )
 
 type CardService struct {

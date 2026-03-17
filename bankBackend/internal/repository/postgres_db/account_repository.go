@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
