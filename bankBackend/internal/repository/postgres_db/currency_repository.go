@@ -17,9 +17,9 @@ func NewCurrencyRepository(db *sqlx.DB) *CurrencyRepository {
 
 func (r *CurrencyRepository) GetAll(ctx context.Context) ([]core.Currency, error) {}
 
-func (r *CurrencyRepository) GetByUser(ctx context.Context, idUser string) (*core.Currency, error) {}
+func (r *CurrencyRepository) GetByUser(ctx context.Context, idUser uint64) (*core.Currency, error) {}
 
-func (r *CurrencyRepository) GetById(ctx context.Context, id string) (*core.Currency, error) {}
+func (r *CurrencyRepository) GetById(ctx context.Context, id uint64) (*core.Currency, error) {}
 
 func (r *CurrencyRepository) GetByIsoCode(ctx context.Context, isoCode string) (*core.Currency, error) {}
 
@@ -31,4 +31,4 @@ func (r *CurrencyRepository) Create(ctx context.Context, input *core.CurrencyCre
 
 func (r *CurrencyRepository) Update(ctx context.Context, input *core.CurrencyUpdateInput) (*core.Currency, error) {}
 
-func (r *CurrencyRepository) Delete(ctx context.Context, id string) error {}
+func (r *CurrencyRepository) Delete(ctx context.Context, id uint64) error {}

@@ -18,9 +18,9 @@ func NewDepositService(repository repository.IDepositRepository) *DepositService
 
 func (s *DepositService) GetAll(ctx context.Context) ([]core.Deposit, error) {}
 
-func (s *DepositService) GetByUser(ctx context.Context, userID string) ([]core.Deposit, error) {}
+func (s *DepositService) GetByUser(ctx context.Context, userID uint64) ([]core.Deposit, error) {}
 
-func (s *DepositService) GetById(ctx context.Context, depositId string) (*core.Deposit, error) {}
+func (s *DepositService) GetById(ctx context.Context, depositId uint64) (*core.Deposit, error) {}
 
 func (s *DepositService) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Deposit, error) {
 }
@@ -31,6 +31,6 @@ func (s *DepositService) GetByCompletionTime(ctx context.Context, createTime tim
 func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {
 }
 
-func (s *DepositService) Repay(ctx context.Context, id string, amount int) error {}
+func (s *DepositService) Repay(ctx context.Context, id uint64, amount int) error {}
 
-func (s *DepositService) Delete(ctx context.Context, id string) error {}
+func (s *DepositService) Delete(ctx context.Context, id uint64) error {}

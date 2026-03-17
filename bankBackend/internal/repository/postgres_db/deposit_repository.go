@@ -18,9 +18,9 @@ func NewDepositRepository(db *sqlx.DB) *DepositRepository {
 
 func (r *DepositRepository) GetAll(ctx context.Context) ([]core.Deposit, error) {}
 
-func (r *DepositRepository) GetByUser(ctx context.Context, idUser string) (*core.Deposit, error) {}
+func (r *DepositRepository) GetByUser(ctx context.Context, idUser uint64) (*core.Deposit, error) {}
 
-func (r *DepositRepository) GetById(ctx context.Context, id string) (*core.Deposit, error) {}
+func (r *DepositRepository) GetById(ctx context.Context, id uint64) (*core.Deposit, error) {}
 
 func (r *DepositRepository) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Deposit, error) {}
 
@@ -28,6 +28,6 @@ func (r *DepositRepository) GetByCompletionTime(ctx context.Context, completeTim
 
 func (r *DepositRepository) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {}
 
-func (r *DepositRepository) Repay(ctx context.Context, id string, amount int) error {}
+func (r *DepositRepository) Repay(ctx context.Context, id uint64, amount int) error {}
 
-func (r *DepositRepository) Delete(ctx context.Context, id string) error {}
+func (r *DepositRepository) Delete(ctx context.Context, id uint64) error {}

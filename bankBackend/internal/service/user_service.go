@@ -17,20 +17,20 @@ func NewUserService(repository repository.IUserRepository) *UserService {
 
 func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {}
 
-func (s *UserService) GetById(ctx context.Context, id string) (*core.User, error) {}
+func (s *UserService) GetById(ctx context.Context, id uint64) (*core.User, error) {}
 
 func (s *UserService) GetByEmail(ctx context.Context, email string) (*core.User, error) {}
 
 func (s *UserService) GetByPhoneNumber(ctx context.Context, phoneNumber string) (*core.User, error) {}
 
-func (s *UserService) GetMe(ctx context.Context, id string) (core.User, error) {}
+func (s *UserService) GetMe(ctx context.Context, id uint64) (core.User, error) {}
 
 func (s *UserService) Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error) {}
 
-func (s *UserService) Update(ctx context.Context, id string, input *core.UserUpdateInput) (*core.User, error) {
+func (s *UserService) Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error) {
 }
 
-func (s *UserService) ChangePassword(ctx context.Context, id string, newPassword string) (*core.User, error) {
+func (s *UserService) ChangePassword(ctx context.Context, id uint64, newPassword string) (*core.User, error) {
 }
 
-func (s *UserService) Delete(ctx context.Context, id string) error {}
+func (s *UserService) Delete(ctx context.Context, id uint64) error {}
