@@ -18,17 +18,17 @@ func NewCardService(repository repository.ICardRepository) *CardService {
 
 func (s *CardService) GetAll(ctx context.Context) ([]core.Card, error) {}
 
-func (s *CardService) GetByUser(ctx context.Context, userId uint64) ([]core.Card, error) {}
+func (s *CardService) GetByUser(ctx context.Context, userId string) ([]core.Card, error) {}
 
-func (s *CardService) GetById(ctx context.Context, id uint64) (*core.Card, error) {}
+func (s *CardService) GetById(ctx context.Context, id string) (*core.Card, error) {}
 
 func (s *CardService) GetByNumber(ctx context.Context, number string) (*core.Card, error) {}
 
 func (s *CardService) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Card, error) {
 }
 
-func (s *CardService) Blocking(ctx context.Context, id uint64) error {}
+func (s *CardService) Blocking(ctx context.Context, id string) error {}
 
 func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {}
 
-func (s *CardService) Delete(ctx context.Context, id uint64) error {}
+func (s *CardService) Delete(ctx context.Context, id string) error {}

@@ -10,9 +10,9 @@ const (
 )
 
 type Card struct {
-	Id        uint64 `json:"id" db:"id"`
-	UserId    uint64 `json:"user_id" db:"user_id"`
-	AccountId uint64 `json:"account_id" db:"account_id"`
+	Id        string `json:"id" db:"id"`
+	UserId    string `json:"user_id" db:"user_id"`
+	AccountId string `json:"account_id" db:"account_id"`
 
 	Number string `json:"number" db:"number"`
 
@@ -25,6 +25,6 @@ type Card struct {
 }
 
 type CardCreateInput struct {
-	UserId    uint64 `json:"user_id" db:"user_id"`
+	UserId    string `json:"user_id" db:"user_id"`
 	AccountId string `json:"account_id" db:"account_id"`
 }
