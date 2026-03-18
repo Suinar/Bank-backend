@@ -3,7 +3,7 @@
 import "time"
 
 type Currency struct {
-	Id uint64 `json:"id" db:"id"`
+	Id string `json:"id" db:"id"`
 
 	Name string `json:"name" db:"name"`
 

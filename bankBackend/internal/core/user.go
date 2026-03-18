@@ -1,7 +1,7 @@
 ﻿package core
 
 type User struct {
-	Id uint64 `json:"id" db:"id"`
+	Id string `json:"id" db:"id"`
 
 	FirstName  string  `json:"first_name" db:"first_name"`
 	MiddleName *string `json:"middle_name" db:"middle_name"`

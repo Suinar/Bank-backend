@@ -18,9 +18,9 @@ func NewCreditRepository(db *sqlx.DB) *CreditRepository {
 
 func (r *CreditRepository) GetAll(ctx context.Context) ([]core.Credit, error) {}
 
-func (r *CreditRepository) GetByUser(ctx context.Context, idUser uint64) (*core.Credit, error) {}
+func (r *CreditRepository) GetByUser(ctx context.Context, idUser string) (*core.Credit, error) {}
 
-func (r *CreditRepository) GetById(ctx context.Context, id uint64) (*core.Credit, error) {}
+func (r *CreditRepository) GetById(ctx context.Context, id string) (*core.Credit, error) {}
 
 func (r *CreditRepository) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Credit, error) {
 }
@@ -31,6 +31,6 @@ func (r *CreditRepository) GetByRepayTime(ctx context.Context, repayTime time.Ti
 func (r *CreditRepository) Create(ctx context.Context, input *core.CreditCreateInput) (*core.Credit, error) {
 }
 
-func (r *CreditRepository) Replay(ctx context.Context, id uint64) (*core.Credit, error) {}
+func (r *CreditRepository) Replay(ctx context.Context, id string) (*core.Credit, error) {}
 
-func (r *CreditRepository) Delete(ctx context.Context, id uint64) error {}
+func (r *CreditRepository) Delete(ctx context.Context, id string) error {}
