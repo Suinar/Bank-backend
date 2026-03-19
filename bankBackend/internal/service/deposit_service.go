@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
+	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 )
 
 type DepositService struct {
@@ -21,12 +21,6 @@ func (s *DepositService) GetAll(ctx context.Context) ([]core.Deposit, error) {}
 func (s *DepositService) GetByUser(ctx context.Context, userID string) ([]core.Deposit, error) {}
 
 func (s *DepositService) GetById(ctx context.Context, depositId string) (*core.Deposit, error) {}
-
-func (s *DepositService) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Deposit, error) {
-}
-
-func (s *DepositService) GetByCompletionTime(ctx context.Context, createTime time.Time) (*core.Deposit, error) {
-}
 
 func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {
 }

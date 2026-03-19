@@ -2,10 +2,9 @@
 
 import (
 	"context"
-	"time"
 
+	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
-	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
 )
 
 type AccountService struct {
@@ -21,9 +20,6 @@ func (s *AccountService) GetAll(ctx context.Context) ([]core.Account, error) {}
 func (s *AccountService) GetByUser(ctx context.Context, userId string) ([]core.Account, error) {}
 
 func (s *AccountService) GetById(ctx context.Context, id string) (*core.Account, error) {}
-
-func (s *AccountService) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Account, error) {
-}
 
 func (s *AccountService) Create(ctx context.Context, input *core.AccountCreateInput) (*core.Account, error) {
 }

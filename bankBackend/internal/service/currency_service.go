@@ -3,8 +3,8 @@
 import (
 	"context"
 
-	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
+	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 )
 
 type CurrencyService struct {
@@ -25,7 +25,7 @@ func (service *CurrencyService) GetByIsoCod(ctx context.Context, isoCode string)
 func (service *CurrencyService) GetByNumberCod(ctx context.Context, numberCode string) (*core.Currency, error) {
 }
 
-func (service *CurrencyService) GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error) {
+func (service *CurrencyService) GetBySymbol(ctx context.Context, symbol string) (*core.Currency, error) {
 }
 
 func (service *CurrencyService) Convert(ctx context.Context, currencyIdFrom string, amount int, currencyIdTo string) (float64, error) {
