@@ -22,11 +22,8 @@ func (r *DepositRepository) GetByUser(ctx context.Context, idUser string) (*core
 
 func (r *DepositRepository) GetById(ctx context.Context, id string) (*core.Deposit, error) {}
 
-func (r *DepositRepository) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Deposit, error) {}
-
-func (r *DepositRepository) GetByCompletionTime(ctx context.Context, completeTime time.Time) (*core.Deposit, error) {}
-
-func (r *DepositRepository) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {}
+func (r *DepositRepository) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {
+}
 
 func (r *DepositRepository) Repay(ctx context.Context, id string, amount int) error {}
 

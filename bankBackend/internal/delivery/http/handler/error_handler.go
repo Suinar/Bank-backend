@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleError(ctx *gin.Context, err error) {
+func ErrorHandler(ctx *gin.Context, err error) {
 	switch {
 	case errors.Is(err, core.NotFound):
 		ResponseNotFound(ctx, err)

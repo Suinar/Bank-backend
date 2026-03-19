@@ -24,9 +24,6 @@ func (r *CardRepository) GetById(ctx context.Context, id string) (*core.Card, er
 
 func (r *CardRepository) GetByNumber(ctx context.Context, number string) (*core.Account, error) {}
 
-func (r *CardRepository) GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Account, error) {
-}
-
 func (r *CardRepository) Blocking(ctx context.Context, id string) error {}
 
 func (r *CardRepository) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {

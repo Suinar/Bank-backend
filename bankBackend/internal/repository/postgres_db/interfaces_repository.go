@@ -33,7 +33,6 @@ type ICardRepository interface {
 	GetByUser(ctx context.Context, idUser string) (*core.Card, error)
 	GetById(ctx context.Context, id string) (*core.Card, error)
 	GetByNumber(ctx context.Context, number string) (*core.Account, error)
-	GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Account, error)
 	Blocking(ctx context.Context, id string) error
 	Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error)
 	Delete(ctx context.Context, id string) error
@@ -43,8 +42,6 @@ type ICreditRepository interface {
 	GetAll(ctx context.Context) ([]core.Credit, error)
 	GetByUser(ctx context.Context, idUser string) (*core.Credit, error)
 	GetById(ctx context.Context, id string) (*core.Credit, error)
-	GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Credit, error)
-	GetByRepayTime(ctx context.Context, repayTime time.Time) (*core.Credit, error)
 	Create(ctx context.Context, input *core.CreditCreateInput) (*core.Credit, error)
 	Replay(ctx context.Context, id string) (*core.Credit, error)
 	Delete(ctx context.Context, id string) error
@@ -54,8 +51,6 @@ type IDepositRepository interface {
 	GetAll(ctx context.Context) ([]core.Deposit, error)
 	GetByUser(ctx context.Context, idUser string) (*core.Deposit, error)
 	GetById(ctx context.Context, id string) (*core.Deposit, error)
-	GetByCreateTime(ctx context.Context, createTime time.Time) (*core.Deposit, error)
-	GetByCompletionTime(ctx context.Context, completeTime time.Time) (*core.Deposit, error)
 	Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error)
 	Repay(ctx context.Context, id string, amount int) error
 	Delete(ctx context.Context, id string) error
