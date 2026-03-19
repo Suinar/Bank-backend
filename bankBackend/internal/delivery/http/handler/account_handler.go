@@ -1,6 +1,7 @@
 ﻿package core
 
 import (
+	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	service "github.com/Suinar/Bank-backend/bankBackend/internal/service"
 	"github.com/gin-gonic/gin"
 )
@@ -10,23 +11,109 @@ type AccountHandler struct {
 }
 
 func NewAccountHandler(service service.IAccountService) *AccountHandler {
-	return &AccountHandler{}
+	return &AccountHandler{service: service}
 }
 
-func (h *AccountHandler) GetAll(*gin.Context) {}
+func (h *AccountHandler) GetAll(ctx *gin.Context) {
+	accounts, err := h.service.GetAll(ctx)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
 
-func (h *AccountHandler) GetByUser(*gin.Context) {}
+	ResponseSuccess(ctx, accounts)
+}
 
-func (h *AccountHandler) GetById(*gin.Context) {}
+func (h *AccountHandler) GetByUser(ctx *gin.Context) {
+	id := ctx.Param("user_id")
 
-func (h *AccountHandler) GetByCreateTime(*gin.Context) {}
+	accounts, err := h.service.GetByUser(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
 
-func (h *AccountHandler) Create(*gin.Context) {}
+	ResponseSuccess(ctx, accounts)
+}
 
-func (h *AccountHandler) BlockingById(*gin.Context) {}
+func (h *AccountHandler) GetById(ctx *gin.Context) {
+	id := ctx.Param("id")
 
-func (h *AccountHandler) CloseById(*gin.Context) {}
+	account, err := h.service.GetById(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
 
-func (h *AccountHandler) UpdateById(*gin.Context) {}
+	ResponseSuccess(ctx, account)
+}
 
-func (h *AccountHandler) DeleteById(*gin.Context) {}
+func (h *AccountHandler) Create(ctx *gin.Context) {
+	var input core.AccountCreateInput
+
+	if err := ctx.ShouldBind(&input); err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	account, err := h.service.Create(ctx, &input)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, account)
+}
+
+func (h *AccountHandler) BlockingById(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := h.service.Blocking(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+}
+
+func (h *AccountHandler) CloseById(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := h.service.Close(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
+}
+
+func (h *AccountHandler) UpdateById(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var input core.AccountUpdateInput
+
+	err := ctx.ShouldBindJSON(&input)
+	if err != nil {
+		ResponseBadRequest(ctx, err)
+		return
+	}
+
+	account, err := h.service.Update(ctx, id, &input)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, account)
+}
+
+func (h *AccountHandler) DeleteById(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := h.service.Delete(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
+}

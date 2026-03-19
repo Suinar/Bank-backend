@@ -1,6 +1,7 @@
 ﻿package core
 
 import (
+	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	service "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 	"github.com/gin-gonic/gin"
 )
@@ -13,18 +14,89 @@ func NewCardHandler(service service.ICardRepository) *CardHandler {
 	return &CardHandler{service: service}
 }
 
-func (h *CardHandler) GetAll(*gin.Context) {}
+func (h *CardHandler) GetAll(ctx *gin.Context) {
+	cards, err := h.service.GetAll(ctx)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
 
-func (h *CardHandler) GetByUser(*gin.Context) {}
+	ResponseSuccess(ctx, cards)
+}
 
-func (h *CardHandler) GetById(*gin.Context) {}
+func (h *CardHandler) GetByUser(ctx *gin.Context) {
+	userId := ctx.Param("user_id")
 
-func (h *CardHandler) GetByNumber(*gin.Context) {}
+	cards, err := h.service.GetByUser(ctx, userId)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
 
-func (h *CardHandler) GetByCreateTime(*gin.Context) {}
+	ResponseSuccess(ctx, cards)
+}
 
-func (h *CardHandler) Create(*gin.Context) {}
+func (h *CardHandler) GetById(ctx *gin.Context) {
+	id := ctx.Param("id")
 
-func (h *CardHandler) BlockingById(*gin.Context) {}
+	card, err := h.service.GetById(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
 
-func (h *CardHandler) DeleteById(*gin.Context) {}
+	ResponseSuccess(ctx, card)
+}
+
+func (h *CardHandler) GetByNumber(ctx *gin.Context) {
+	number := ctx.Param("number")
+
+	card, err := h.service.GetByNumber(ctx, number)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, card)
+}
+
+func (h *CardHandler) Create(ctx *gin.Context) {
+	var input core.CardCreateInput
+
+	if err := ctx.ShouldBind(&input); err != nil {
+		ResponseBadRequest(ctx, err)
+		return
+	}
+
+	card, err := h.service.Create(ctx, &input)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, card)
+}
+
+func (h *CardHandler) BlockingById(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := h.service.Blocking(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
+}
+
+func (h *CardHandler) DeleteById(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := h.service.Delete(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ResponseSuccess(ctx, nil)
+}
