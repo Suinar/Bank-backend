@@ -15,7 +15,22 @@ func NewCreditService(repository repository.ICreditRepository) *CreditService {
 	return &CreditService{repository: repository}
 }
 
-func (s *CreditService) GetAll(ctx context.Context) ([]core.Credit, error) {}
+func (s *CreditService) GetAll(ctx context.Context) ([]core.Credit, error) {
+	credits, err := s.repository.GetAll(ctx)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	filtered := make([]core.Credit, len(credits))
+
+	for _, credit := range credits {
+		if credit.Status != 0 {
+			filtered = append(filtered, credit)
+		}
+	}
+
+	return filtered, nil
+}
 
 func (s *CreditService) GetByUser(ctx context.Context, userId string) ([]core.Credit, error) {}
 
