@@ -3,7 +3,7 @@
 import (
 	"context"
 
-	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
+	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -17,13 +17,13 @@ func NewCreditRepository(db *sqlx.DB) *CreditRepository {
 
 func (r *CreditRepository) GetAll(ctx context.Context) ([]core.Credit, error) {}
 
-func (r *CreditRepository) GetByUser(ctx context.Context, idUser string) (*core.Credit, error) {}
+func (r *CreditRepository) GetByUser(ctx context.Context, idUser uint64) (*core.Credit, error) {}
 
-func (r *CreditRepository) GetById(ctx context.Context, id string) (*core.Credit, error) {}
+func (r *CreditRepository) GetById(ctx context.Context, id uint64) (*core.Credit, error) {}
 
 func (r *CreditRepository) Create(ctx context.Context, input *core.CreditCreateInput) (*core.Credit, error) {
 }
 
-func (r *CreditRepository) Replay(ctx context.Context, id string) (*core.Credit, error) {}
+func (r *CreditRepository) Replay(ctx context.Context, id uint64) (*core.Credit, error) {}
 
-func (r *CreditRepository) Delete(ctx context.Context, id string) error {}
+func (r *CreditRepository) Delete(ctx context.Context, id uint64) error {}

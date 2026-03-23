@@ -3,7 +3,7 @@
 import (
 	"context"
 
-	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
+	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 )
 
