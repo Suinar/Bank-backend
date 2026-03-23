@@ -15,7 +15,14 @@ func NewUserService(repository repository.IUserRepository) *UserService {
 	return &UserService{repository: repository}
 }
 
-func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {}
+func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {
+	users, err := s.repository.GetAll(ctx)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	return users, nil
+}
 
 func (s *UserService) GetById(ctx context.Context, id string) (*core.User, error) {}
 

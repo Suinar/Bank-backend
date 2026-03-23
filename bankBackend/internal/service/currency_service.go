@@ -15,7 +15,14 @@ func NewCurrencyService(repository repository.ICurrencyRepository) *CurrencyServ
 	return &CurrencyService{repository: repository}
 }
 
-func (service *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {}
+func (service *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {
+	currency, err := service.repository.GetAll(ctx)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	return currency, nil
+}
 
 func (service *CurrencyService) GetById(ctx context.Context, id string) (*core.Currency, error) {}
 
