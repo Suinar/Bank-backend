@@ -27,7 +27,13 @@ func (h *AccountHandler) GetAll(ctx *gin.Context) {
 func (h *AccountHandler) GetByUser(ctx *gin.Context) {
 	id := ctx.Param("user_id")
 
-	accounts, err := h.service.GetByUser(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	accounts, err := h.service.GetByUser(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -39,7 +45,13 @@ func (h *AccountHandler) GetByUser(ctx *gin.Context) {
 func (h *AccountHandler) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	account, err := h.service.GetById(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	account, err := h.service.GetById(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -68,7 +80,13 @@ func (h *AccountHandler) Create(ctx *gin.Context) {
 func (h *AccountHandler) BlockingById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Blocking(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Blocking(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -78,7 +96,13 @@ func (h *AccountHandler) BlockingById(ctx *gin.Context) {
 func (h *AccountHandler) CloseById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Close(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Close(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -97,7 +121,13 @@ func (h *AccountHandler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-	account, err := h.service.Update(ctx, id, &input)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	account, err := h.service.Update(ctx, parsedId, &input)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -109,7 +139,13 @@ func (h *AccountHandler) UpdateById(ctx *gin.Context) {
 func (h *AccountHandler) DeleteById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Delete(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Delete(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return

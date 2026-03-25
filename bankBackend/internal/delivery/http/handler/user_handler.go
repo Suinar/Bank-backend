@@ -27,7 +27,13 @@ func (h *UserHandler) GetAll(ctx *gin.Context) {
 func (h *UserHandler) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	user, err := h.service.GetById(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	user, err := h.service.GetById(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -86,7 +92,13 @@ func (h *UserHandler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-	user, err := h.service.Update(ctx, id, &input)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	user, err := h.service.Update(ctx, parsedId, &input)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -99,7 +111,13 @@ func (h *UserHandler) ChangePasswordById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	hashPassword := ctx.PostForm("hash_password")
 
-	user, err := h.service.ChangePassword(ctx, id, hashPassword)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	user, err := h.service.ChangePassword(ctx, parsedId, hashPassword)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -111,7 +129,13 @@ func (h *UserHandler) ChangePasswordById(ctx *gin.Context) {
 func (h *UserHandler) DeleteById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Delete(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Delete(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return

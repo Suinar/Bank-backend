@@ -29,7 +29,13 @@ func (h *CurrencyHandler) GetAll(ctx *gin.Context) {
 func (h *CurrencyHandler) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	currency, err := h.service.GetById(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	currency, err := h.service.GetById(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -65,7 +71,13 @@ func (h *CurrencyHandler) GetByNumberCode(ctx *gin.Context) {
 func (h *CurrencyHandler) GetBySymbol(ctx *gin.Context) {
 	symbol := ctx.Param("symbol")
 
-	currency, err := h.service.GetBySymbol(ctx, symbol)
+	if len(symbol) == 0 && len(symbol) > 1 {
+		ResponseBadRequest(ctx, core.MoreThanOneCharacter)
+		return
+	}
+	parseSymbol := []rune(symbol)[0]
+
+	currency, err := h.service.GetBySymbol(ctx, parseSymbol)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -80,13 +92,26 @@ func (h *CurrencyHandler) Convert(ctx *gin.Context) {
 
 	amount := ctx.Param("amount")
 
-	intAmount, err := strconv.Atoi(amount)
+	parseAmount, err := strconv.Atoi(amount)
 	if err != nil {
 		ResponseBadRequest(ctx, err)
 		return
 	}
 
-	ranking, err := h.service.Convert(ctx, currencyIdFrom, intAmount, currencyIdTo)
+	parsedIdFrom, err := IdParseHandler(ctx, currencyIdFrom)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	parsedIdTo, err := IdParseHandler(ctx, currencyIdTo)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+
+	ranking, err := h.service.Convert(ctx, parsedIdFrom, parseAmount, parsedIdTo)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -121,7 +146,14 @@ func (h *CurrencyHandler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-	currency, err := h.service.Update(ctx, id, &input)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+
+	currency, err := h.service.Update(ctx, parsedId, &input)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -133,7 +165,14 @@ func (h *CurrencyHandler) UpdateById(ctx *gin.Context) {
 func (h *CurrencyHandler) DeleteById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Delete(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+
+	err = h.service.Delete(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -145,7 +184,13 @@ func (h *CurrencyHandler) DeleteById(ctx *gin.Context) {
 func (h *CurrencyHandler) GetAllRanking(ctx *gin.Context) {
 	currencyIdFrom := ctx.Param("currency_id_from")
 
-	ranking, err := h.service.GetAllRanking(ctx, currencyIdFrom)
+	parsedIdFrom, err := IdParseHandler(ctx, currencyIdFrom)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	ranking, err := h.service.GetAllRanking(ctx, parsedIdFrom)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -158,7 +203,20 @@ func (h *CurrencyHandler) GetRelativeRanking(ctx *gin.Context) {
 	currencyIdFrom := ctx.Param("currency_id_from")
 	currencyIdTo := ctx.Param("currency_id_to")
 
-	ranking, err := h.service.GetRelativeRanking(ctx, currencyIdFrom, currencyIdTo)
+	parsedIdFrom, err := IdParseHandler(ctx, currencyIdFrom)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	parsedIdTo, err := IdParseHandler(ctx, currencyIdTo)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+
+	ranking, err := h.service.GetRelativeRanking(ctx, parsedIdFrom, parsedIdTo)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return

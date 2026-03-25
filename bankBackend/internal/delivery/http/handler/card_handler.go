@@ -27,7 +27,13 @@ func (h *CardHandler) GetAll(ctx *gin.Context) {
 func (h *CardHandler) GetByUser(ctx *gin.Context) {
 	userId := ctx.Param("user_id")
 
-	cards, err := h.service.GetByUser(ctx, userId)
+	parsedId, err := IdParseHandler(ctx, userId)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	cards, err := h.service.GetByUser(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -39,7 +45,13 @@ func (h *CardHandler) GetByUser(ctx *gin.Context) {
 func (h *CardHandler) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	card, err := h.service.GetById(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	card, err := h.service.GetById(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -80,7 +92,13 @@ func (h *CardHandler) Create(ctx *gin.Context) {
 func (h *CardHandler) BlockingById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Blocking(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Blocking(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -92,7 +110,13 @@ func (h *CardHandler) BlockingById(ctx *gin.Context) {
 func (h *CardHandler) DeleteById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Delete(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Delete(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return

@@ -3,7 +3,7 @@
 import (
 	"context"
 
-	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
+	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -17,16 +17,19 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 
 func (r *UserRepository) GetAll(ctx context.Context) ([]core.User, error) {}
 
-func (r *UserRepository) GetById(ctx context.Context, id string) (*core.User, error) {}
+func (r *UserRepository) GetById(ctx context.Context, id uint64) (*core.User, error) {}
 
 func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*core.User, error) {}
 
 func (r *UserRepository) GetByPhoneNumber(ctx context.Context, phone string) (*core.User, error) {}
 
-func (r *UserRepository) Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error) {}
+func (r *UserRepository) Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error) {
+}
 
-func (r *UserRepository) ChangePassword(ctx context.Context, id string, newPassword string) (*core.User, error) {}
+func (r *UserRepository) ChangePassword(ctx context.Context, id uint64, newPassword string) (*core.User, error) {
+}
 
-func (r *UserRepository) Update(ctx context.Context, input *core.UserUpdateInput) (*core.User, error) {}
+func (r *UserRepository) Update(ctx context.Context, input *core.UserUpdateInput) (*core.User, error) {
+}
 
-func (r *UserRepository) Delete(ctx context.Context, id string) error {}
+func (r *UserRepository) Delete(ctx context.Context, id uint64) error {}
