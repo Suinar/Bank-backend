@@ -67,8 +67,7 @@ func (s *CreditService) GetById(ctx context.Context, id uint64) (*core.Credit, e
 	return credit, nil
 }
 
-func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInput) (*core.Credit, error) {
-}
+func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInput) (*core.Credit, error) {}
 
 func (s *CreditService) Repay(ctx context.Context, id uint64, amount int) error {}
 

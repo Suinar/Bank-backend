@@ -67,8 +67,7 @@ func (s *DepositService) GetById(ctx context.Context, id uint64) (*core.Deposit,
 	return deposit, nil
 }
 
-func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {
-}
+func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {}
 
 func (s *DepositService) Repay(ctx context.Context, id uint64, amount int) error {}
 

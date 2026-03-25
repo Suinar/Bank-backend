@@ -16,7 +16,22 @@ func NewAccountService(repository repository.IAccountRepository) *AccountService
 	return &AccountService{repository: repository}
 }
 
-func (s *AccountService) GetAll(ctx context.Context) ([]core.Account, error) {}
+func (s *AccountService) GetAll(ctx context.Context) ([]core.Account, error) {
+	accounts, err := s.repository.GetAll(ctx)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	filtered := make([]core.Account, 0, len(accounts))
+
+	for _, account := range accounts {
+		if account.Status != 0 {
+			filtered = append(filtered, account)
+		}
+	}
+
+	return filtered, nil
+}
 
 func (s *AccountService) GetByUser(ctx context.Context, userId uint64) ([]core.Account, error) {
 	accounts, err := s.repository.GetByUser(ctx, userId)

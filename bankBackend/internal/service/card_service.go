@@ -16,7 +16,22 @@ func NewCardService(repository repository.ICardRepository) *CardService {
 	return &CardService{repository: repository}
 }
 
-func (s *CardService) GetAll(ctx context.Context) ([]core.Card, error) {}
+func (s *CardService) GetAll(ctx context.Context) ([]core.Card, error) {
+	cards, err := s.repository.GetAll(ctx)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	filtered := make([]core.Card, len(cards))
+
+	for _, card := range cards {
+		if card.Status != 0 {
+			filtered = append(filtered, card)
+		}
+	}
+
+	return filtered, nil
+}
 
 func (s *CardService) GetByUser(ctx context.Context, userId uint64) ([]core.Card, error) {
 	cards, err := s.repository.GetByUser(ctx, userId)
