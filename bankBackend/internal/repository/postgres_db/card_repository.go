@@ -17,15 +17,14 @@ func NewCardRepository(db *sqlx.DB) *CardRepository {
 
 func (r *CardRepository) GetAll(ctx context.Context) ([]core.Card, error) {}
 
-func (r *CardRepository) GetByUser(ctx context.Context, idUser uint64) (*core.Card, error) {}
+func (r *CardRepository) GetByUser(ctx context.Context, idUser uint64) ([]core.Card, error) {}
 
 func (r *CardRepository) GetById(ctx context.Context, id uint64) (*core.Card, error) {}
 
-func (r *CardRepository) GetByNumber(ctx context.Context, number string) (*core.Account, error) {}
+func (r *CardRepository) GetByNumber(ctx context.Context, number string) (*core.Card, error) {}
 
 func (r *CardRepository) Blocking(ctx context.Context, id uint64) error {}
 
-func (r *CardRepository) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {
-}
+func (r *CardRepository) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {}
 
 func (r *CardRepository) Delete(ctx context.Context, id uint64) error {}

@@ -29,7 +29,9 @@ func (h *DepositHandler) GetAll(ctx *gin.Context) {
 func (h *DepositHandler) GetByUser(ctx *gin.Context) {
 	userId := ctx.Param("user_id")
 
-	deposits, err := h.service.GetByUser(ctx, userId)
+	parsedId, err := IdParseHandler(ctx, userId)
+
+	deposits, err := h.service.GetByUser(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -41,7 +43,13 @@ func (h *DepositHandler) GetByUser(ctx *gin.Context) {
 func (h *DepositHandler) GetById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	deposit, err := h.service.GetById(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	deposit, err := h.service.GetById(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -77,7 +85,13 @@ func (h *DepositHandler) RepayById(ctx *gin.Context) {
 		return
 	}
 
-	err = h.service.Repay(ctx, id, intAmount)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Repay(ctx, parsedId, intAmount)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -89,7 +103,13 @@ func (h *DepositHandler) RepayById(ctx *gin.Context) {
 func (h *DepositHandler) DeleteById(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := h.service.Delete(ctx, id)
+	parsedId, err := IdParseHandler(ctx, id)
+	if err != nil {
+		ErrorHandler(ctx, err)
+		return
+	}
+
+	err = h.service.Delete(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return

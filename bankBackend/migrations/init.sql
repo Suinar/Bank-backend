@@ -24,7 +24,6 @@ CREATE TABLE accounts (
     name VARCHAR(20) NOT NULL,
     balance BIGINT NOT NULL,
     status SMALLINT NOT NULL CHECK (status IN (0,1,2)),
-    type SMALLINT NOT NULL CHECK (type IN (0,1,2)),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP,
 

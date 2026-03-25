@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"errors"
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
@@ -32,14 +33,55 @@ func (s *CardService) GetAll(ctx context.Context) ([]core.Card, error) {
 	return filtered, nil
 }
 
-func (s *CardService) GetByUser(ctx context.Context, userId string) ([]core.Card, error) {}
+func (s *CardService) GetByUser(ctx context.Context, userId uint64) ([]core.Card, error) {
+	cards, err := s.repository.GetByUser(ctx, userId)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return nil, core.NotFound
+		}
 
-func (s *CardService) GetById(ctx context.Context, id string) (*core.Card, error) {}
+		return nil, core.InternalServerError
+	}
 
-func (s *CardService) GetByNumber(ctx context.Context, number string) (*core.Card, error) {}
+	filtered := make([]core.Card, len(cards))
 
-func (s *CardService) Blocking(ctx context.Context, id string) error {}
+	for _, card := range cards {
+		if card.Status != 0 {
+			filtered = append(filtered, card)
+		}
+	}
+
+	return filtered, nil
+}
+
+func (s *CardService) GetById(ctx context.Context, id uint64) (*core.Card, error) {
+	card, err := s.repository.GetById(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return nil, core.NotFound
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	return card, nil
+}
+
+func (s *CardService) GetByNumber(ctx context.Context, number string) (*core.Card, error) {
+	card, err := s.repository.GetByNumber(ctx, number)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return nil, core.NotFound
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	return card, nil
+}
+
+func (s *CardService) Blocking(ctx context.Context, id uint64) error {}
 
 func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {}
 
-func (s *CardService) Delete(ctx context.Context, id string) error {}
+func (s *CardService) Delete(ctx context.Context, id uint64) error {}
