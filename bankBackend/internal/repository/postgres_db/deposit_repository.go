@@ -21,8 +21,7 @@ func (r *DepositRepository) GetByUser(ctx context.Context, idUser uint64) ([]cor
 
 func (r *DepositRepository) GetById(ctx context.Context, id uint64) (*core.Deposit, error) {}
 
-func (r *DepositRepository) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {
-}
+func (r *DepositRepository) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {}
 
 func (r *DepositRepository) Repay(ctx context.Context, id uint64, amount int) error {}
 
