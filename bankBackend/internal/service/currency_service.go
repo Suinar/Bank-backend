@@ -16,8 +16,8 @@ func NewCurrencyService(repository repository.ICurrencyRepository) *CurrencyServ
 	return &CurrencyService{repository: repository}
 }
 
-func (service *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {
-	currency, err := service.repository.GetAll(ctx)
+func (s *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {
+	currency, err := s.repository.GetAll(ctx)
 	if err != nil {
 		return nil, core.InternalServerError
 	}
@@ -25,21 +25,8 @@ func (service *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, er
 	return currency, nil
 }
 
-func (service *CurrencyService) GetById(ctx context.Context, id uint64) (*core.Currency, error) {
-	currency, err := service.repository.GetById(ctx, id)
-	if err != nil {
-		if errors.Is(err, core.NotFound) {
-			return nil, core.NotFound
-		}
-
-		return nil, core.InternalServerError
-	}
-
-	return currency, nil
-}
-
-func (service *CurrencyService) GetByIsoCod(ctx context.Context, isoCode string) (*core.Currency, error) {
-	currency, err := service.repository.GetByIsoCode(ctx, isoCode)
+func (s *CurrencyService) GetById(ctx context.Context, id uint64) (*core.Currency, error) {
+	currency, err := s.repository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -51,8 +38,8 @@ func (service *CurrencyService) GetByIsoCod(ctx context.Context, isoCode string)
 	return currency, nil
 }
 
-func (service *CurrencyService) GetByNumberCod(ctx context.Context, numberCode string) (*core.Currency, error) {
-	currency, err := service.repository.GetByNumberCode(ctx, numberCode)
+func (s *CurrencyService) GetByIsoCod(ctx context.Context, isoCode string) (*core.Currency, error) {
+	currency, err := s.repository.GetByIsoCode(ctx, isoCode)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -64,8 +51,8 @@ func (service *CurrencyService) GetByNumberCod(ctx context.Context, numberCode s
 	return currency, nil
 }
 
-func (service *CurrencyService) GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error) {
-	currency, err := service.repository.GetBySymbol(ctx, symbol)
+func (s *CurrencyService) GetByNumberCod(ctx context.Context, numberCode string) (*core.Currency, error) {
+	currency, err := s.repository.GetByNumberCode(ctx, numberCode)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -77,19 +64,56 @@ func (service *CurrencyService) GetBySymbol(ctx context.Context, symbol rune) (*
 	return currency, nil
 }
 
-func (service *CurrencyService) Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error) {
+func (s *CurrencyService) GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error) {
+	currency, err := s.repository.GetBySymbol(ctx, symbol)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return nil, core.NotFound
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	return currency, nil
 }
 
-func (service *CurrencyService) Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error) {
+func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error) {
+	// todo: convert service
+
+	return 0, nil
 }
 
-func (service *CurrencyService) Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error) {
+func (s *CurrencyService) Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error) {
+	return nil, nil
 }
 
-func (service *CurrencyService) Delete(ctx context.Context, id uint64) error {}
-
-func (service *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom uint64) ([]core.ExchangeRate, error) {
+func (s *CurrencyService) Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error) {
+	return nil, nil
 }
 
-func (service *CurrencyService) GetRelativeRanking(ctx context.Context, currencyIdFrom uint64, currencyIdTo uint64) (*core.ExchangeRate, error) {
+func (s *CurrencyService) Delete(ctx context.Context, id uint64) error {
+	err := s.repository.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
+
+	// Maybe todo: notification
+
+	return nil
+}
+
+func (s *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom uint64) ([]core.ExchangeRate, error) {
+	// todo: currency ranking service
+
+	return nil, nil
+}
+
+func (s *CurrencyService) GetRelativeRanking(ctx context.Context, currencyIdFrom uint64, currencyIdTo uint64) (*core.ExchangeRate, error) {
+	// todo: currency ranking service
+
+	return nil, nil
 }

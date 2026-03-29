@@ -16,7 +16,22 @@ func NewAccountService(repository repository.IAccountRepository) *AccountService
 	return &AccountService{repository: repository}
 }
 
-func (s *AccountService) GetAll(ctx context.Context) ([]core.Account, error) {}
+func (s *AccountService) GetAll(ctx context.Context) ([]core.Account, error) {
+	accounts, err := s.repository.GetAll(ctx)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	filtered := make([]core.Account, 0, len(accounts))
+
+	for _, account := range accounts {
+		if account.Status != core.AccountStatusClosed {
+			filtered = append(filtered, account)
+		}
+	}
+
+	return filtered, nil
+}
 
 func (s *AccountService) GetByUser(ctx context.Context, userId uint64) ([]core.Account, error) {
 	accounts, err := s.repository.GetByUser(ctx, userId)
@@ -31,7 +46,7 @@ func (s *AccountService) GetByUser(ctx context.Context, userId uint64) ([]core.A
 	filtered := make([]core.Account, 0, len(accounts))
 
 	for _, account := range accounts {
-		if account.Status != 0 {
+		if account.Status != core.AccountStatusClosed {
 			filtered = append(filtered, account)
 		}
 	}
@@ -53,13 +68,54 @@ func (s *AccountService) GetById(ctx context.Context, id uint64) (*core.Account,
 }
 
 func (s *AccountService) Create(ctx context.Context, input *core.AccountCreateInput) (*core.Account, error) {
+	return nil, nil
 }
 
-func (s *AccountService) Blocking(ctx context.Context, id uint64) error {}
+func (s *AccountService) Blocking(ctx context.Context, id uint64) error {
+	err := s.repository.Blocking(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
 
-func (s *AccountService) Close(ctx context.Context, id uint64) error {}
+		return core.InternalServerError
+	}
+
+	// todo: notification
+
+	return nil
+}
+
+func (s *AccountService) Close(ctx context.Context, id uint64) error {
+	err := s.repository.Close(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
+
+	// todo:notification
+
+	return nil
+}
 
 func (s *AccountService) Update(ctx context.Context, id uint64, input *core.AccountUpdateInput) (*core.Account, error) {
+	return nil, nil
 }
 
-func (s *AccountService) Delete(ctx context.Context, id uint64) error {}
+func (s *AccountService) Delete(ctx context.Context, id uint64) error {
+	err := s.repository.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
+
+	// todo: notification
+
+	return nil
+}
