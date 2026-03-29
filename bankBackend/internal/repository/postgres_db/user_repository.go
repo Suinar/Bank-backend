@@ -26,7 +26,7 @@ func (r *UserRepository) GetByPhoneNumber(ctx context.Context, phone string) (*c
 func (r *UserRepository) Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error) {
 }
 
-func (r *UserRepository) ChangePassword(ctx context.Context, id uint64, newPassword string) (*core.User, error) {
+func (r *UserRepository) ChangePassword(ctx context.Context, id uint64, newPassword string) error {
 }
 
 func (r *UserRepository) Update(ctx context.Context, input *core.UserUpdateInput) (*core.User, error) {

@@ -3,7 +3,7 @@
 import (
 	"context"
 
-	"github.com/Suinar/Bank-backend/bankBackend/internal/core"
+	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 )
 
 type IUserRepository interface {
@@ -12,7 +12,7 @@ type IUserRepository interface {
 	GetByEmail(ctx context.Context, email string) (*core.User, error)
 	GetByPhoneNumber(ctx context.Context, phone string) (*core.User, error)
 	Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error)
-	ChangePassword(ctx context.Context, id uint64, newPassword string) (*core.User, error)
+	ChangePassword(ctx context.Context, id uint64, newPassword string) error
 	Update(ctx context.Context, input *core.UserUpdateInput) (*core.User, error)
 	Delete(ctx context.Context, id uint64) error
 }
@@ -22,6 +22,8 @@ type IAccountRepository interface {
 	GetByUser(ctx context.Context, idUser uint64) ([]core.Account, error)
 	GetById(ctx context.Context, id uint64) (*core.Account, error)
 	Create(ctx context.Context, input *core.AccountCreateInput) (*core.Account, error)
+	Blocking(ctx context.Context, id uint64) error
+	Close(ctx context.Context, id uint64) error
 	Update(ctx context.Context, input *core.AccountUpdateInput) (*core.Account, error)
 	Delete(ctx context.Context, id uint64) error
 }

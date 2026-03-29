@@ -25,7 +25,7 @@ func (s *CardService) GetAll(ctx context.Context) ([]core.Card, error) {
 	filtered := make([]core.Card, len(cards))
 
 	for _, card := range cards {
-		if card.Status != 0 {
+		if card.Status != core.CardStatusClosed {
 			filtered = append(filtered, card)
 		}
 	}
@@ -46,7 +46,7 @@ func (s *CardService) GetByUser(ctx context.Context, userId uint64) ([]core.Card
 	filtered := make([]core.Card, len(cards))
 
 	for _, card := range cards {
-		if card.Status != 0 {
+		if card.Status != core.CardStatusClosed {
 			filtered = append(filtered, card)
 		}
 	}
@@ -80,8 +80,36 @@ func (s *CardService) GetByNumber(ctx context.Context, number string) (*core.Car
 	return card, nil
 }
 
-func (s *CardService) Blocking(ctx context.Context, id uint64) error {}
+func (s *CardService) Blocking(ctx context.Context, id uint64) error {
+	err := s.repository.Blocking(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
 
-func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {}
+		return core.InternalServerError
+	}
 
-func (s *CardService) Delete(ctx context.Context, id uint64) error {}
+	// todo: notification
+
+	return nil
+}
+
+func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {
+	return nil, nil
+}
+
+func (s *CardService) Delete(ctx context.Context, id uint64) error {
+	err := s.repository.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
+
+	// todo: notification
+
+	return nil
+}

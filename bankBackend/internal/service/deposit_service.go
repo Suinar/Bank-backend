@@ -22,11 +22,11 @@ func (s *DepositService) GetAll(ctx context.Context) ([]core.Deposit, error) {
 		return nil, core.InternalServerError
 	}
 
-	filtered := make([]core.Deposit, len(deposits))
+	filtered := make([]core.Deposit, 0, len(deposits))
 
 	for _, deposit := range deposits {
-		if deposit.Status != 0 {
-			filtered = append(filtered, deposit)
+		if deposit.Status != core.DepositStatusClosed {
+			deposits = append(deposits, deposit)
 		}
 	}
 
@@ -46,7 +46,7 @@ func (s *DepositService) GetByUser(ctx context.Context, userId uint64) ([]core.D
 	filtered := make([]core.Deposit, len(deposits))
 
 	for _, deposit := range deposits {
-		if deposit.Status != 0 {
+		if deposit.Status != core.DepositStatusClosed {
 			filtered = append(filtered, deposit)
 		}
 	}
@@ -67,8 +67,27 @@ func (s *DepositService) GetById(ctx context.Context, id uint64) (*core.Deposit,
 	return deposit, nil
 }
 
-func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {}
+func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {
+	return nil, nil
+}
 
-func (s *DepositService) Repay(ctx context.Context, id uint64, amount int) error {}
+func (s *DepositService) Repay(ctx context.Context, id uint64, amount int) error {
+	// todo: repay service
 
-func (s *DepositService) Delete(ctx context.Context, id uint64) error {}
+	return nil
+}
+
+func (s *DepositService) Delete(ctx context.Context, id uint64) error {
+	err := s.repository.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
+
+	// todo: notification
+
+	return nil
+}

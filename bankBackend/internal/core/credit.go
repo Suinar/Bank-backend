@@ -3,9 +3,9 @@
 type CreditStatus int
 
 const (
-	CreditStatusRejected CreditStatus = iota
+	CreditStatusClosed CreditStatus = iota
 	CreditStatusActive
-	CreditStatusClosed
+	CreditStatusRejected
 )
 
 type Credit struct {

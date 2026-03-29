@@ -13,7 +13,7 @@ type IUserService interface {
 	GetByPhoneNumber(ctx context.Context, phoneNumber string) (*core.User, error)
 	Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error)
 	Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error)
-	ChangePassword(ctx context.Context, id uint64, newPassword string) (*core.User, error)
+	ChangePassword(ctx context.Context, id uint64, newPassword string) error
 	Delete(ctx context.Context, id uint64) error
 }
 

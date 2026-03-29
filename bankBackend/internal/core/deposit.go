@@ -3,9 +3,9 @@
 type DepositStatus int
 
 const (
-	DepositStatusRejected CreditStatus = iota
+	DepositStatusClosed DepositStatus = iota
 	DepositStatusActive
-	DepositStatusClosed
+	DepositStatusRejected
 )
 
 type Deposit struct {
