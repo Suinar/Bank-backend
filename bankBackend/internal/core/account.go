@@ -9,9 +9,9 @@ const (
 )
 
 type Account struct {
-	Id         string `json:"id" db:"id"`
-	UserId     string `json:"user_id" db:"user_id"`
-	CurrencyId string `json:"currency_id" db:"currency_id"`
+	Id         uint64 `json:"id" db:"id"`
+	UserId     uint64 `json:"user_id" db:"user_id"`
+	CurrencyId uint64 `json:"currency_id" db:"currency_id"`
 
 	Name string `json:"name" db:"name"`
 

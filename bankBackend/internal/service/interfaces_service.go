@@ -32,7 +32,7 @@ type ICardService interface {
 	GetAll(ctx context.Context) ([]core.Card, error)
 	GetByUser(ctx context.Context, userId uint64) ([]core.Card, error)
 	GetById(ctx context.Context, id uint64) (*core.Card, error)
-	GetByNumber(ctx context.Context, number uint64) (*core.Card, error)
+	GetByNumber(ctx context.Context, number string) (*core.Card, error)
 	Blocking(ctx context.Context, id uint64) error
 	Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error)
 	Delete(ctx context.Context, id uint64) error
@@ -52,7 +52,7 @@ type IDepositService interface {
 	GetByUser(ctx context.Context, userId uint64) ([]core.Deposit, error)
 	GetById(ctx context.Context, id uint64) (*core.Deposit, error)
 	Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error)
-	Repay(ctx context.Context, id uint64, amount int) error
+	Replenish(ctx context.Context, id uint64, amount int) error
 	Delete(ctx context.Context, id uint64) error
 }
 
@@ -66,7 +66,6 @@ type ICurrencyService interface {
 	Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error)
 	Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error)
 	Delete(ctx context.Context, id uint64) error
-
 	GetAllRanking(ctx context.Context, currencyIdFrom uint64) ([]core.ExchangeRate, error)
 	GetRelativeRanking(ctx context.Context, currencyIdFrom uint64, currencyIdTo uint64) (*core.ExchangeRate, error)
 }

@@ -50,7 +50,7 @@ type IDebitHandler interface {
 	GetByUser(*gin.Context)
 	GetById(*gin.Context)
 	Create(*gin.Context)
-	RepayById(*gin.Context)
+	ReplenishById(*gin.Context)
 	DeleteById(*gin.Context)
 }
 
@@ -58,7 +58,6 @@ type ICurrencyHandler interface {
 	GetAll(*gin.Context)
 	GetById(*gin.Context)
 	GetByIsoCode(*gin.Context)
-	GetByNumberCode(*gin.Context)
 	GetBySymbol(*gin.Context)
 	Convert(*gin.Context)
 	Create(*gin.Context)

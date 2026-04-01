@@ -23,13 +23,13 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*core.Us
 
 func (r *UserRepository) GetByPhoneNumber(ctx context.Context, phone string) (*core.User, error) {}
 
-func (r *UserRepository) Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error) {
+func (r *UserRepository) Create(ctx context.Context, input *core.User) (*core.User, error) {
 }
 
 func (r *UserRepository) ChangePassword(ctx context.Context, id uint64, newPassword string) error {
 }
 
-func (r *UserRepository) Update(ctx context.Context, input *core.UserUpdateInput) (*core.User, error) {
+func (r *UserRepository) Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error) {
 }
 
 func (r *UserRepository) Delete(ctx context.Context, id uint64) error {}
