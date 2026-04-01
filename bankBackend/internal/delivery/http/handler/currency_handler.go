@@ -56,18 +56,6 @@ func (h *CurrencyHandler) GetByIsoCode(ctx *gin.Context) {
 	ResponseSuccess(ctx, currency)
 }
 
-func (h *CurrencyHandler) GetByNumberCode(ctx *gin.Context) {
-	numberCode := ctx.Param("number_code")
-
-	currency, err := h.service.GetByNumberCod(ctx, numberCode)
-	if err != nil {
-		ErrorHandler(ctx, err)
-		return
-	}
-
-	ResponseSuccess(ctx, currency)
-}
-
 func (h *CurrencyHandler) GetBySymbol(ctx *gin.Context) {
 	symbol := ctx.Param("symbol")
 
@@ -110,7 +98,6 @@ func (h *CurrencyHandler) Convert(ctx *gin.Context) {
 		return
 	}
 
-
 	ranking, err := h.service.Convert(ctx, parsedIdFrom, parseAmount, parsedIdTo)
 	if err != nil {
 		ErrorHandler(ctx, err)
@@ -152,7 +139,6 @@ func (h *CurrencyHandler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-
 	currency, err := h.service.Update(ctx, parsedId, &input)
 	if err != nil {
 		ErrorHandler(ctx, err)
@@ -170,7 +156,6 @@ func (h *CurrencyHandler) DeleteById(ctx *gin.Context) {
 		ErrorHandler(ctx, err)
 		return
 	}
-
 
 	err = h.service.Delete(ctx, parsedId)
 	if err != nil {
@@ -214,7 +199,6 @@ func (h *CurrencyHandler) GetRelativeRanking(ctx *gin.Context) {
 		ErrorHandler(ctx, err)
 		return
 	}
-
 
 	ranking, err := h.service.GetRelativeRanking(ctx, parsedIdFrom, parsedIdTo)
 	if err != nil {

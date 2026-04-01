@@ -21,14 +21,15 @@ func (r *CurrencyRepository) GetByUser(ctx context.Context, idUser uint64) ([]co
 
 func (r *CurrencyRepository) GetById(ctx context.Context, id uint64) (*core.Currency, error) {}
 
-func (r *CurrencyRepository) GetByIsoCode(ctx context.Context, isoCode string) (*core.Currency, error) {}
-
-func (r *CurrencyRepository) GetByNumberCode(ctx context.Context, numberCode string) (*core.Currency, error) {}
+func (r *CurrencyRepository) GetByIsoCode(ctx context.Context, isoCode string) (*core.Currency, error) {
+}
 
 func (r *CurrencyRepository) GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error) {}
 
-func (r *CurrencyRepository) Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error) {}
+func (r *CurrencyRepository) Create(ctx context.Context, input *core.Currency) (*core.Currency, error) {
+}
 
-func (r *CurrencyRepository) Update(ctx context.Context, input *core.CurrencyUpdateInput) (*core.Currency, error) {}
+func (r *CurrencyRepository) Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error) {
+}
 
 func (r *CurrencyRepository) Delete(ctx context.Context, id uint64) error {}

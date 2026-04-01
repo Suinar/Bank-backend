@@ -11,9 +11,9 @@ type IUserRepository interface {
 	GetById(ctx context.Context, id uint64) (*core.User, error)
 	GetByEmail(ctx context.Context, email string) (*core.User, error)
 	GetByPhoneNumber(ctx context.Context, phone string) (*core.User, error)
-	Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error)
+	Create(ctx context.Context, input *core.User) (*core.User, error)
 	ChangePassword(ctx context.Context, id uint64, newPassword string) error
-	Update(ctx context.Context, input *core.UserUpdateInput) (*core.User, error)
+	Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error)
 	Delete(ctx context.Context, id uint64) error
 }
 
@@ -21,10 +21,10 @@ type IAccountRepository interface {
 	GetAll(ctx context.Context) ([]core.Account, error)
 	GetByUser(ctx context.Context, idUser uint64) ([]core.Account, error)
 	GetById(ctx context.Context, id uint64) (*core.Account, error)
-	Create(ctx context.Context, input *core.AccountCreateInput) (*core.Account, error)
+	Create(ctx context.Context, input *core.Account) (*core.Account, error)
 	Blocking(ctx context.Context, id uint64) error
 	Close(ctx context.Context, id uint64) error
-	Update(ctx context.Context, input *core.AccountUpdateInput) (*core.Account, error)
+	Update(ctx context.Context, id uint64, input *core.AccountUpdateInput) (*core.Account, error)
 	Delete(ctx context.Context, id uint64) error
 }
 
@@ -34,7 +34,7 @@ type ICardRepository interface {
 	GetById(ctx context.Context, id uint64) (*core.Card, error)
 	GetByNumber(ctx context.Context, number string) (*core.Card, error)
 	Blocking(ctx context.Context, id uint64) error
-	Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error)
+	Create(ctx context.Context, input *core.Card) (*core.Card, error)
 	Delete(ctx context.Context, id uint64) error
 }
 
@@ -42,7 +42,7 @@ type ICreditRepository interface {
 	GetAll(ctx context.Context) ([]core.Credit, error)
 	GetByUser(ctx context.Context, idUser uint64) ([]core.Credit, error)
 	GetById(ctx context.Context, id uint64) (*core.Credit, error)
-	Create(ctx context.Context, input *core.CreditCreateInput) (*core.Credit, error)
+	Create(ctx context.Context, input *core.Credit) (*core.Credit, error)
 	Replay(ctx context.Context, id uint64) (*core.Credit, error)
 	Delete(ctx context.Context, id uint64) error
 }
@@ -51,7 +51,7 @@ type IDepositRepository interface {
 	GetAll(ctx context.Context) ([]core.Deposit, error)
 	GetByUser(ctx context.Context, idUser uint64) ([]core.Deposit, error)
 	GetById(ctx context.Context, id uint64) (*core.Deposit, error)
-	Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error)
+	Create(ctx context.Context, input *core.Deposit) (*core.Deposit, error)
 	Repay(ctx context.Context, id uint64, amount int) error
 	Delete(ctx context.Context, id uint64) error
 }
@@ -61,9 +61,8 @@ type ICurrencyRepository interface {
 	GetByUser(ctx context.Context, idUser uint64) ([]core.Currency, error)
 	GetById(ctx context.Context, id uint64) (*core.Currency, error)
 	GetByIsoCode(ctx context.Context, isoCode string) (*core.Currency, error)
-	GetByNumberCode(ctx context.Context, numberCode string) (*core.Currency, error)
 	GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error)
-	Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error)
-	Update(ctx context.Context, input *core.CurrencyUpdateInput) (*core.Currency, error)
+	Create(ctx context.Context, input *core.Currency) (*core.Currency, error)
+	Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error)
 	Delete(ctx context.Context, id uint64) error
 }

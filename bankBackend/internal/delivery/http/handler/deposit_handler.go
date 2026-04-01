@@ -75,11 +75,11 @@ func (h *DepositHandler) Create(ctx *gin.Context) {
 	ResponseSuccess(ctx, deposit)
 }
 
-func (h *DepositHandler) RepayById(ctx *gin.Context) {
+func (h *DepositHandler) ReplenishById(ctx *gin.Context) {
 	id := ctx.Param("id")
 	amount := ctx.PostForm("amount")
 
-	intAmount, err := strconv.Atoi(amount)
+	parsedAmount, err := strconv.Atoi(amount)
 	if err != nil {
 		ResponseBadRequest(ctx, err)
 		return
@@ -91,7 +91,7 @@ func (h *DepositHandler) RepayById(ctx *gin.Context) {
 		return
 	}
 
-	err = h.service.Repay(ctx, parsedId, intAmount)
+	err = h.service.Replenish(ctx, parsedId, parsedAmount)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return

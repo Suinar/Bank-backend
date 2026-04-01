@@ -25,6 +25,6 @@ func (r *CardRepository) GetByNumber(ctx context.Context, number string) (*core.
 
 func (r *CardRepository) Blocking(ctx context.Context, id uint64) error {}
 
-func (r *CardRepository) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {}
+func (r *CardRepository) Create(ctx context.Context, input *core.Card) (*core.Card, error) {}
 
 func (r *CardRepository) Delete(ctx context.Context, id uint64) error {}

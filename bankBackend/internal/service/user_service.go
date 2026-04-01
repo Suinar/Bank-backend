@@ -10,15 +10,15 @@ import (
 )
 
 type UserService struct {
-	repository repository.IUserRepository
+	userRepository repository.IUserRepository
 }
 
-func NewUserService(repository repository.IUserRepository) *UserService {
-	return &UserService{repository: repository}
+func NewUserService(userRepository repository.IUserRepository) *UserService {
+	return &UserService{userRepository: userRepository}
 }
 
 func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {
-	users, err := s.repository.GetAll(ctx)
+	users, err := s.userRepository.GetAll(ctx)
 	if err != nil {
 		return nil, core.InternalServerError
 	}
@@ -27,7 +27,7 @@ func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {
 }
 
 func (s *UserService) GetById(ctx context.Context, id uint64) (*core.User, error) {
-	user, err := s.repository.GetById(ctx, id)
+	user, err := s.userRepository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -40,7 +40,7 @@ func (s *UserService) GetById(ctx context.Context, id uint64) (*core.User, error
 }
 
 func (s *UserService) GetByEmail(ctx context.Context, email string) (*core.User, error) {
-	user, err := s.repository.GetByEmail(ctx, email)
+	user, err := s.userRepository.GetByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -53,7 +53,7 @@ func (s *UserService) GetByEmail(ctx context.Context, email string) (*core.User,
 }
 
 func (s *UserService) GetByPhoneNumber(ctx context.Context, phoneNumber string) (*core.User, error) {
-	user, err := s.repository.GetByPhoneNumber(ctx, phoneNumber)
+	user, err := s.userRepository.GetByPhoneNumber(ctx, phoneNumber)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -66,15 +66,81 @@ func (s *UserService) GetByPhoneNumber(ctx context.Context, phoneNumber string) 
 }
 
 func (s *UserService) Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error) {
-	return nil, nil
+	if input == nil || input.FirstName == "" || input.LastName == "" ||
+		input.Email == "" || input.PasswordHash == "" || input.PhoneNumber == ""{
+		return nil, core.BadRequest
+	}
+
+	if len(input.FirstName) == 0 || len(input.FirstName) > 50 {
+		return nil, core.BadRequest
+	}
+
+	if input.MiddleName != nil {
+		if len(*input.MiddleName) == 0 || len(*input.MiddleName) > 50 {
+			return nil, core.BadRequest
+		}
+	}
+
+	if len(input.LastName) == 0 || len(input.LastName) > 50 {
+		return nil, core.BadRequest
+	}
+
+	user := &core.User{
+		FirstName:   input.FirstName,
+		MiddleName:  input.MiddleName,
+		LastName:    input.LastName,
+		Email:       input.Email,
+		PhoneNumber: input.PhoneNumber,
+		PasswordHash: input.PasswordHash,
+	}
+
+	create, err := s.userRepository.Create(ctx, user)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	// todo: notification
+
+	return create, nil
 }
 
 func (s *UserService) Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error) {
-	return nil, nil
+	if input == nil {
+		return nil, core.BadRequest
+	}
+
+	if input.FirstName != nil {
+		if len(*input.FirstName) == 0 || len(*input.FirstName) > 50 {
+			return nil, core.BadRequest
+		}
+	}
+
+	if input.MiddleName != nil {
+		if len(*input.MiddleName) == 0 || len(*input.MiddleName) > 50 {
+			return nil, core.BadRequest
+		}
+	}
+
+	if input.LastName != nil {
+		if len(*input.LastName) == 0 || len(*input.LastName) > 50 {
+			return nil, core.BadRequest
+		}
+	}
+
+	user, err := s.userRepository.Update(ctx, id, input)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return nil, core.NotFound
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	return user, nil
 }
 
 func (s *UserService) ChangePassword(ctx context.Context, id uint64, newPassword string) error {
-	if len(newPassword) < 6 || len(newPassword) > 100 {
+	if len(newPassword) < 6 || len(newPassword) > 20 {
 		return core.BadRequest
 	}
 
@@ -83,7 +149,7 @@ func (s *UserService) ChangePassword(ctx context.Context, id uint64, newPassword
 		return core.InternalServerError
 	}
 
-	err = s.repository.ChangePassword(ctx, id, string(hashedPassword))
+	err = s.userRepository.ChangePassword(ctx, id, string(hashedPassword))
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound
@@ -96,7 +162,7 @@ func (s *UserService) ChangePassword(ctx context.Context, id uint64, newPassword
 }
 
 func (s *UserService) Delete(ctx context.Context, id uint64) error {
-	err := s.repository.Delete(ctx, id)
+	err := s.userRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound

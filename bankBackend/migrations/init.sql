@@ -38,7 +38,6 @@ CREATE TABLE cards (
     number VARCHAR(19) UNIQUE NOT NULL,
     expiry_month SMALLINT NOT NULL,
     expiry_year SMALLINT NOT NULL,
-    security_code_hash TEXT NOT NULL,
     status SMALLINT NOT NULL CHECK (status IN (0,1,2,3)),
 
     FOREIGN KEY (user_id) REFERENCES users(id),
@@ -52,6 +51,7 @@ CREATE TABLE credits (
     amount UUID NOT NULL,
     interest_rate SMALLINT NOT NULL,
     term_month SMALLINT NOT NULL,
+    monthly_payment UUID NOT NULL,
     status SMALLINT NOT NULL CHECK (status IN (0,1,2)),
 
     FOREIGN KEY (user_id) REFERENCES users(id),
@@ -62,10 +62,9 @@ CREATE TABLE deposits (
     id UUID PRIMARY KEY,
     user_id UUID NOT NULL,
     currency_id UUID NOT NULL,
-    principal UUID NOT NULL,
+    amount UUID NOT NULL,
     interest_rate SMALLINT NOT NULL,
     term_month SMALLINT NOT NULL,
-    monthly_payment UUID NOT NULL,
     status NOT NULL CHECK (status IN (0,1,2)),
 
     FOREIGN KEY (user_id) REFERENCES users(id),
