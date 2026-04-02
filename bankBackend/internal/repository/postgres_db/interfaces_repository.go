@@ -10,7 +10,7 @@ type IUserRepository interface {
 	GetAll(ctx context.Context) ([]core.User, error)
 	GetById(ctx context.Context, id uint64) (*core.User, error)
 	GetByEmail(ctx context.Context, email string) (*core.User, error)
-	GetByPhoneNumber(ctx context.Context, phone string) (*core.User, error)
+	GetByPhoneNumber(ctx context.Context, phoneNumber string) (*core.User, error)
 	Create(ctx context.Context, input *core.User) (*core.User, error)
 	ChangePassword(ctx context.Context, id uint64, newPassword string) error
 	Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error)
@@ -43,7 +43,6 @@ type ICreditRepository interface {
 	GetByUser(ctx context.Context, idUser uint64) ([]core.Credit, error)
 	GetById(ctx context.Context, id uint64) (*core.Credit, error)
 	Create(ctx context.Context, input *core.Credit) (*core.Credit, error)
-	Replay(ctx context.Context, id uint64) (*core.Credit, error)
 	Delete(ctx context.Context, id uint64) error
 }
 
@@ -52,7 +51,6 @@ type IDepositRepository interface {
 	GetByUser(ctx context.Context, idUser uint64) ([]core.Deposit, error)
 	GetById(ctx context.Context, id uint64) (*core.Deposit, error)
 	Create(ctx context.Context, input *core.Deposit) (*core.Deposit, error)
-	Repay(ctx context.Context, id uint64, amount int) error
 	Delete(ctx context.Context, id uint64) error
 }
 

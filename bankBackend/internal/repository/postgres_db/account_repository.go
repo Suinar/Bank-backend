@@ -6,14 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	"github.com/jmoiron/sqlx"
-)
-
-const (
-	StatusBlocked = core.AccountStatusBlocked
-	StatusClosed  = core.AccountStatusClosed
 )
 
 type AccountRepository struct {
@@ -26,8 +22,8 @@ func NewAccountRepository(db *sqlx.DB) *AccountRepository {
 
 func (r *AccountRepository) GetAll(ctx context.Context) ([]core.Account, error) {
 	query := `
-        SELECT id, user_id, currency_id, name, balance, status
-        FROM accounts
+SELECT id, user_id, currency_id, name, balance, status
+FROM accounts
     `
 
 	var accounts []core.Account
@@ -41,13 +37,17 @@ func (r *AccountRepository) GetAll(ctx context.Context) ([]core.Account, error) 
 
 func (r *AccountRepository) GetByUser(ctx context.Context, userId uint64) ([]core.Account, error) {
 	query := `
-	SELECT id, user_id, currency_id, name, balance, status
-	FROM accounts
-	WHERE user_id = $1`
+SELECT id, user_id, currency_id, name, balance, status
+FROM accounts
+WHERE user_id = $1`
 
 	var accounts []core.Account
 
 	if err := r.db.SelectContext(ctx, &accounts, query, userId); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, core.NotFound
+		}
+
 		return nil, core.InternalServerError
 	}
 
@@ -56,9 +56,9 @@ func (r *AccountRepository) GetByUser(ctx context.Context, userId uint64) ([]cor
 
 func (r *AccountRepository) GetById(ctx context.Context, id uint64) (*core.Account, error) {
 	query := `
-	SELECT id, user_id, currency_id, name, balance, status
-	FROM accounts
-	WHERE id = $1`
+SELECT id, user_id, currency_id, name, balance, status
+FROM accounts
+WHERE id = $1`
 
 	var account core.Account
 
@@ -75,9 +75,9 @@ func (r *AccountRepository) GetById(ctx context.Context, id uint64) (*core.Accou
 
 func (r *AccountRepository) Create(ctx context.Context, input *core.Account) (*core.Account, error) {
 	query := `
-	INSERT INTO accounts (user_id, currency_id, name, balance, status)
-	VALUES (:user_id, :currency_id, :name, :balance, :status)
-	RETURNING id, user_id, currency_id, name, balance, status;`
+INSERT INTO accounts (user_id, currency_id, name, balance, status)
+VALUES (:user_id, :currency_id, :name, :balance, :status)
+RETURNING id, user_id, currency_id, name, balance, status;`
 
 	rows, err := r.db.NamedQueryContext(ctx, query, input)
 	if err != nil {
@@ -98,11 +98,11 @@ func (r *AccountRepository) Create(ctx context.Context, input *core.Account) (*c
 
 func (r *AccountRepository) Blocking(ctx context.Context, id uint64) error {
 	query := `
-	UPDATE accounts
-	SET status = $1
-	where id = $2`
+UPDATE accounts
+SET status = $1, updated_at = $2
+where id = $3`
 
-	result, err := r.db.ExecContext(ctx, query, StatusBlocked, id)
+	result, err := r.db.ExecContext(ctx, query, core.AccountStatusBlocked, time.Now(), id)
 	if err != nil {
 		return core.InternalServerError
 	}
@@ -121,11 +121,11 @@ func (r *AccountRepository) Blocking(ctx context.Context, id uint64) error {
 
 func (r *AccountRepository) Close(ctx context.Context, id uint64) error {
 	query := `
-	UPDATE accounts
-	SET status = $1
-	WHERE id = $2`
+UPDATE accounts
+SET status = $1, updated_at = $2
+where id = $3`
 
-	result, err := r.db.ExecContext(ctx, query, StatusClosed, id)
+	result, err := r.db.ExecContext(ctx, query, core.AccountStatusClosed, time.Now(), id)
 	if err != nil {
 		return core.InternalServerError
 	}
@@ -153,20 +153,21 @@ func (r *AccountRepository) Update(ctx context.Context, id uint64, input *core.A
 		argId++
 	}
 
-	args = append(args, id)
+	setParts = append(setParts, "updated_at = NOW()")
 
-	args = append(args, StatusClosed)
+	args = append(args, id)
+	args = append(args, core.AccountStatusClosed)
 
 	if len(setParts) == 0 {
 		return nil, core.BadRequest
 	}
 
 	query := fmt.Sprintf(`
-    UPDATE accounts
-    SET %s
-    WHERE id = $%d AND status != $%d
-    RETURNING id, user_id, currency_id, name, balance, status
-	`, strings.Join(setParts, ", "), argId, argId+1)
+UPDATE accounts
+SET %s
+WHERE id = $%d AND status != $%d
+RETURNING id, user_id, currency_id, name, balance, status
+`, strings.Join(setParts, ", "), argId, argId+1)
 
 	var updated core.Account
 
@@ -183,8 +184,9 @@ func (r *AccountRepository) Update(ctx context.Context, id uint64, input *core.A
 }
 
 func (r *AccountRepository) Delete(ctx context.Context, id uint64) error {
-	query := `DELETE FROM accounts 
-       WHERE id = $1`
+	query := `
+DELETE FROM accounts 
+WHERE id = $1`
 
 	result, err := r.db.ExecContext(ctx, query, id)
 	if err != nil {

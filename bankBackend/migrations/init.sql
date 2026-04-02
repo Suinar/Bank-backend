@@ -39,6 +39,8 @@ CREATE TABLE cards (
     expiry_month SMALLINT NOT NULL,
     expiry_year SMALLINT NOT NULL,
     status SMALLINT NOT NULL CHECK (status IN (0,1,2,3)),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (currency_id) REFERENCES currenies(id)
@@ -53,6 +55,8 @@ CREATE TABLE credits (
     term_month SMALLINT NOT NULL,
     monthly_payment UUID NOT NULL,
     status SMALLINT NOT NULL CHECK (status IN (0,1,2)),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (currency_id) REFERENCES currenies(id)
@@ -66,6 +70,8 @@ CREATE TABLE deposits (
     interest_rate SMALLINT NOT NULL,
     term_month SMALLINT NOT NULL,
     status NOT NULL CHECK (status IN (0,1,2)),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (currency_id) REFERENCES currenies(id)
@@ -77,5 +83,7 @@ CREATE TABLE currencies (
     symbol CHAR UNIQUE NOT NULL,
     iso_code VARCHAR(4) UNIQUE NOT NULL,
     number_code VARCHAR(3) UNIQUE NOT NULL,
-    minor_units VARCHAR(3) NOT NULL
+    minor_units VARCHAR(3) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP
 );
