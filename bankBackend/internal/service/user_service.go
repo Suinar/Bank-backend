@@ -94,14 +94,14 @@ func (s *UserService) Create(ctx context.Context, input *core.UserCreateInput) (
 		PasswordHash: input.PasswordHash,
 	}
 
-	create, err := s.userRepository.Create(ctx, user)
+	created, err := s.userRepository.Create(ctx, user)
 	if err != nil {
 		return nil, core.InternalServerError
 	}
 
 	// todo: notification
 
-	return create, nil
+	return created, nil
 }
 
 func (s *UserService) Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error) {
@@ -127,8 +127,12 @@ func (s *UserService) Update(ctx context.Context, id uint64, input *core.UserUpd
 		}
 	}
 
-	user, err := s.userRepository.Update(ctx, id, input)
+	updated, err := s.userRepository.Update(ctx, id, input)
 	if err != nil {
+		if errors.Is(err, core.BadRequest) {
+			return nil, core.BadRequest
+		}
+
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
 		}
@@ -136,7 +140,7 @@ func (s *UserService) Update(ctx context.Context, id uint64, input *core.UserUpd
 		return nil, core.InternalServerError
 	}
 
-	return user, nil
+	return updated, nil
 }
 
 func (s *UserService) ChangePassword(ctx context.Context, id uint64, newPassword string) error {
