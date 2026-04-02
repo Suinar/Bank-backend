@@ -116,14 +116,14 @@ func (s *AccountService) Create(ctx context.Context, input *core.AccountCreateIn
 		Status:     core.AccountStatusActive,
 	}
 
-	create, err := s.accountRepository.Create(ctx, account)
+	created, err := s.accountRepository.Create(ctx, account)
 	if err != nil {
 		return nil, core.InternalServerError
 	}
 
 	// todo: notification
 
-	return create, nil
+	return created, nil
 }
 
 func (s *AccountService) Blocking(ctx context.Context, id uint64) error {
@@ -167,8 +167,12 @@ func (s *AccountService) Update(ctx context.Context, id uint64, input *core.Acco
 		}
 	}
 
-	account, err := s.accountRepository.Update(ctx, id, input)
+	updated, err := s.accountRepository.Update(ctx, id, input)
 	if err != nil {
+		if errors.Is(err, core.BadRequest) {
+			return nil, core.BadRequest
+		}
+
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
 		}
@@ -178,7 +182,7 @@ func (s *AccountService) Update(ctx context.Context, id uint64, input *core.Acco
 
 	// todo: notification
 
-	return account, nil
+	return updated, nil
 }
 
 func (s *AccountService) Delete(ctx context.Context, id uint64) error {
