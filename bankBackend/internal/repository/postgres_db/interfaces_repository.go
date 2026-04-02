@@ -19,7 +19,7 @@ type IUserRepository interface {
 
 type IAccountRepository interface {
 	GetAll(ctx context.Context) ([]core.Account, error)
-	GetByUser(ctx context.Context, idUser uint64) ([]core.Account, error)
+	GetByUser(ctx context.Context, userId uint64) ([]core.Account, error)
 	GetById(ctx context.Context, id uint64) (*core.Account, error)
 	Create(ctx context.Context, input *core.Account) (*core.Account, error)
 	Blocking(ctx context.Context, id uint64) error
