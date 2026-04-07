@@ -5,15 +5,19 @@ import (
 	"errors"
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
+	cache "github.com/Suinar/Bank-backend/bankBackend/internal/repository/cache"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
 )
 
 type CurrencyService struct {
 	currencyRepository repository.ICurrencyRepository
+	currencyCache      cache.ICurrencyCache
 }
 
-func NewCurrencyService(repository repository.ICurrencyRepository) *CurrencyService {
-	return &CurrencyService{currencyRepository: repository}
+func NewCurrencyService(repository repository.ICurrencyRepository,
+	currencyCache cache.ICurrencyCache) *CurrencyService {
+	return &CurrencyService{currencyRepository: repository,
+		currencyCache: currencyCache}
 }
 
 func (s *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {

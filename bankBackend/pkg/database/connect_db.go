@@ -1,18 +1,19 @@
 ﻿package database
 
 import (
+	configs "github.com/Suinar/Bank-backend/bankBackend/configs"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
-func Connect(databaseUrl string, maxOpenConns int, maxIdleConns int) (*sqlx.DB, error) {
-	db, err := sqlx.Connect("postgres", databaseUrl)
+func ConnectToDb(cfg *configs.Config) (*sqlx.DB, error) {
+	db, err := sqlx.Connect("postgres", cfg.DbUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(maxOpenConns)
-	db.SetMaxIdleConns(maxIdleConns)
+	db.SetMaxOpenConns(cfg.Postgres.MaxOpenConns)
+	db.SetMaxIdleConns(cfg.Postgres.MaxIdleConns)
 
 	return db, nil
 }
