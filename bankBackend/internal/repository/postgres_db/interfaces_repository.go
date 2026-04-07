@@ -56,7 +56,6 @@ type IDepositRepository interface {
 
 type ICurrencyRepository interface {
 	GetAll(ctx context.Context) ([]core.Currency, error)
-	GetByUser(ctx context.Context, idUser uint64) ([]core.Currency, error)
 	GetById(ctx context.Context, id uint64) (*core.Currency, error)
 	GetByIsoCode(ctx context.Context, isoCode string) (*core.Currency, error)
 	GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error)

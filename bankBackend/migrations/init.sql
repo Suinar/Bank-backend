@@ -82,7 +82,6 @@ CREATE TABLE currencies (
     name VARCHAR UNIQUE NOT NULL,
     symbol CHAR UNIQUE NOT NULL,
     iso_code VARCHAR(4) UNIQUE NOT NULL,
-    number_code VARCHAR(3) UNIQUE NOT NULL,
     minor_units VARCHAR(3) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP
