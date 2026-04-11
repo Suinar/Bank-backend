@@ -59,7 +59,7 @@ type IDepositService interface {
 type ICurrencyService interface {
 	GetAll(ctx context.Context) ([]core.Currency, error)
 	GetById(ctx context.Context, id uint64) (*core.Currency, error)
-	GetByIsoCod(ctx context.Context, isoCode string) (*core.Currency, error)
+	GetByIso(ctx context.Context, isoCode string) (*core.Currency, error)
 	GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error)
 	Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error)
 	Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error)

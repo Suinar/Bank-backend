@@ -44,10 +44,10 @@ func (h *CurrencyHandler) GetById(ctx *gin.Context) {
 	ResponseSuccess(ctx, currency)
 }
 
-func (h *CurrencyHandler) GetByIsoCode(ctx *gin.Context) {
+func (h *CurrencyHandler) GetByIso(ctx *gin.Context) {
 	isoCode := ctx.Param("iso_code")
 
-	currency, err := h.service.GetByIsoCod(ctx, isoCode)
+	currency, err := h.service.GetByIso(ctx, isoCode)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
