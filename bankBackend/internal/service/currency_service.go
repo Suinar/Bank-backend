@@ -21,29 +21,47 @@ func NewCurrencyService(repository repository.ICurrencyRepository,
 }
 
 func (s *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {
-	currency, err := s.currencyRepository.GetAll(ctx)
+	currencies, err := s.currencyCache.GetAll(ctx)
+	if err == nil && currencies != nil {
+		return currencies, nil
+	}
+
+	currencies, err = s.currencyRepository.GetAll(ctx)
 	if err != nil {
 		return nil, core.InternalServerError
 	}
 
-	return currency, nil
+	_ = s.currencyCache.UpdateAll(ctx, currencies)
+
+	return currencies, nil
 }
 
 func (s *CurrencyService) GetById(ctx context.Context, id uint64) (*core.Currency, error) {
-	currency, err := s.currencyRepository.GetById(ctx, id)
+	currency, err := s.currencyCache.GetById(ctx, id)
+	if err == nil && currency != nil {
+		return currency, nil
+	}
+
+	currency, err = s.currencyRepository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
 		}
-
 		return nil, core.InternalServerError
 	}
+
+	_ = s.currencyCache.Set(ctx, currency)
 
 	return currency, nil
 }
 
-func (s *CurrencyService) GetByIsoCod(ctx context.Context, isoCode string) (*core.Currency, error) {
-	currency, err := s.currencyRepository.GetByIsoCode(ctx, isoCode)
+func (s *CurrencyService) GetByIso(ctx context.Context, isoCode string) (*core.Currency, error) {
+	currency, err := s.currencyCache.GetByIso(ctx, isoCode)
+	if err == nil && currency != nil {
+		return currency, nil
+	}
+
+	currency, err = s.currencyRepository.GetByIso(ctx, isoCode)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -51,12 +69,19 @@ func (s *CurrencyService) GetByIsoCod(ctx context.Context, isoCode string) (*cor
 
 		return nil, core.InternalServerError
 	}
+
+	_ = s.currencyCache.Set(ctx, currency)
 
 	return currency, nil
 }
 
 func (s *CurrencyService) GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error) {
-	currency, err := s.currencyRepository.GetBySymbol(ctx, symbol)
+	currency, err := s.currencyCache.GetBySymbol(ctx, symbol)
+	if err == nil && currency != nil {
+		return currency, nil
+	}
+
+	currency, err = s.currencyCache.GetBySymbol(ctx, symbol)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return nil, core.NotFound
@@ -64,6 +89,8 @@ func (s *CurrencyService) GetBySymbol(ctx context.Context, symbol rune) (*core.C
 
 		return nil, core.InternalServerError
 	}
+
+	_ = s.currencyCache.Set(ctx, currency)
 
 	return currency, nil
 }
@@ -91,7 +118,12 @@ func (s *CurrencyService) Create(ctx context.Context, input *core.CurrencyCreate
 		return nil, core.InternalServerError
 	}
 
-	// Maybe server todo: notification
+	err = s.currencyCache.Set(ctx, create)
+	if err != nil {
+		// todo: maybe error or logging
+	}
+
+	// todo: maybe notification
 
 	return create, nil
 }
@@ -128,7 +160,12 @@ func (s *CurrencyService) Update(ctx context.Context, id uint64, input *core.Cur
 		return nil, core.InternalServerError
 	}
 
-	// Maybe server todo: notification
+	err = s.currencyCache.Update(ctx, id, currency)
+	if err != nil {
+		// todo: maybe error or logging
+	}
+
+	// todo: maybe notification
 
 	return currency, nil
 }
@@ -143,7 +180,12 @@ func (s *CurrencyService) Delete(ctx context.Context, id uint64) error {
 		return core.InternalServerError
 	}
 
-	// Maybe server todo: notification
+	err = s.currencyCache.Delete(ctx, id)
+	if err != nil {
+		// todo: maybe error or logging
+	}
+
+	// todo: maybe notification
 
 	return nil
 }

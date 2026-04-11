@@ -57,7 +57,7 @@ type IDebitHandler interface {
 type ICurrencyHandler interface {
 	GetAll(*gin.Context)
 	GetById(*gin.Context)
-	GetByIsoCode(*gin.Context)
+	GetByIso(*gin.Context)
 	GetBySymbol(*gin.Context)
 	Convert(*gin.Context)
 	Create(*gin.Context)

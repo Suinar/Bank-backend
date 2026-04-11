@@ -55,42 +55,38 @@ func (c *CurrencyCache) GetAll(ctx context.Context) ([]core.Currency, error) {
 	return currencies, nil
 }
 
-func (c *CurrencyCache) SetAll(ctx context.Context, currencies []core.Currency) error {
-	return nil
-}
-
 func (c *CurrencyCache) GetById(ctx context.Context, id uint64) (*core.Currency, error) {
 	return nil, nil
-}
-
-func (c *CurrencyCache) SetById(ctx context.Context, currency *core.Currency) error {
-	return nil
 }
 
 func (c *CurrencyCache) GetByIso(ctx context.Context, iso string) (*core.Currency, error) {
 	return nil, nil
 }
 
-func (c *CurrencyCache) SetByIso(ctx context.Context, currency *core.Currency) error {
-	return nil
-}
-
 func (c *CurrencyCache) GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error) {
 	return nil, nil
 }
 
-func (c *CurrencyCache) SetBySymbol(ctx context.Context, currency *core.Currency) error {
-	return nil
-}
-
-func (c *CurrencyCache) DeleteById(ctx context.Context, id uint64) error {
-	return nil
-}
-
-func (c *CurrencyCache) DeleteAll(ctx context.Context) error {
+func (c *CurrencyCache) Delete(ctx context.Context, id uint64) error {
 	return nil
 }
 
 func (c *CurrencyCache) MapToCurrency(data map[string]string) (core.Currency, error) {
 	return core.Currency{}, nil
+}
+
+func (c *CurrencyCache) Set(ctx context.Context, currency *core.Currency) error {
+	return nil
+}
+
+func (c *CurrencyCache) SetAll(ctx context.Context, currencies []core.Currency) error {
+	return nil
+}
+
+func (c *CurrencyCache) Update(ctx context.Context, id uint64, currency *core.Currency) error {
+	return nil
+}
+
+func (c *CurrencyCache) UpdateAll(ctx context.Context, currencies []core.Currency) error {
+	return nil
 }

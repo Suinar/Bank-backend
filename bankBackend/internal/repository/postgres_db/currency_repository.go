@@ -52,7 +52,7 @@ WHERE id = $1`
 	return &currency, nil
 }
 
-func (r *CurrencyRepository) GetByIsoCode(ctx context.Context, isoCode string) (*core.Currency, error) {
+func (r *CurrencyRepository) GetByIso(ctx context.Context, isoCode string) (*core.Currency, error) {
 	query := `
 SELECT id, name, symbol, iso_code, minor_units
 FROM currencies
