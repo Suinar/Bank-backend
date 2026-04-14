@@ -11,9 +11,8 @@ type ICurrencyCache interface {
 	GetById(ctx context.Context, id uint64) (*core.Currency, error)
 	GetByIso(ctx context.Context, iso string) (*core.Currency, error)
 	GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error)
-	Delete(ctx context.Context, id uint64) error
 	Set(ctx context.Context, currency *core.Currency) error
 	SetAll(ctx context.Context, currencies []core.Currency) error
-	Update(ctx context.Context, id uint64, currency *core.Currency) error
-	UpdateAll(ctx context.Context, currencies []core.Currency) error
+	UpdateById(ctx context.Context, currency *core.Currency) error
+	Delete(ctx context.Context, id uint64) error
 }

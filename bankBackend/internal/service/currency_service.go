@@ -14,6 +14,16 @@ type CurrencyService struct {
 	currencyCache      cache.ICurrencyCache
 }
 
+func (s *CurrencyService) SetAll(ctx context.context.Context, currencies []core.Currency) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (s *CurrencyService) Set(ctx context.context.Context, currency *core.Currency) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewCurrencyService(repository repository.ICurrencyRepository,
 	currencyCache cache.ICurrencyCache) *CurrencyService {
 	return &CurrencyService{currencyRepository: repository,
