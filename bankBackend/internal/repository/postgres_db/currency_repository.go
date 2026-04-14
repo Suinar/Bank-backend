@@ -15,6 +15,16 @@ type CurrencyRepository struct {
 	db *sqlx.DB
 }
 
+func (r *CurrencyRepository) SetAll(ctx context.context.Context, currencies []core.Currency) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *CurrencyRepository) Set(ctx context.context.Context, currency *core.Currency) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func NewCurrencyRepository(db *sqlx.DB) *CurrencyRepository {
 	return &CurrencyRepository{db: db}
 }
