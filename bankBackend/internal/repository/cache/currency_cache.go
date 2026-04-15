@@ -203,7 +203,7 @@ func (c *CurrencyCache) SetAll(ctx context.Context, currencies []core.Currency) 
 	return nil
 }
 
-func (c *CurrencyCache) UpdateById(ctx context.Context, currency *core.Currency) error {
+func (c *CurrencyCache) Update(ctx context.Context, currency *core.Currency) error {
 	existing, err := c.GetById(ctx, currency.Id)
 	if err != nil {
 		if errors.Is(err, core.CacheGetError) {
