@@ -14,16 +14,6 @@ type CurrencyService struct {
 	currencyCache      cache.ICurrencyCache
 }
 
-func (s *CurrencyService) SetAll(ctx context.context.Context, currencies []core.Currency) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *CurrencyService) Set(ctx context.context.Context, currency *core.Currency) error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewCurrencyService(repository repository.ICurrencyRepository,
 	currencyCache cache.ICurrencyCache) *CurrencyService {
 	return &CurrencyService{currencyRepository: repository,
@@ -41,7 +31,7 @@ func (s *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {
 		return nil, core.InternalServerError
 	}
 
-	_ = s.currencyCache.UpdateAll(ctx, currencies)
+	_ = s.currencyCache.SetAll(ctx, currencies)
 
 	return currencies, nil
 }
@@ -170,7 +160,7 @@ func (s *CurrencyService) Update(ctx context.Context, id uint64, input *core.Cur
 		return nil, core.InternalServerError
 	}
 
-	err = s.currencyCache.Update(ctx, id, currency)
+	err = s.currencyCache.Update(ctx, currency)
 	if err != nil {
 		// todo: maybe error or logging
 	}
