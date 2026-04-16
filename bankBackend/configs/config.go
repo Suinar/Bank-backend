@@ -17,9 +17,13 @@ type Config struct {
 		MaxOpenConns int
 		MaxIdleConns int
 	}
+
+	Grps struct {
+		CurrencyRankingUrl string
+	}
 }
 
-func Load() (*Config, error) {
+func LoadConfig() (*Config, error) {
 	viper.SetConfigFile(".env")
 	viper.SetConfigType("env")
 
@@ -38,6 +42,8 @@ func Load() (*Config, error) {
 	cfg.Redis.Db = viper.GetInt("REDIS_DB")
 	cfg.Redis.PoolSize = viper.GetInt("REDIS_POOL_SIZE")
 	cfg.Redis.MinIdleConns = viper.GetInt("REDIS_MIN_IDLE")
+
+	cfg.Grps.CurrencyRankingUrl = viper.GetString("CURRENCY_RANKING_URL")
 
 	return cfg, nil
 }

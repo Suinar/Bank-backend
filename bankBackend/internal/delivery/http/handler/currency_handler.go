@@ -9,15 +9,22 @@ import (
 )
 
 type CurrencyHandler struct {
-	service service.ICurrencyService
+	currencyService     service.ICurrencyService
+	convertService      service.IConvertService
+	exchangeRateService service.IExchangeRateService
 }
 
-func NewCurrencyHandler(service service.ICurrencyService) *CurrencyHandler {
-	return &CurrencyHandler{service: service}
+func NewCurrencyHandler(currencyService service.ICurrencyService,
+	convertService service.IConvertService,
+	exchangeRateService service.IExchangeRateService) *CurrencyHandler {
+	return &CurrencyHandler{currencyService: currencyService,
+		convertService:      convertService,
+		exchangeRateService: exchangeRateService,
+	}
 }
 
 func (h *CurrencyHandler) GetAll(ctx *gin.Context) {
-	currencies, err := h.service.GetAll(ctx)
+	currencies, err := h.currencyService.GetAll(ctx)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -35,7 +42,7 @@ func (h *CurrencyHandler) GetById(ctx *gin.Context) {
 		return
 	}
 
-	currency, err := h.service.GetById(ctx, parsedId)
+	currency, err := h.currencyService.GetById(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -47,7 +54,7 @@ func (h *CurrencyHandler) GetById(ctx *gin.Context) {
 func (h *CurrencyHandler) GetByIso(ctx *gin.Context) {
 	isoCode := ctx.Param("iso_code")
 
-	currency, err := h.service.GetByIso(ctx, isoCode)
+	currency, err := h.currencyService.GetByIso(ctx, isoCode)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -65,7 +72,7 @@ func (h *CurrencyHandler) GetBySymbol(ctx *gin.Context) {
 	}
 	parseSymbol := []rune(symbol)[0]
 
-	currency, err := h.service.GetBySymbol(ctx, parseSymbol)
+	currency, err := h.currencyService.GetBySymbol(ctx, parseSymbol)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -98,7 +105,7 @@ func (h *CurrencyHandler) Convert(ctx *gin.Context) {
 		return
 	}
 
-	ranking, err := h.service.Convert(ctx, parsedIdFrom, parseAmount, parsedIdTo)
+	ranking, err := h.convertService.Convert(ctx, parsedIdFrom, parseAmount, parsedIdTo)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -115,7 +122,7 @@ func (h *CurrencyHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	currency, err := h.service.Create(ctx, &input)
+	currency, err := h.currencyService.Create(ctx, &input)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -139,7 +146,7 @@ func (h *CurrencyHandler) UpdateById(ctx *gin.Context) {
 		return
 	}
 
-	currency, err := h.service.Update(ctx, parsedId, &input)
+	currency, err := h.currencyService.Update(ctx, parsedId, &input)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -157,7 +164,7 @@ func (h *CurrencyHandler) DeleteById(ctx *gin.Context) {
 		return
 	}
 
-	err = h.service.Delete(ctx, parsedId)
+	err = h.currencyService.Delete(ctx, parsedId)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -175,7 +182,7 @@ func (h *CurrencyHandler) GetAllRanking(ctx *gin.Context) {
 		return
 	}
 
-	ranking, err := h.service.GetAllRanking(ctx, parsedIdFrom)
+	ranking, err := h.exchangeRateService.GetAllRanking(ctx, parsedIdFrom)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
@@ -200,7 +207,7 @@ func (h *CurrencyHandler) GetRelativeRanking(ctx *gin.Context) {
 		return
 	}
 
-	ranking, err := h.service.GetRelativeRanking(ctx, parsedIdFrom, parsedIdTo)
+	ranking, err := h.exchangeRateService.GetRelativeRanking(ctx, parsedIdFrom, parsedIdTo)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return

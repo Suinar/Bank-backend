@@ -95,12 +95,6 @@ func (s *CurrencyService) GetBySymbol(ctx context.Context, symbol rune) (*core.C
 	return currency, nil
 }
 
-func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error) {
-	// todo: convert service
-
-	return 0, nil
-}
-
 func (s *CurrencyService) Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error) {
 	if input == nil || input.Name == "" || input.Symbol == '0' ||
 		input.MinorUnits <= 0 || input.MinorUnits > 50 ||
@@ -188,6 +182,12 @@ func (s *CurrencyService) Delete(ctx context.Context, id uint64) error {
 	// todo: maybe notification
 
 	return nil
+}
+
+func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error) {
+	// todo: convert service
+
+	return 0, nil
 }
 
 func (s *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom uint64) ([]core.ExchangeRate, error) {
