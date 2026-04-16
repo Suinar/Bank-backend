@@ -61,10 +61,16 @@ type ICurrencyService interface {
 	GetById(ctx context.Context, id uint64) (*core.Currency, error)
 	GetByIso(ctx context.Context, isoCode string) (*core.Currency, error)
 	GetBySymbol(ctx context.Context, symbol rune) (*core.Currency, error)
-	Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error)
 	Create(ctx context.Context, input *core.CurrencyCreateInput) (*core.Currency, error)
 	Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error)
 	Delete(ctx context.Context, id uint64) error
+}
+
+type IExchangeRateService interface {
 	GetAllRanking(ctx context.Context, currencyIdFrom uint64) ([]core.ExchangeRate, error)
 	GetRelativeRanking(ctx context.Context, currencyIdFrom uint64, currencyIdTo uint64) (*core.ExchangeRate, error)
+}
+
+type IConvertService interface {
+	Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error)
 }
