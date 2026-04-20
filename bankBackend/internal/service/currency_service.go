@@ -7,17 +7,24 @@ import (
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	cache "github.com/Suinar/Bank-backend/bankBackend/internal/repository/cache"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	"github.com/Suinar/Bank-exhange-rate-service/ranking"
 )
 
 type CurrencyService struct {
 	currencyRepository repository.ICurrencyRepository
 	currencyCache      cache.ICurrencyCache
+	currencyRanking    ranking.RankingServiceClient
 }
 
-func NewCurrencyService(repository repository.ICurrencyRepository,
-	currencyCache cache.ICurrencyCache) *CurrencyService {
-	return &CurrencyService{currencyRepository: repository,
-		currencyCache: currencyCache}
+func NewCurrencyService(
+	repository repository.ICurrencyRepository,
+	currencyCache cache.ICurrencyCache,
+	currencyRanking ranking.RankingServiceClient) *CurrencyService {
+	return &CurrencyService{
+		currencyRepository: repository,
+		currencyCache:      currencyCache,
+		currencyRanking:    currencyRanking,
+	}
 }
 
 func (s *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {
@@ -190,14 +197,49 @@ func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom uint64, am
 	return 0, nil
 }
 
-func (s *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom uint64) ([]core.ExchangeRate, error) {
-	// todo: currency ranking service
+func (s *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom int64) ([]core.ExchangeRate, error) {
+	resp, err := s.currencyRanking.GetAllRanking(ctx, &ranking.GetAllRankingRequest{
+		CurrencyIdFrom: currencyIdFrom,
+	})
+	if err != nil {
+		if errors.Is(err, core.BadRequest) {
+			return nil, core.BadRequest
+		}
 
-	return nil, nil
+		return nil, core.InternalServerError
+	}
+
+	var rates []core.ExchangeRate
+
+	for _, r := range resp.Rates {
+		rates = append(rates, core.ExchangeRate{
+			CurrencyIdFrom: r.CurrencyIdFrom,
+			CurrencyIdTo:   r.CurrencyIdTo,
+			RateSell:       r.RateSell,
+			RateBuy:        r.RateBuy,
+			RateCross:      r.RateCross,
+		})
+	}
+
+	return rates, nil
 }
 
-func (s *CurrencyService) GetRelativeRanking(ctx context.Context, currencyIdFrom uint64, currencyIdTo uint64) (*core.ExchangeRate, error) {
-	// todo: currency ranking service
+func (s *CurrencyService) GetRelativeRanking(ctx context.Context, currencyIdFrom int64, currencyIdTo int64) (*core.ExchangeRate, error) {
+	resp, err := s.currencyRanking.GetRelativeRanking(ctx, &ranking.GetRelativeRankingRequest{
+		CurrencyIdFrom: currencyIdFrom,
+		CurrencyIdTo:   currencyIdTo,
+	})
+	if err != nil {
+		return nil, core.InternalServerError
+	}
 
-	return nil, nil
+	rate := &core.ExchangeRate{
+		CurrencyIdFrom: resp.Rate.CurrencyIdFrom,
+		CurrencyIdTo:   resp.Rate.CurrencyIdTo,
+		RateSell:       resp.Rate.RateSell,
+		RateBuy:        resp.Rate.RateBuy,
+		RateCross:      resp.Rate.RateCross,
+	}
+
+	return rate, nil
 }

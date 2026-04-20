@@ -3,6 +3,7 @@ module github.com/Suinar/Bank-backend
 go 1.25.5
 
 require (
+	github.com/Suinar/Bank-exhange-rate-service v0.0.0-20260416211049-71791e8ffeed
 	github.com/gin-gonic/gin v1.12.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/joho/godotenv v1.5.1
@@ -11,7 +12,6 @@ require (
 	github.com/spf13/viper v1.21.0
 	golang.org/x/crypto v0.48.0
 	google.golang.org/grpc v1.80.0
-	google.golang.org/protobuf v1.36.11
 )
 
 require (
@@ -55,4 +55,5 @@ require (
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/text v0.34.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516 // indirect
+	google.golang.org/protobuf v1.36.11 // indirect
 )

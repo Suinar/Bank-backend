@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	ranking "github.com/Suinar/Bank-backend/bankBackend/proto"
+	ranking "github.com/Suinar/Bank-exhange-rate-service/ranking"
 )
 
 func NewCurrencyRankingClient(ctx context.Context, cfg configs.Config) (ranking.RankingServiceClient, *grpc.ClientConn, error) {
