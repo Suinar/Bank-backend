@@ -26,7 +26,7 @@ func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {
 	return users, nil
 }
 
-func (s *UserService) GetById(ctx context.Context, id uint64) (*core.User, error) {
+func (s *UserService) GetById(ctx context.Context, id int64) (*core.User, error) {
 	user, err := s.userRepository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -67,7 +67,7 @@ func (s *UserService) GetByPhoneNumber(ctx context.Context, phoneNumber string) 
 
 func (s *UserService) Create(ctx context.Context, input *core.UserCreateInput) (*core.User, error) {
 	if input == nil || input.FirstName == "" || input.LastName == "" ||
-		input.Email == "" || input.PasswordHash == "" || input.PhoneNumber == ""{
+		input.Email == "" || input.PasswordHash == "" || input.PhoneNumber == "" {
 		return nil, core.BadRequest
 	}
 
@@ -86,11 +86,11 @@ func (s *UserService) Create(ctx context.Context, input *core.UserCreateInput) (
 	}
 
 	user := &core.User{
-		FirstName:   input.FirstName,
-		MiddleName:  input.MiddleName,
-		LastName:    input.LastName,
-		Email:       input.Email,
-		PhoneNumber: input.PhoneNumber,
+		FirstName:    input.FirstName,
+		MiddleName:   input.MiddleName,
+		LastName:     input.LastName,
+		Email:        input.Email,
+		PhoneNumber:  input.PhoneNumber,
 		PasswordHash: input.PasswordHash,
 	}
 
@@ -104,7 +104,7 @@ func (s *UserService) Create(ctx context.Context, input *core.UserCreateInput) (
 	return created, nil
 }
 
-func (s *UserService) Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error) {
+func (s *UserService) Update(ctx context.Context, id int64, input *core.UserUpdateInput) (*core.User, error) {
 	if input == nil {
 		return nil, core.BadRequest
 	}
@@ -143,7 +143,7 @@ func (s *UserService) Update(ctx context.Context, id uint64, input *core.UserUpd
 	return updated, nil
 }
 
-func (s *UserService) ChangePassword(ctx context.Context, id uint64, newPassword string) error {
+func (s *UserService) ChangePassword(ctx context.Context, id int64, newPassword string) error {
 	if len(newPassword) < 6 || len(newPassword) > 20 {
 		return core.BadRequest
 	}
@@ -165,7 +165,7 @@ func (s *UserService) ChangePassword(ctx context.Context, id uint64, newPassword
 	return nil
 }
 
-func (s *UserService) Delete(ctx context.Context, id uint64) error {
+func (s *UserService) Delete(ctx context.Context, id int64) error {
 	err := s.userRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {

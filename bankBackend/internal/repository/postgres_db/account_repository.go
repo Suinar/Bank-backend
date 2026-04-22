@@ -35,7 +35,7 @@ FROM accounts
 	return accounts, nil
 }
 
-func (r *AccountRepository) GetByUser(ctx context.Context, userId uint64) ([]core.Account, error) {
+func (r *AccountRepository) GetByUser(ctx context.Context, userId int64) ([]core.Account, error) {
 	query := `
 SELECT id, user_id, currency_id, name, balance, status
 FROM accounts
@@ -54,7 +54,7 @@ WHERE user_id = $1`
 	return accounts, nil
 }
 
-func (r *AccountRepository) GetById(ctx context.Context, id uint64) (*core.Account, error) {
+func (r *AccountRepository) GetById(ctx context.Context, id int64) (*core.Account, error) {
 	query := `
 SELECT id, user_id, currency_id, name, balance, status
 FROM accounts
@@ -96,7 +96,7 @@ RETURNING id, user_id, currency_id, name, balance, status;`
 	return nil, core.InternalServerError
 }
 
-func (r *AccountRepository) Blocking(ctx context.Context, id uint64) error {
+func (r *AccountRepository) Blocking(ctx context.Context, id int64) error {
 	query := `
 UPDATE accounts
 SET status = $1, updated_at = $2
@@ -119,7 +119,7 @@ where id = $3`
 	return nil
 }
 
-func (r *AccountRepository) Close(ctx context.Context, id uint64) error {
+func (r *AccountRepository) Close(ctx context.Context, id int64) error {
 	query := `
 UPDATE accounts
 SET status = $1, updated_at = $2
@@ -142,7 +142,7 @@ where id = $3`
 	return nil
 }
 
-func (r *AccountRepository) Update(ctx context.Context, id uint64, input *core.AccountUpdateInput) (*core.Account, error) {
+func (r *AccountRepository) Update(ctx context.Context, id int64, input *core.AccountUpdateInput) (*core.Account, error) {
 	setParts := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
@@ -183,7 +183,7 @@ RETURNING id, user_id, currency_id, name, balance, status
 	return &updated, nil
 }
 
-func (r *AccountRepository) Delete(ctx context.Context, id uint64) error {
+func (r *AccountRepository) Delete(ctx context.Context, id int64) error {
 	query := `
 DELETE FROM accounts 
 WHERE id = $1`

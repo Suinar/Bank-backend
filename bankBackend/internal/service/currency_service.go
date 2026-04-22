@@ -43,7 +43,7 @@ func (s *CurrencyService) GetAll(ctx context.Context) ([]core.Currency, error) {
 	return currencies, nil
 }
 
-func (s *CurrencyService) GetById(ctx context.Context, id uint64) (*core.Currency, error) {
+func (s *CurrencyService) GetById(ctx context.Context, id int64) (*core.Currency, error) {
 	currency, err := s.currencyCache.GetById(ctx, id)
 	if err == nil && currency != nil {
 		return currency, nil
@@ -129,7 +129,7 @@ func (s *CurrencyService) Create(ctx context.Context, input *core.CurrencyCreate
 	return create, nil
 }
 
-func (s *CurrencyService) Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error) {
+func (s *CurrencyService) Update(ctx context.Context, id int64, input *core.CurrencyUpdateInput) (*core.Currency, error) {
 	if input == nil {
 		return nil, core.BadRequest
 	}
@@ -171,7 +171,7 @@ func (s *CurrencyService) Update(ctx context.Context, id uint64, input *core.Cur
 	return currency, nil
 }
 
-func (s *CurrencyService) Delete(ctx context.Context, id uint64) error {
+func (s *CurrencyService) Delete(ctx context.Context, id int64) error {
 	err := s.currencyRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -191,7 +191,7 @@ func (s *CurrencyService) Delete(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom uint64, amount int, currencyIdTo uint64) (float64, error) {
+func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom int64, amount int, currencyIdTo int64) (float64, error) {
 	// todo: convert service
 
 	return 0, nil

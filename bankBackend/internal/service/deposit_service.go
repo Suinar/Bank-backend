@@ -40,7 +40,7 @@ func (s *DepositService) GetAll(ctx context.Context) ([]core.Deposit, error) {
 	return filtered, nil
 }
 
-func (s *DepositService) GetByUser(ctx context.Context, userId uint64) ([]core.Deposit, error) {
+func (s *DepositService) GetByUser(ctx context.Context, userId int64) ([]core.Deposit, error) {
 	deposits, err := s.depositRepository.GetByUser(ctx, userId)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -61,7 +61,7 @@ func (s *DepositService) GetByUser(ctx context.Context, userId uint64) ([]core.D
 	return filtered, nil
 }
 
-func (s *DepositService) GetById(ctx context.Context, id uint64) (*core.Deposit, error) {
+func (s *DepositService) GetById(ctx context.Context, id int64) (*core.Deposit, error) {
 	deposit, err := s.depositRepository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -80,12 +80,12 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 		return nil, core.BadRequest
 	}
 
-	parsedUserId, err := strconv.ParseUint(input.UserId, 10, 64)
+	parsedUserId, err := strconv.ParseInt(input.UserId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
 
-	parsedCurrencyId, err := strconv.ParseUint(input.CurrencyId, 10, 64)
+	parsedCurrencyId, err := strconv.ParseInt(input.CurrencyId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
@@ -136,13 +136,13 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 	return created, nil
 }
 
-func (s *DepositService) Replenish(ctx context.Context, id uint64, amount int) error {
+func (s *DepositService) Replenish(ctx context.Context, id int64, amount int) error {
 	// todo: replenish service
 
 	return nil
 }
 
-func (s *DepositService) Delete(ctx context.Context, id uint64) error {
+func (s *DepositService) Delete(ctx context.Context, id int64) error {
 	err := s.depositRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {

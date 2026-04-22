@@ -42,7 +42,7 @@ func (s *CreditService) GetAll(ctx context.Context) ([]core.Credit, error) {
 	return filtered, nil
 }
 
-func (s *CreditService) GetByUser(ctx context.Context, userId uint64) ([]core.Credit, error) {
+func (s *CreditService) GetByUser(ctx context.Context, userId int64) ([]core.Credit, error) {
 	credits, err := s.creditRepository.GetByUser(ctx, userId)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -63,7 +63,7 @@ func (s *CreditService) GetByUser(ctx context.Context, userId uint64) ([]core.Cr
 	return filtered, nil
 }
 
-func (s *CreditService) GetById(ctx context.Context, id uint64) (*core.Credit, error) {
+func (s *CreditService) GetById(ctx context.Context, id int64) (*core.Credit, error) {
 	credit, err := s.creditRepository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -82,12 +82,12 @@ func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInpu
 		return nil, core.BadRequest
 	}
 
-	parsedUserId, err := strconv.ParseUint(input.UserId, 10, 64)
+	parsedUserId, err := strconv.ParseInt(input.UserId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
 
-	parsedCurrencyId, err := strconv.ParseUint(input.CurrencyId, 10, 64)
+	parsedCurrencyId, err := strconv.ParseInt(input.CurrencyId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
@@ -110,7 +110,7 @@ func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInpu
 		return nil, core.InternalServerError
 	}
 
-	monthlyPayment := input.Amount/uint64(input.TermMonths) + input.Amount/10
+	monthlyPayment := input.Amount/int64(input.TermMonths) + input.Amount/10
 
 	var interestRate float32
 	if input.Amount < 100000 {
@@ -141,13 +141,13 @@ func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInpu
 	return created, nil
 }
 
-func (s *CreditService) Repay(ctx context.Context, id uint64, amount int) error {
+func (s *CreditService) Repay(ctx context.Context, id int64, amount int) error {
 	// todo: repay service
 
 	return nil
 }
 
-func (s *CreditService) Delete(ctx context.Context, id uint64) error {
+func (s *CreditService) Delete(ctx context.Context, id int64) error {
 	err := s.creditRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {

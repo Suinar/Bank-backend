@@ -32,7 +32,7 @@ FROM cards`
 	return cards, nil
 }
 
-func (r *CardRepository) GetByUser(ctx context.Context, userId uint64) ([]core.Card, error) {
+func (r *CardRepository) GetByUser(ctx context.Context, userId int64) ([]core.Card, error) {
 	query := `
 SELECT id, user_id, account_id, number, expiry_month, expiry_year, status
 FROM cards
@@ -47,9 +47,11 @@ WHERE user_id = $1`
 
 		return nil, core.InternalServerError
 	}
+
+	return cards, nil
 }
 
-func (r *CardRepository) GetById(ctx context.Context, id uint64) (*core.Card, error) {
+func (r *CardRepository) GetById(ctx context.Context, id int64) (*core.Card, error) {
 	query := `
 SELECT id, user_id, account_id, number, expiry_month, expiry_year, status
 FROM cards
@@ -87,7 +89,7 @@ WHERE number = $1`
 	return &card, nil
 }
 
-func (r *CardRepository) Blocking(ctx context.Context, id uint64) error {
+func (r *CardRepository) Blocking(ctx context.Context, id int64) error {
 	query := `
 UPDATE cards
 SET status = $1, updated_at = $2
@@ -133,7 +135,7 @@ RETURNING id, user_id, account_id, number, expiry_month, expiry_year, status;`
 	return nil, core.InternalServerError
 }
 
-func (r *CardRepository) Delete(ctx context.Context, id uint64) error {
+func (r *CardRepository) Delete(ctx context.Context, id int64) error {
 	query := `
 DELETE FROM cards 
 WHERE id = $1`

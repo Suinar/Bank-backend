@@ -9,13 +9,13 @@ const (
 )
 
 type Account struct {
-	Id         uint64 `json:"id" db:"id"`
-	UserId     uint64 `json:"user_id" db:"user_id"`
-	CurrencyId uint64 `json:"currency_id" db:"currency_id"`
+	Id         int64 `json:"id" db:"id"`
+	UserId     int64 `json:"user_id" db:"user_id"`
+	CurrencyId int64 `json:"currency_id" db:"currency_id"`
 
 	Name string `json:"name" db:"name"`
 
-	Balance uint64 `json:"balance" db:"balance"`
+	Balance int64 `json:"balance" db:"balance"`
 
 	Status AccountStatus `json:"status" db:"status"`
 }

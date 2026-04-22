@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func IdParseHandler(ctx *gin.Context, id string) (uint64, error) {
-	uintId, err := strconv.ParseUint(id, 10, 64)
+func IdParseHandler(ctx *gin.Context, id string) (int64, error) {
+	intId, err := strconv.ParseInt(id, 10, 64)
 
-	return uintId, err
+	return intId, err
 }
