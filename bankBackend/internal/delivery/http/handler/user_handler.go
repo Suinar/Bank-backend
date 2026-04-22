@@ -117,13 +117,13 @@ func (h *UserHandler) ChangePasswordById(ctx *gin.Context) {
 		return
 	}
 
-	user, err := h.service.ChangePassword(ctx, parsedId, hashPassword)
+	err = h.service.ChangePassword(ctx, parsedId, hashPassword)
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
 	}
 
-	ResponseSuccess(ctx, user)
+	ResponseSuccess(ctx, nil)
 }
 
 func (h *UserHandler) DeleteById(ctx *gin.Context) {

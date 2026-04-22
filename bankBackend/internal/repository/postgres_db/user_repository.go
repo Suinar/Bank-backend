@@ -34,7 +34,7 @@ FROM users`
 	return users, nil
 }
 
-func (r *UserRepository) GetById(ctx context.Context, id uint64) (*core.User, error) {
+func (r *UserRepository) GetById(ctx context.Context, id int64) (*core.User, error) {
 	query := `
 SELECT id, user_id, middle_name, last_name, email, phone_number, password_hash
 FROM users
@@ -114,7 +114,7 @@ RETURNING id, user_id, middle_name, last_name, email, phone_number, password_has
 	return nil, core.InternalServerError
 }
 
-func (r *UserRepository) ChangePassword(ctx context.Context, id uint64, newPassword string) error {
+func (r *UserRepository) ChangePassword(ctx context.Context, id int64, newPassword string) error {
 	query := `
 UPDATE users
 SET password_hash = $1, updated_at = $2
@@ -137,7 +137,7 @@ where id = $3`
 	return nil
 }
 
-func (r *UserRepository) Update(ctx context.Context, id uint64, input *core.UserUpdateInput) (*core.User, error) {
+func (r *UserRepository) Update(ctx context.Context, id int64, input *core.UserUpdateInput) (*core.User, error) {
 	setParts := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
@@ -187,7 +187,7 @@ func (r *UserRepository) Update(ctx context.Context, id uint64, input *core.User
 	return &updated, nil
 }
 
-func (r *UserRepository) Delete(ctx context.Context, id uint64) error {
+func (r *UserRepository) Delete(ctx context.Context, id int64) error {
 	query := `
 DELETE FROM users 
 WHERE id = $1`

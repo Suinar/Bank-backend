@@ -40,7 +40,7 @@ func (s *AccountService) GetAll(ctx context.Context) ([]core.Account, error) {
 	return filtered, nil
 }
 
-func (s *AccountService) GetByUser(ctx context.Context, userId uint64) ([]core.Account, error) {
+func (s *AccountService) GetByUser(ctx context.Context, userId int64) ([]core.Account, error) {
 	accounts, err := s.accountRepository.GetByUser(ctx, userId)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -61,7 +61,7 @@ func (s *AccountService) GetByUser(ctx context.Context, userId uint64) ([]core.A
 	return filtered, nil
 }
 
-func (s *AccountService) GetById(ctx context.Context, id uint64) (*core.Account, error) {
+func (s *AccountService) GetById(ctx context.Context, id int64) (*core.Account, error) {
 	account, err := s.accountRepository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -80,12 +80,12 @@ func (s *AccountService) Create(ctx context.Context, input *core.AccountCreateIn
 		return nil, core.BadRequest
 	}
 
-	parsedUserId, err := strconv.ParseUint(input.UserId, 10, 64)
+	parsedUserId, err := strconv.ParseInt(input.UserId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
 
-	parsedCurrencyId, err := strconv.ParseUint(input.CurrencyId, 10, 64)
+	parsedCurrencyId, err := strconv.ParseInt(input.CurrencyId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
@@ -126,7 +126,7 @@ func (s *AccountService) Create(ctx context.Context, input *core.AccountCreateIn
 	return created, nil
 }
 
-func (s *AccountService) Blocking(ctx context.Context, id uint64) error {
+func (s *AccountService) Blocking(ctx context.Context, id int64) error {
 	err := s.accountRepository.Blocking(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -141,7 +141,7 @@ func (s *AccountService) Blocking(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *AccountService) Close(ctx context.Context, id uint64) error {
+func (s *AccountService) Close(ctx context.Context, id int64) error {
 	err := s.accountRepository.Close(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -156,7 +156,7 @@ func (s *AccountService) Close(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *AccountService) Update(ctx context.Context, id uint64, input *core.AccountUpdateInput) (*core.Account, error) {
+func (s *AccountService) Update(ctx context.Context, id int64, input *core.AccountUpdateInput) (*core.Account, error) {
 	if input == nil || input.Name == nil {
 		return nil, core.BadRequest
 	}
@@ -185,7 +185,7 @@ func (s *AccountService) Update(ctx context.Context, id uint64, input *core.Acco
 	return updated, nil
 }
 
-func (s *AccountService) Delete(ctx context.Context, id uint64) error {
+func (s *AccountService) Delete(ctx context.Context, id int64) error {
 	err := s.accountRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {

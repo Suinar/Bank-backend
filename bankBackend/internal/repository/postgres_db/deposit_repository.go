@@ -31,7 +31,7 @@ FROM deposits`
 	return deposits, nil
 }
 
-func (r *DepositRepository) GetByUser(ctx context.Context, userId uint64) ([]core.Deposit, error) {
+func (r *DepositRepository) GetByUser(ctx context.Context, userId int64) ([]core.Deposit, error) {
 	query := `
 SELECT id, user_id, currency_id, amount, interest_rate, term_month, monthly_payment, status
 FROM deposits
@@ -50,7 +50,7 @@ WHERE user_id = $1`
 	return deposits, nil
 }
 
-func (r *DepositRepository) GetById(ctx context.Context, id uint64) (*core.Deposit, error) {
+func (r *DepositRepository) GetById(ctx context.Context, id int64) (*core.Deposit, error) {
 	query := `
 SELECT id, user_id, currency_id, amount, interest_rate, term_month, monthly_payment, status
 FROM deposits
@@ -92,7 +92,7 @@ RETURNING user_id, currency_id, amount, interest_rate, term_month, monthly_payme
 	return nil, core.InternalServerError
 }
 
-func (r *DepositRepository) Delete(ctx context.Context, id uint64) error {
+func (r *DepositRepository) Delete(ctx context.Context, id int64) error {
 	query := `
 DELETE FROM deposits 
 WHERE id = $1`

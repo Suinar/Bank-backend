@@ -15,16 +15,6 @@ type CurrencyRepository struct {
 	db *sqlx.DB
 }
 
-func (r *CurrencyRepository) SetAll(ctx context.context.Context, currencies []core.Currency) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (r *CurrencyRepository) Set(ctx context.context.Context, currency *core.Currency) error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func NewCurrencyRepository(db *sqlx.DB) *CurrencyRepository {
 	return &CurrencyRepository{db: db}
 }
@@ -43,7 +33,7 @@ FROM currencies`
 	return currencies, nil
 }
 
-func (r *CurrencyRepository) GetById(ctx context.Context, id uint64) (*core.Currency, error) {
+func (r *CurrencyRepository) GetById(ctx context.Context, id int64) (*core.Currency, error) {
 	query := `
 SELECT id, name, symbol, iso_code, minor_units
 FROM currencies
@@ -122,7 +112,7 @@ RETURNING id, name, symbol, iso_code, minor_units`
 	return nil, core.InternalServerError
 }
 
-func (r *CurrencyRepository) Update(ctx context.Context, id uint64, input *core.CurrencyUpdateInput) (*core.Currency, error) {
+func (r *CurrencyRepository) Update(ctx context.Context, id int64, input *core.CurrencyUpdateInput) (*core.Currency, error) {
 	setParts := make([]string, 0)
 	args := make([]interface{}, 0)
 	argId := 1
@@ -151,11 +141,13 @@ func (r *CurrencyRepository) Update(ctx context.Context, id uint64, input *core.
 		argId++
 	}
 
-	setParts = append(setParts, "updated_at = NOW()")
-
 	if len(setParts) == 0 {
 		return nil, core.BadRequest
 	}
+
+	setParts = append(setParts, "updated_at = NOW()")
+
+	args = append(args, id)
 
 	query := fmt.Sprintf(`
 UPDATE accounts
@@ -178,7 +170,7 @@ RETURNING id, name, symbol, iso_code, minor_units
 	return &updated, nil
 }
 
-func (r *CurrencyRepository) Delete(ctx context.Context, id uint64) error {
+func (r *CurrencyRepository) Delete(ctx context.Context, id int64) error {
 	query := `
 DELETE FROM accounts 
 WHERE id = $1`

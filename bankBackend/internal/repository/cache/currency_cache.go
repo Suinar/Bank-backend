@@ -36,7 +36,7 @@ func (c *CurrencyCache) GetAll(ctx context.Context) ([]core.Currency, error) {
 	cmds := make([]*redis.MapStringStringCmd, 0, len(ids))
 
 	for _, id := range ids {
-		parsedId, err := strconv.ParseUint(id, 10, 64)
+		parsedId, err := strconv.ParseInt(id, 10, 64)
 		if err != nil {
 			return nil, core.CacheGetError
 		}
@@ -70,7 +70,7 @@ func (c *CurrencyCache) GetAll(ctx context.Context) ([]core.Currency, error) {
 	return currencies, nil
 }
 
-func (c *CurrencyCache) GetById(ctx context.Context, id uint64) (*core.Currency, error) {
+func (c *CurrencyCache) GetById(ctx context.Context, id int64) (*core.Currency, error) {
 	primaryKey := c.GetPrimaryKey(id)
 
 	data, err := c.rdb.HGetAll(ctx, primaryKey).Result()
@@ -104,7 +104,7 @@ func (c *CurrencyCache) GetByIso(ctx context.Context, iso string) (*core.Currenc
 		return nil, core.InternalServerError
 	}
 
-	id, err := strconv.ParseUint(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
@@ -122,7 +122,7 @@ func (c *CurrencyCache) GetBySymbol(ctx context.Context, symbol rune) (*core.Cur
 		return nil, core.InternalServerError
 	}
 
-	id, err := strconv.ParseUint(idStr, 10, 64)
+	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
@@ -147,7 +147,7 @@ func (c *CurrencyCache) Set(ctx context.Context, currency *core.Currency) error 
 
 	pipe.HSet(ctx, primaryKey, data)
 
-	pipe.SAdd(ctx, currenciesSetKey, strconv.FormatUint(currency.Id, 10))
+	pipe.SAdd(ctx, currenciesSetKey, strconv.FormatInt(currency.Id, 10))
 
 	pipe.Set(ctx, isoKey, currency.Id, 0)
 
@@ -189,7 +189,7 @@ func (c *CurrencyCache) SetAll(ctx context.Context, currencies []core.Currency) 
 		}
 
 		pipe.HSet(ctx, primaryKey, data)
-		pipe.SAdd(ctx, currenciesSetKey, strconv.FormatUint(currency.Id, 10))
+		pipe.SAdd(ctx, currenciesSetKey, strconv.FormatInt(currency.Id, 10))
 		pipe.Set(ctx, isoKey, currency.Id, 0)
 		pipe.SAdd(ctx, symbolKey, currency.Id)
 		pipe.SAdd(ctx, minorUnitsKey, currency.Id)
@@ -236,7 +236,7 @@ func (c *CurrencyCache) Update(ctx context.Context, currency *core.Currency) err
 	return nil
 }
 
-func (c *CurrencyCache) Delete(ctx context.Context, id uint64) error {
+func (c *CurrencyCache) Delete(ctx context.Context, id int64) error {
 	currency, err := c.GetById(ctx, id)
 	if err != nil {
 		return err
@@ -257,7 +257,7 @@ func (c *CurrencyCache) Delete(ctx context.Context, id uint64) error {
 	pipe.Del(ctx, isoKey)
 	pipe.SRem(ctx, symbolKey, id)
 	pipe.SRem(ctx, minorUnitsKey, id)
-	pipe.SRem(ctx, currenciesSetKey, strconv.FormatUint(id, 10))
+	pipe.SRem(ctx, currenciesSetKey, strconv.FormatInt(id, 10))
 
 	_, err = pipe.Exec(ctx)
 	if err != nil {
@@ -268,12 +268,12 @@ func (c *CurrencyCache) Delete(ctx context.Context, id uint64) error {
 }
 
 func (c *CurrencyCache) MapToCurrency(data map[string]string) (core.Currency, error) {
-	id, err := strconv.ParseUint(data["id"], 10, 64)
+	id, err := strconv.ParseInt(data["id"], 10, 64)
 	if err != nil {
 		return core.Currency{}, core.BadRequest
 	}
 
-	minorUnits, err := strconv.Atoi(data["minor_units"])
+	minorUnits, err := strconv.ParseInt(data["minor_units"], 10, 8)
 	if err != nil {
 		return core.Currency{}, core.BadRequest
 	}
@@ -290,12 +290,12 @@ func (c *CurrencyCache) MapToCurrency(data map[string]string) (core.Currency, er
 		Name:       data["name"],
 		Symbol:     symbol,
 		IsoCode:    data["iso_code"],
-		MinorUnits: minorUnits,
+		MinorUnits: int8(minorUnits),
 	}, nil
 }
 
-func (c *CurrencyCache) GetPrimaryKey(id uint64) string {
-	return currencyKeyPrefix + strconv.FormatUint(id, 10)
+func (c *CurrencyCache) GetPrimaryKey(id int64) string {
+	return currencyKeyPrefix + strconv.FormatInt(id, 10)
 }
 
 func (c *CurrencyCache) GetIsoKey(iso string) string {
@@ -306,6 +306,6 @@ func (c *CurrencyCache) GetSymbolKey(symbol rune) string {
 	return currencyKeyPrefix + "symbol:" + string(symbol)
 }
 
-func (c *CurrencyCache) GetMinorUnitsKey(minorUnits int) string {
-	return currencyKeyPrefix + "minor_units:" + strconv.Itoa(minorUnits)
+func (c *CurrencyCache) GetMinorUnitsKey(minorUnits int8) string {
+	return currencyKeyPrefix + "minor_units:" + strconv.Itoa(int(minorUnits))
 }

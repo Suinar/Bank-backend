@@ -31,7 +31,7 @@ FROM credits`
 	return credits, nil
 }
 
-func (r *CreditRepository) GetByUser(ctx context.Context, userId uint64) ([]core.Credit, error) {
+func (r *CreditRepository) GetByUser(ctx context.Context, userId int64) ([]core.Credit, error) {
 	query := `
 SELECT id, user_id, currency_id, amount, interest_rate, term_month, monthly_payment, status
 FROM credits
@@ -50,7 +50,7 @@ WHERE user_id = $1`
 	return credits, nil
 }
 
-func (r *CreditRepository) GetById(ctx context.Context, id uint64) (*core.Credit, error) {
+func (r *CreditRepository) GetById(ctx context.Context, id int64) (*core.Credit, error) {
 	query := `
 SELECT id, user_id, currency_id, amount, interest_rate, term_month, monthly_payment, status
 FROM credits
@@ -92,7 +92,7 @@ Returning id, user_id, currency_id, amount, interest_rate, term_month, monthly_p
 	return nil, core.InternalServerError
 }
 
-func (r *CreditRepository) Delete(ctx context.Context, id uint64) error {
+func (r *CreditRepository) Delete(ctx context.Context, id int64) error {
 	query := `
 DELETE FROM credits 
 WHERE id = $1`

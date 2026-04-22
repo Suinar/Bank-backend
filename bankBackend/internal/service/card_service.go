@@ -15,13 +15,13 @@ import (
 
 type CardService struct {
 	cardRepository    repository.ICardRepository
-	userRepository    repository.UserRepository
-	accountRepository repository.AccountRepository
+	userRepository    repository.IUserRepository
+	accountRepository repository.IAccountRepository
 }
 
 func NewCardService(cardRepository repository.ICardRepository,
-	userRepository repository.UserRepository,
-	accountRepository repository.AccountRepository) *CardService {
+	userRepository repository.IUserRepository,
+	accountRepository repository.IAccountRepository) *CardService {
 	return &CardService{cardRepository: cardRepository,
 		userRepository:    userRepository,
 		accountRepository: accountRepository}
@@ -44,7 +44,7 @@ func (s *CardService) GetAll(ctx context.Context) ([]core.Card, error) {
 	return filtered, nil
 }
 
-func (s *CardService) GetByUser(ctx context.Context, userId uint64) ([]core.Card, error) {
+func (s *CardService) GetByUser(ctx context.Context, userId int64) ([]core.Card, error) {
 	cards, err := s.cardRepository.GetByUser(ctx, userId)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -65,7 +65,7 @@ func (s *CardService) GetByUser(ctx context.Context, userId uint64) ([]core.Card
 	return filtered, nil
 }
 
-func (s *CardService) GetById(ctx context.Context, id uint64) (*core.Card, error) {
+func (s *CardService) GetById(ctx context.Context, id int64) (*core.Card, error) {
 	card, err := s.cardRepository.GetById(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -91,7 +91,7 @@ func (s *CardService) GetByNumber(ctx context.Context, number string) (*core.Car
 	return card, nil
 }
 
-func (s *CardService) Blocking(ctx context.Context, id uint64) error {
+func (s *CardService) Blocking(ctx context.Context, id int64) error {
 	err := s.cardRepository.Blocking(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
@@ -172,12 +172,12 @@ func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (
 		return nil, core.BadRequest
 	}
 
-	parsedUserId, err := strconv.ParseUint(input.UserId, 10, 64)
+	parsedUserId, err := strconv.ParseInt(input.UserId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
 
-	parsedAccountId, err := strconv.ParseUint(input.AccountId, 10, 64)
+	parsedAccountId, err := strconv.ParseInt(input.AccountId, 10, 64)
 	if err != nil {
 		return nil, core.BadRequest
 	}
@@ -224,7 +224,7 @@ func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (
 	return created, nil
 }
 
-func (s *CardService) Delete(ctx context.Context, id uint64) error {
+func (s *CardService) Delete(ctx context.Context, id int64) error {
 	err := s.cardRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
