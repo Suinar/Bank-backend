@@ -192,9 +192,20 @@ func (s *CurrencyService) Delete(ctx context.Context, id int64) error {
 }
 
 func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom int64, amount int, currencyIdTo int64) (float64, error) {
-	// todo: convert service
+	if currencyIdFrom == currencyIdTo {
+		return float64(amount), nil
+	}
 
-	return 0, nil
+	rate, err := s.GetRelativeRanking(ctx, currencyIdFrom, currencyIdTo)
+	if err != nil && rate == nil {
+		if errors.Is(err, core.NotFound) {
+			return 0, core.NotFound
+		}
+
+		return 0, core.InternalServerError
+	}
+
+	return float64(amount) * float64(rate.RateCross), nil
 }
 
 func (s *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom int64) ([]core.ExchangeRate, error) {
