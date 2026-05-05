@@ -78,6 +78,8 @@ func (h *UserHandler) Create(ctx *gin.Context) {
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
+
+		// todo: notification
 	}
 
 	ResponseSuccess(ctx, user)
@@ -121,6 +123,8 @@ func (h *UserHandler) ChangePasswordById(ctx *gin.Context) {
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
+
+		// todo: notification
 	}
 
 	ResponseSuccess(ctx, nil)
@@ -139,6 +143,8 @@ func (h *UserHandler) DeleteById(ctx *gin.Context) {
 	if err != nil {
 		ErrorHandler(ctx, err)
 		return
+
+		// todo: notification
 	}
 
 	ResponseSuccess(ctx, nil)
