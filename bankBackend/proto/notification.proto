@@ -1,0 +1,52 @@
+﻿syntax = "proto3";
+
+package notification;
+
+option go_package = "github.com/Suinar/Bank-notification-service/notification;notification";
+
+// ===== SERVICE =====
+
+service NotificationService {
+  rpc SendEvent (NotificationEventRequest) returns (NotificationEventResponse);
+}
+
+// ===== ENUMS =====
+
+enum EntityType {
+  ENTITY_UNSPECIFIED = 0;
+  ACCOUNT = 1;
+  CARD = 2;
+  CREDIT = 3;
+  DEPOSIT = 4;
+  USER = 5;
+  CURRENCY = 6;
+}
+
+enum ActionType {
+  ACTION_UNSPECIFIED = 0;
+  CREATE = 1;
+  DELETE = 2;
+  BLOCK = 3;
+  CLOSE = 4;
+  REPAY = 5;
+  REPLENISH = 6;
+  CHANGE_PASSWORD = 7;
+}
+
+// ===== REQUEST =====
+
+message NotificationEventRequest {
+  EntityType entity = 1;
+  ActionType action = 2;
+
+  uint64 entity_id = 3;
+  uint64 user_id = 4;
+
+  int64 timestamp = 5;
+}
+
+// ===== RESPONSE =====
+
+message NotificationEventResponse {
+  bool success = 1;
+}

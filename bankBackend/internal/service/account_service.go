@@ -180,8 +180,6 @@ func (s *AccountService) Update(ctx context.Context, id int64, input *core.Accou
 		return nil, core.InternalServerError
 	}
 
-	// todo: notification
-
 	return updated, nil
 }
 
