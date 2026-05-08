@@ -7,23 +7,23 @@ import (
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	cache "github.com/Suinar/Bank-backend/bankBackend/internal/repository/cache"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
-	"github.com/Suinar/Bank-exhange-rate-service/ranking"
+	rankingService "github.com/Suinar/Bank-exhange-rate-service/ranking"
 )
 
 type CurrencyService struct {
 	currencyRepository repository.ICurrencyRepository
 	currencyCache      cache.ICurrencyCache
-	currencyRanking    ranking.RankingServiceClient
+	rankingService     rankingService.RankingServiceClient
 }
 
 func NewCurrencyService(
 	repository repository.ICurrencyRepository,
 	currencyCache cache.ICurrencyCache,
-	currencyRanking ranking.RankingServiceClient) *CurrencyService {
+	rankingService rankingService.RankingServiceClient) *CurrencyService {
 	return &CurrencyService{
 		currencyRepository: repository,
 		currencyCache:      currencyCache,
-		currencyRanking:    currencyRanking,
+		rankingService:     rankingService,
 	}
 }
 
@@ -209,7 +209,7 @@ func (s *CurrencyService) Convert(ctx context.Context, currencyIdFrom int64, amo
 }
 
 func (s *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom int64) ([]core.ExchangeRate, error) {
-	resp, err := s.currencyRanking.GetAllRanking(ctx, &ranking.GetAllRankingRequest{
+	resp, err := s.rankingService.GetAllRanking(ctx, &rankingService.GetAllRankingRequest{
 		CurrencyIdFrom: currencyIdFrom,
 	})
 	if err != nil {
@@ -236,7 +236,7 @@ func (s *CurrencyService) GetAllRanking(ctx context.Context, currencyIdFrom int6
 }
 
 func (s *CurrencyService) GetRelativeRanking(ctx context.Context, currencyIdFrom int64, currencyIdTo int64) (*core.ExchangeRate, error) {
-	resp, err := s.currencyRanking.GetRelativeRanking(ctx, &ranking.GetRelativeRankingRequest{
+	resp, err := s.rankingService.GetRelativeRanking(ctx, &rankingService.GetRelativeRankingRequest{
 		CurrencyIdFrom: currencyIdFrom,
 		CurrencyIdTo:   currencyIdTo,
 	})

@@ -6,15 +6,19 @@ import (
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	notificationService "github.com/Suinar/Bank-backend/bankBackend/proto/notification"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
-	userRepository repository.IUserRepository
+	userRepository      repository.IUserRepository
+	notificationService notificationService.NotificationServiceClient
 }
 
-func NewUserService(userRepository repository.IUserRepository) *UserService {
-	return &UserService{userRepository: userRepository}
+func NewUserService(userRepository repository.IUserRepository,
+	notificationService notificationService.NotificationServiceClient) *UserService {
+	return &UserService{userRepository: userRepository,
+		notificationService: notificationService}
 }
 
 func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {

@@ -2,7 +2,7 @@
 
 package notification;
 
-option go_package = "github.com/Suinar/Bank-notification-service/notification;notification";
+option go_package = "./notification";
 
 // ===== SERVICE =====
 
