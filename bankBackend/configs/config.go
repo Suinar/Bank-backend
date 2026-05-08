@@ -18,8 +18,9 @@ type Config struct {
 		MaxIdleConns int
 	}
 
-	Grps struct {
+	Grpc struct {
 		CurrencyRankingUrl string
+		NotificationUrl    string
 	}
 }
 
@@ -43,7 +44,8 @@ func LoadConfig() (*Config, error) {
 	cfg.Redis.PoolSize = viper.GetInt("REDIS_POOL_SIZE")
 	cfg.Redis.MinIdleConns = viper.GetInt("REDIS_MIN_IDLE")
 
-	cfg.Grps.CurrencyRankingUrl = viper.GetString("CURRENCY_RANKING_URL")
+	cfg.Grpc.CurrencyRankingUrl = viper.GetString("GRPC_CURRENCY_RANKING_URL")
+	cfg.Grpc.NotificationUrl = viper.GetString("GRPC_NOTIFICATION_URL")
 
 	return cfg, nil
 }

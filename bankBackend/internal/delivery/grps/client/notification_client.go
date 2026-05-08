@@ -8,16 +8,16 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	ranking "github.com/Suinar/Bank-exhange-rate-service/ranking"
+	notification "github.com/Suinar/Bank-backend/bankBackend/proto/notification"
 )
 
-func NewCurrencyRankingClient(ctx context.Context, cfg configs.Config) (ranking.RankingServiceClient, *grpc.ClientConn, error) {
+func NewNotificationClient(ctx context.Context, cfg configs.Config) (notification.NotificationServiceClient, *grpc.ClientConn, error) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
 	conn, err := grpc.DialContext(
 		ctx,
-		cfg.Grpc.CurrencyRankingUrl,
+		cfg.Grpc.NotificationUrl,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
 	)
@@ -25,7 +25,7 @@ func NewCurrencyRankingClient(ctx context.Context, cfg configs.Config) (ranking.
 		return nil, nil, err
 	}
 
-	client := ranking.NewRankingServiceClient(conn)
+	client := notification.NewNotificationServiceClient(conn)
 
 	return client, conn, nil
 }
