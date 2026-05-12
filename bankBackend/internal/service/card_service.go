@@ -10,21 +10,27 @@ import (
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	notificationService "github.com/Suinar/Bank-backend/bankBackend/proto/notification"
 	"github.com/joho/godotenv"
 )
 
 type CardService struct {
-	cardRepository    repository.ICardRepository
-	userRepository    repository.IUserRepository
-	accountRepository repository.IAccountRepository
+	cardRepository      repository.ICardRepository
+	userRepository      repository.IUserRepository
+	accountRepository   repository.IAccountRepository
+	notificationService notificationService.NotificationServiceClient
 }
 
 func NewCardService(cardRepository repository.ICardRepository,
 	userRepository repository.IUserRepository,
-	accountRepository repository.IAccountRepository) *CardService {
-	return &CardService{cardRepository: cardRepository,
-		userRepository:    userRepository,
-		accountRepository: accountRepository}
+	accountRepository repository.IAccountRepository,
+	notificationService notificationService.NotificationServiceClient) *CardService {
+	return &CardService{
+		cardRepository:      cardRepository,
+		userRepository:      userRepository,
+		accountRepository:   accountRepository,
+		notificationService: notificationService,
+	}
 }
 
 func (s *CardService) GetAll(ctx context.Context) ([]core.Card, error) {

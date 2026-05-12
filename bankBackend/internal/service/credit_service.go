@@ -7,21 +7,25 @@ import (
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	notificationService "github.com/Suinar/Bank-backend/bankBackend/proto/notification"
 )
 
 type CreditService struct {
-	creditRepository   repository.ICreditRepository
-	userRepository     repository.ICreditRepository
-	currencyRepository repository.ICreditRepository
+	creditRepository    repository.ICreditRepository
+	userRepository      repository.ICreditRepository
+	currencyRepository  repository.ICreditRepository
+	notificationService notificationService.NotificationServiceClient
 }
 
 func NewCreditService(creditRepository repository.ICreditRepository,
 	userRepository repository.ICreditRepository,
-	currencyRepository repository.ICreditRepository) *CreditService {
+	currencyRepository repository.ICreditRepository,
+	notificationService notificationService.NotificationServiceClient) *CreditService {
 	return &CreditService{
-		creditRepository:   creditRepository,
-		userRepository:     userRepository,
-		currencyRepository: currencyRepository,
+		creditRepository:    creditRepository,
+		userRepository:      userRepository,
+		currencyRepository:  currencyRepository,
+		notificationService: notificationService,
 	}
 }
 
