@@ -7,20 +7,26 @@ import (
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	notificationService "github.com/Suinar/Bank-backend/bankBackend/proto/notification"
 )
 
 type AccountService struct {
-	accountRepository  repository.IAccountRepository
-	userRepository     repository.IUserRepository
-	currencyRepository repository.ICurrencyRepository
+	accountRepository   repository.IAccountRepository
+	userRepository      repository.IUserRepository
+	currencyRepository  repository.ICurrencyRepository
+	notificationService notificationService.NotificationServiceClient
 }
 
 func NewAccountService(accountRepository repository.IAccountRepository,
 	userRepository repository.IUserRepository,
-	currencyRepository repository.ICurrencyRepository) *AccountService {
-	return &AccountService{accountRepository: accountRepository,
-		userRepository:     userRepository,
-		currencyRepository: currencyRepository}
+	currencyRepository repository.ICurrencyRepository,
+	notificationService notificationService.NotificationServiceClient) *AccountService {
+	return &AccountService{
+		accountRepository:   accountRepository,
+		userRepository:      userRepository,
+		currencyRepository:  currencyRepository,
+		notificationService: notificationService,
+	}
 }
 
 func (s *AccountService) GetAll(ctx context.Context) ([]core.Account, error) {

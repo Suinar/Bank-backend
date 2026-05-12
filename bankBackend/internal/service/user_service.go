@@ -17,8 +17,10 @@ type UserService struct {
 
 func NewUserService(userRepository repository.IUserRepository,
 	notificationService notificationService.NotificationServiceClient) *UserService {
-	return &UserService{userRepository: userRepository,
-		notificationService: notificationService}
+	return &UserService{
+		userRepository:      userRepository,
+		notificationService: notificationService,
+	}
 }
 
 func (s *UserService) GetAll(ctx context.Context) ([]core.User, error) {

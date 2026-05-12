@@ -7,20 +7,26 @@ import (
 
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	notificationService "github.com/Suinar/Bank-backend/bankBackend/proto/notification"
 )
 
 type DepositService struct {
-	depositRepository  repository.IDepositRepository
-	userRepository     repository.IUserRepository
-	currencyRepository repository.ICurrencyRepository
+	depositRepository   repository.IDepositRepository
+	userRepository      repository.IUserRepository
+	currencyRepository  repository.ICurrencyRepository
+	notificationService notificationService.NotificationServiceClient
 }
 
 func NewDepositService(depositRepository repository.IDepositRepository,
 	userRepository repository.IUserRepository,
-	currencyRepository repository.ICurrencyRepository) *DepositService {
-	return &DepositService{depositRepository: depositRepository,
-		userRepository:     userRepository,
-		currencyRepository: currencyRepository}
+	currencyRepository repository.ICurrencyRepository,
+	notificationService notificationService.NotificationServiceClient) *DepositService {
+	return &DepositService{
+		depositRepository:   depositRepository,
+		userRepository:      userRepository,
+		currencyRepository:  currencyRepository,
+		notificationService: notificationService,
+	}
 }
 
 func (s *DepositService) GetAll(ctx context.Context) ([]core.Deposit, error) {
