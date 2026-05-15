@@ -7,23 +7,27 @@ import (
 	core "github.com/Suinar/Bank-backend/bankBackend/internal/core"
 	cache "github.com/Suinar/Bank-backend/bankBackend/internal/repository/cache"
 	repository "github.com/Suinar/Bank-backend/bankBackend/internal/repository/postgres_db"
+	notificationService "github.com/Suinar/Bank-backend/bankBackend/proto/notification"
 	rankingService "github.com/Suinar/Bank-exhange-rate-service/ranking"
 )
 
 type CurrencyService struct {
-	currencyRepository repository.ICurrencyRepository
-	currencyCache      cache.ICurrencyCache
-	rankingService     rankingService.RankingServiceClient
+	currencyRepository  repository.ICurrencyRepository
+	currencyCache       cache.ICurrencyCache
+	rankingService      rankingService.RankingServiceClient
+	notificationService notificationService.NotificationServiceClient
 }
 
 func NewCurrencyService(
 	repository repository.ICurrencyRepository,
 	currencyCache cache.ICurrencyCache,
-	rankingService rankingService.RankingServiceClient) *CurrencyService {
+	rankingService rankingService.RankingServiceClient,
+	notificationService notificationService.NotificationServiceClient) *CurrencyService {
 	return &CurrencyService{
-		currencyRepository: repository,
-		currencyCache:      currencyCache,
-		rankingService:     rankingService,
+		currencyRepository:  repository,
+		currencyCache:       currencyCache,
+		rankingService:      rankingService,
+		notificationService: notificationService,
 	}
 }
 
@@ -121,10 +125,15 @@ func (s *CurrencyService) Create(ctx context.Context, input *core.CurrencyCreate
 
 	err = s.currencyCache.Set(ctx, create)
 	if err != nil {
-		// todo: maybe error or logging
+		// todo: logging
 	}
 
-	// todo: maybe notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CURRENCY,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: create.Id,
+		UserId:   0,
+	})
 
 	return create, nil
 }
@@ -163,10 +172,8 @@ func (s *CurrencyService) Update(ctx context.Context, id int64, input *core.Curr
 
 	err = s.currencyCache.Update(ctx, currency)
 	if err != nil {
-		// todo: maybe error or logging
+		// todo: logging
 	}
-
-	// todo: maybe notification
 
 	return currency, nil
 }
@@ -183,10 +190,15 @@ func (s *CurrencyService) Delete(ctx context.Context, id int64) error {
 
 	err = s.currencyCache.Delete(ctx, id)
 	if err != nil {
-		// todo: maybe error or logging
+		// todo: logging
 	}
 
-	// todo: maybe notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CURRENCY,
+		Action:   notificationService.ActionType_DELETE,
+		EntityId: id,
+		UserId:   0,
+	})
 
 	return nil
 }

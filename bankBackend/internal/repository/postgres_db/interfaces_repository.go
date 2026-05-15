@@ -22,10 +22,10 @@ type IAccountRepository interface {
 	GetByUser(ctx context.Context, userId int64) ([]core.Account, error)
 	GetById(ctx context.Context, id int64) (*core.Account, error)
 	Create(ctx context.Context, input *core.Account) (*core.Account, error)
-	Blocking(ctx context.Context, id int64) error
-	Close(ctx context.Context, id int64) error
+	Blocking(ctx context.Context, id int64) (core.Account, error)
+	Close(ctx context.Context, id int64) (core.Account, error)
 	Update(ctx context.Context, id int64, input *core.AccountUpdateInput) (*core.Account, error)
-	Delete(ctx context.Context, id int64) error
+	Delete(ctx context.Context, id int64) (int64, error)
 }
 
 type ICardRepository interface {
@@ -33,9 +33,9 @@ type ICardRepository interface {
 	GetByUser(ctx context.Context, idUser int64) ([]core.Card, error)
 	GetById(ctx context.Context, id int64) (*core.Card, error)
 	GetByNumber(ctx context.Context, number string) (*core.Card, error)
-	Blocking(ctx context.Context, id int64) error
+	Blocking(ctx context.Context, id int64) (core.Card, error)
 	Create(ctx context.Context, input *core.Card) (*core.Card, error)
-	Delete(ctx context.Context, id int64) error
+	Delete(ctx context.Context, id int64) (int64, error)
 }
 
 type ICreditRepository interface {
@@ -43,7 +43,7 @@ type ICreditRepository interface {
 	GetByUser(ctx context.Context, idUser int64) ([]core.Credit, error)
 	GetById(ctx context.Context, id int64) (*core.Credit, error)
 	Create(ctx context.Context, input *core.Credit) (*core.Credit, error)
-	Delete(ctx context.Context, id int64) error
+	Delete(ctx context.Context, id int64) (int64, error)
 }
 
 type IDepositRepository interface {
@@ -51,7 +51,7 @@ type IDepositRepository interface {
 	GetByUser(ctx context.Context, idUser int64) ([]core.Deposit, error)
 	GetById(ctx context.Context, id int64) (*core.Deposit, error)
 	Create(ctx context.Context, input *core.Deposit) (*core.Deposit, error)
-	Delete(ctx context.Context, id int64) error
+	Delete(ctx context.Context, id int64) (int64, error)
 }
 
 type ICurrencyRepository interface {

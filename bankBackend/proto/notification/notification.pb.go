@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v4.25.9
-// source: bankBackend/proto/notification/notification.proto
+// source: notification.proto
 
 package notification
 
@@ -67,11 +67,11 @@ func (x EntityType) String() string {
 }
 
 func (EntityType) Descriptor() protoreflect.EnumDescriptor {
-	return file_bankBackend_proto_notification_notification_proto_enumTypes[0].Descriptor()
+	return file_notification_proto_enumTypes[0].Descriptor()
 }
 
 func (EntityType) Type() protoreflect.EnumType {
-	return &file_bankBackend_proto_notification_notification_proto_enumTypes[0]
+	return &file_notification_proto_enumTypes[0]
 }
 
 func (x EntityType) Number() protoreflect.EnumNumber {
@@ -80,7 +80,7 @@ func (x EntityType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use EntityType.Descriptor instead.
 func (EntityType) EnumDescriptor() ([]byte, []int) {
-	return file_bankBackend_proto_notification_notification_proto_rawDescGZIP(), []int{0}
+	return file_notification_proto_rawDescGZIP(), []int{0}
 }
 
 type ActionType int32
@@ -131,11 +131,11 @@ func (x ActionType) String() string {
 }
 
 func (ActionType) Descriptor() protoreflect.EnumDescriptor {
-	return file_bankBackend_proto_notification_notification_proto_enumTypes[1].Descriptor()
+	return file_notification_proto_enumTypes[1].Descriptor()
 }
 
 func (ActionType) Type() protoreflect.EnumType {
-	return &file_bankBackend_proto_notification_notification_proto_enumTypes[1]
+	return &file_notification_proto_enumTypes[1]
 }
 
 func (x ActionType) Number() protoreflect.EnumNumber {
@@ -144,23 +144,22 @@ func (x ActionType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ActionType.Descriptor instead.
 func (ActionType) EnumDescriptor() ([]byte, []int) {
-	return file_bankBackend_proto_notification_notification_proto_rawDescGZIP(), []int{1}
+	return file_notification_proto_rawDescGZIP(), []int{1}
 }
 
 type NotificationEventRequest struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
 	Entity   EntityType             `protobuf:"varint,1,opt,name=entity,proto3,enum=notification.EntityType" json:"entity,omitempty"`
 	Action   ActionType             `protobuf:"varint,2,opt,name=action,proto3,enum=notification.ActionType" json:"action,omitempty"`
-	EntityId uint64                 `protobuf:"varint,3,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
-	UserId        uint64                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Timestamp     int64                  `protobuf:"varint,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	EntityId int64                  `protobuf:"varint,3,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *NotificationEventRequest) Reset() {
 	*x = NotificationEventRequest{}
-	mi := &file_bankBackend_proto_notification_notification_proto_msgTypes[0]
+	mi := &file_notification_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -172,7 +171,7 @@ func (x *NotificationEventRequest) String() string {
 func (*NotificationEventRequest) ProtoMessage() {}
 
 func (x *NotificationEventRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_bankBackend_proto_notification_notification_proto_msgTypes[0]
+	mi := &file_notification_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -185,7 +184,7 @@ func (x *NotificationEventRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NotificationEventRequest.ProtoReflect.Descriptor instead.
 func (*NotificationEventRequest) Descriptor() ([]byte, []int) {
-	return file_bankBackend_proto_notification_notification_proto_rawDescGZIP(), []int{0}
+	return file_notification_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *NotificationEventRequest) GetEntity() EntityType {
@@ -202,23 +201,16 @@ func (x *NotificationEventRequest) GetAction() ActionType {
 	return ActionType_ACTION_UNSPECIFIED
 }
 
-func (x *NotificationEventRequest) GetEntityId() uint64 {
+func (x *NotificationEventRequest) GetEntityId() int64 {
 	if x != nil {
 		return x.EntityId
 	}
 	return 0
 }
 
-func (x *NotificationEventRequest) GetUserId() uint64 {
+func (x *NotificationEventRequest) GetUserId() int64 {
 	if x != nil {
 		return x.UserId
-	}
-	return 0
-}
-
-func (x *NotificationEventRequest) GetTimestamp() int64 {
-	if x != nil {
-		return x.Timestamp
 	}
 	return 0
 }
@@ -232,7 +224,7 @@ type NotificationEventResponse struct {
 
 func (x *NotificationEventResponse) Reset() {
 	*x = NotificationEventResponse{}
-	mi := &file_bankBackend_proto_notification_notification_proto_msgTypes[1]
+	mi := &file_notification_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -244,7 +236,7 @@ func (x *NotificationEventResponse) String() string {
 func (*NotificationEventResponse) ProtoMessage() {}
 
 func (x *NotificationEventResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_bankBackend_proto_notification_notification_proto_msgTypes[1]
+	mi := &file_notification_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -257,7 +249,7 @@ func (x *NotificationEventResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use NotificationEventResponse.ProtoReflect.Descriptor instead.
 func (*NotificationEventResponse) Descriptor() ([]byte, []int) {
-	return file_bankBackend_proto_notification_notification_proto_rawDescGZIP(), []int{1}
+	return file_notification_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *NotificationEventResponse) GetSuccess() bool {
@@ -267,17 +259,16 @@ func (x *NotificationEventResponse) GetSuccess() bool {
 	return false
 }
 
-var File_bankBackend_proto_notification_notification_proto protoreflect.FileDescriptor
+var File_notification_proto protoreflect.FileDescriptor
 
-const file_bankBackend_proto_notification_notification_proto_rawDesc = "" +
+const file_notification_proto_rawDesc = "" +
 	"\n" +
-	"1bankBackend/proto/notification/notification.proto\x12\fnotification\"\xd2\x01\n" +
+	"\x12notification.proto\x12\fnotification\"\xb4\x01\n" +
 	"\x18NotificationEventRequest\x120\n" +
 	"\x06entity\x18\x01 \x01(\x0e2\x18.notification.EntityTypeR\x06entity\x120\n" +
 	"\x06action\x18\x02 \x01(\x0e2\x18.notification.ActionTypeR\x06action\x12\x1b\n" +
-	"\tentity_id\x18\x03 \x01(\x04R\bentityId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x04R\x06userId\x12\x1c\n" +
-	"\ttimestamp\x18\x05 \x01(\x03R\ttimestamp\"5\n" +
+	"\tentity_id\x18\x03 \x01(\x03R\bentityId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x03R\x06userId\"5\n" +
 	"\x19NotificationEventResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess*l\n" +
 	"\n" +
@@ -306,26 +297,26 @@ const file_bankBackend_proto_notification_notification_proto_rawDesc = "" +
 	"\tSendEvent\x12&.notification.NotificationEventRequest\x1a'.notification.NotificationEventResponseB\x10Z\x0e./notificationb\x06proto3"
 
 var (
-	file_bankBackend_proto_notification_notification_proto_rawDescOnce sync.Once
-	file_bankBackend_proto_notification_notification_proto_rawDescData []byte
+	file_notification_proto_rawDescOnce sync.Once
+	file_notification_proto_rawDescData []byte
 )
 
-func file_bankBackend_proto_notification_notification_proto_rawDescGZIP() []byte {
-	file_bankBackend_proto_notification_notification_proto_rawDescOnce.Do(func() {
-		file_bankBackend_proto_notification_notification_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_bankBackend_proto_notification_notification_proto_rawDesc), len(file_bankBackend_proto_notification_notification_proto_rawDesc)))
+func file_notification_proto_rawDescGZIP() []byte {
+	file_notification_proto_rawDescOnce.Do(func() {
+		file_notification_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_notification_proto_rawDesc), len(file_notification_proto_rawDesc)))
 	})
-	return file_bankBackend_proto_notification_notification_proto_rawDescData
+	return file_notification_proto_rawDescData
 }
 
-var file_bankBackend_proto_notification_notification_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_bankBackend_proto_notification_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_bankBackend_proto_notification_notification_proto_goTypes = []any{
+var file_notification_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_notification_proto_goTypes = []any{
 	(EntityType)(0),                   // 0: notification.EntityType
 	(ActionType)(0),                   // 1: notification.ActionType
 	(*NotificationEventRequest)(nil),  // 2: notification.NotificationEventRequest
 	(*NotificationEventResponse)(nil), // 3: notification.NotificationEventResponse
 }
-var file_bankBackend_proto_notification_notification_proto_depIdxs = []int32{
+var file_notification_proto_depIdxs = []int32{
 	0, // 0: notification.NotificationEventRequest.entity:type_name -> notification.EntityType
 	1, // 1: notification.NotificationEventRequest.action:type_name -> notification.ActionType
 	2, // 2: notification.NotificationService.SendEvent:input_type -> notification.NotificationEventRequest
@@ -337,27 +328,27 @@ var file_bankBackend_proto_notification_notification_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_bankBackend_proto_notification_notification_proto_init() }
-func file_bankBackend_proto_notification_notification_proto_init() {
-	if File_bankBackend_proto_notification_notification_proto != nil {
+func init() { file_notification_proto_init() }
+func file_notification_proto_init() {
+	if File_notification_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_bankBackend_proto_notification_notification_proto_rawDesc), len(file_bankBackend_proto_notification_notification_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_notification_proto_rawDesc), len(file_notification_proto_rawDesc)),
 			NumEnums:      2,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_bankBackend_proto_notification_notification_proto_goTypes,
-		DependencyIndexes: file_bankBackend_proto_notification_notification_proto_depIdxs,
-		EnumInfos:         file_bankBackend_proto_notification_notification_proto_enumTypes,
-		MessageInfos:      file_bankBackend_proto_notification_notification_proto_msgTypes,
+		GoTypes:           file_notification_proto_goTypes,
+		DependencyIndexes: file_notification_proto_depIdxs,
+		EnumInfos:         file_notification_proto_enumTypes,
+		MessageInfos:      file_notification_proto_msgTypes,
 	}.Build()
-	File_bankBackend_proto_notification_notification_proto = out.File
-	file_bankBackend_proto_notification_notification_proto_goTypes = nil
-	file_bankBackend_proto_notification_notification_proto_depIdxs = nil
+	File_notification_proto = out.File
+	file_notification_proto_goTypes = nil
+	file_notification_proto_depIdxs = nil
 }

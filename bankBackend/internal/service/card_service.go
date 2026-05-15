@@ -21,7 +21,8 @@ type CardService struct {
 	notificationService notificationService.NotificationServiceClient
 }
 
-func NewCardService(cardRepository repository.ICardRepository,
+func NewCardService(
+	cardRepository repository.ICardRepository,
 	userRepository repository.IUserRepository,
 	accountRepository repository.IAccountRepository,
 	notificationService notificationService.NotificationServiceClient) *CardService {
@@ -97,8 +98,70 @@ func (s *CardService) GetByNumber(ctx context.Context, number string) (*core.Car
 	return card, nil
 }
 
+func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {
+	if input == nil || input.UserId == "" || input.AccountId == "" {
+		return nil, core.BadRequest
+	}
+
+	parsedUserId, err := strconv.ParseInt(input.UserId, 10, 64)
+	if err != nil {
+		return nil, core.BadRequest
+	}
+
+	parsedAccountId, err := strconv.ParseInt(input.AccountId, 10, 64)
+	if err != nil {
+		return nil, core.BadRequest
+	}
+
+	_, err = s.userRepository.GetById(ctx, parsedUserId)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return nil, core.NotFound
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	number, err := s.GenerateCardNumber(ctx)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	_, err = s.accountRepository.GetById(ctx, parsedAccountId)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return nil, core.BadRequest
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	card := &core.Card{
+		UserId:      parsedUserId,
+		AccountId:   parsedAccountId,
+		Number:      number,
+		ExpiryMonth: 6,
+		ExpiryYear:  3,
+		Status:      core.CardStatusActive,
+	}
+
+	created, err := s.cardRepository.Create(ctx, card)
+	if err != nil {
+		return nil, core.InternalServerError
+	}
+
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CARD,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: card.Id,
+		UserId:   card.UserId,
+	})
+
+	return created, nil
+}
+
 func (s *CardService) Blocking(ctx context.Context, id int64) error {
-	err := s.cardRepository.Blocking(ctx, id)
+	card, err := s.cardRepository.Blocking(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound
@@ -107,7 +170,32 @@ func (s *CardService) Blocking(ctx context.Context, id int64) error {
 		return core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CARD,
+		Action:   notificationService.ActionType_BLOCK,
+		EntityId: card.Id,
+		UserId:   card.UserId,
+	})
+
+	return nil
+}
+
+func (s *CardService) Delete(ctx context.Context, id int64) error {
+	userId, err := s.cardRepository.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
+
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CARD,
+		Action:   notificationService.ActionType_DELETE,
+		EntityId: id,
+		UserId:   userId,
+	})
 
 	return nil
 }
@@ -171,76 +259,4 @@ func (s *CardService) GenerateCardNumber(ctx context.Context) (string, error) {
 	}
 
 	return "", core.InternalServerError
-}
-
-func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (*core.Card, error) {
-	if input == nil || input.UserId == "" || input.AccountId == "" {
-		return nil, core.BadRequest
-	}
-
-	parsedUserId, err := strconv.ParseInt(input.UserId, 10, 64)
-	if err != nil {
-		return nil, core.BadRequest
-	}
-
-	parsedAccountId, err := strconv.ParseInt(input.AccountId, 10, 64)
-	if err != nil {
-		return nil, core.BadRequest
-	}
-
-	_, err = s.userRepository.GetById(ctx, parsedUserId)
-	if err != nil {
-		if errors.Is(err, core.NotFound) {
-			return nil, core.NotFound
-		}
-
-		return nil, core.InternalServerError
-	}
-
-	number, err := s.GenerateCardNumber(ctx)
-	if err != nil {
-		return nil, core.InternalServerError
-	}
-
-	_, err = s.accountRepository.GetById(ctx, parsedAccountId)
-	if err != nil {
-		if errors.Is(err, core.NotFound) {
-			return nil, core.BadRequest
-		}
-
-		return nil, core.InternalServerError
-	}
-
-	card := &core.Card{
-		UserId:      parsedUserId,
-		AccountId:   parsedAccountId,
-		Number:      number,
-		ExpiryMonth: 6,
-		ExpiryYear:  3,
-		Status:      core.CardStatusActive,
-	}
-
-	created, err := s.cardRepository.Create(ctx, card)
-	if err != nil {
-		return nil, core.InternalServerError
-	}
-
-	// todo: notification
-
-	return created, nil
-}
-
-func (s *CardService) Delete(ctx context.Context, id int64) error {
-	err := s.cardRepository.Delete(ctx, id)
-	if err != nil {
-		if errors.Is(err, core.NotFound) {
-			return core.NotFound
-		}
-
-		return core.InternalServerError
-	}
-
-	// todo: notification
-
-	return nil
 }

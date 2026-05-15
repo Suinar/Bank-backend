@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v4.25.9
-// source: bankBackend/proto/notification/notification.proto
+// source: notification.proto
 
 package notification
 
@@ -118,5 +118,5 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "bankBackend/proto/notification/notification.proto",
+	Metadata: "notification.proto",
 }
