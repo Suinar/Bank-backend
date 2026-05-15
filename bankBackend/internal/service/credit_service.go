@@ -17,7 +17,8 @@ type CreditService struct {
 	notificationService notificationService.NotificationServiceClient
 }
 
-func NewCreditService(creditRepository repository.ICreditRepository,
+func NewCreditService(
+	creditRepository repository.ICreditRepository,
 	userRepository repository.ICreditRepository,
 	currencyRepository repository.ICreditRepository,
 	notificationService notificationService.NotificationServiceClient) *CreditService {
@@ -140,7 +141,12 @@ func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInpu
 		return nil, core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CREDIT,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: created.Id,
+		UserId:   created.UserId,
+	})
 
 	return created, nil
 }
@@ -148,11 +154,18 @@ func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInpu
 func (s *CreditService) Repay(ctx context.Context, id int64, amount int) error {
 	// todo: repay service
 
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CREDIT,
+		Action:   notificationService.ActionType_REPAY,
+		EntityId: id,
+		UserId:   0, // todo: user id by repay service
+	})
+
 	return nil
 }
 
 func (s *CreditService) Delete(ctx context.Context, id int64) error {
-	err := s.creditRepository.Delete(ctx, id)
+	userId, err := s.creditRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound
@@ -161,7 +174,12 @@ func (s *CreditService) Delete(ctx context.Context, id int64) error {
 		return core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_CREDIT,
+		Action:   notificationService.ActionType_DELETE,
+		EntityId: id,
+		UserId:   userId,
+	})
 
 	return nil
 }

@@ -17,7 +17,8 @@ type AccountService struct {
 	notificationService notificationService.NotificationServiceClient
 }
 
-func NewAccountService(accountRepository repository.IAccountRepository,
+func NewAccountService(
+	accountRepository repository.IAccountRepository,
 	userRepository repository.IUserRepository,
 	currencyRepository repository.ICurrencyRepository,
 	notificationService notificationService.NotificationServiceClient) *AccountService {
@@ -127,13 +128,18 @@ func (s *AccountService) Create(ctx context.Context, input *core.AccountCreateIn
 		return nil, core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_ACCOUNT,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: account.Id,
+		UserId:   account.UserId,
+	})
 
 	return created, nil
 }
 
 func (s *AccountService) Blocking(ctx context.Context, id int64) error {
-	err := s.accountRepository.Blocking(ctx, id)
+	account, err := s.accountRepository.Blocking(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound
@@ -142,13 +148,18 @@ func (s *AccountService) Blocking(ctx context.Context, id int64) error {
 		return core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_ACCOUNT,
+		Action:   notificationService.ActionType_BLOCK,
+		EntityId: account.Id,
+		UserId:   account.UserId,
+	})
 
 	return nil
 }
 
 func (s *AccountService) Close(ctx context.Context, id int64) error {
-	err := s.accountRepository.Close(ctx, id)
+	account, err := s.accountRepository.Close(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound
@@ -157,7 +168,12 @@ func (s *AccountService) Close(ctx context.Context, id int64) error {
 		return core.InternalServerError
 	}
 
-	// todo:notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_ACCOUNT,
+		Action:   notificationService.ActionType_CLOSE,
+		EntityId: account.Id,
+		UserId:   account.UserId,
+	})
 
 	return nil
 }
@@ -190,7 +206,7 @@ func (s *AccountService) Update(ctx context.Context, id int64, input *core.Accou
 }
 
 func (s *AccountService) Delete(ctx context.Context, id int64) error {
-	err := s.accountRepository.Delete(ctx, id)
+	userId, err := s.accountRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound
@@ -199,7 +215,12 @@ func (s *AccountService) Delete(ctx context.Context, id int64) error {
 		return core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_ACCOUNT,
+		Action:   notificationService.ActionType_DELETE,
+		EntityId: id,
+		UserId:   userId,
+	})
 
 	return nil
 }

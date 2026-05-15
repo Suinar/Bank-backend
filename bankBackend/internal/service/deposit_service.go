@@ -17,7 +17,8 @@ type DepositService struct {
 	notificationService notificationService.NotificationServiceClient
 }
 
-func NewDepositService(depositRepository repository.IDepositRepository,
+func NewDepositService(
+	depositRepository repository.IDepositRepository,
 	userRepository repository.IUserRepository,
 	currencyRepository repository.ICurrencyRepository,
 	notificationService notificationService.NotificationServiceClient) *DepositService {
@@ -137,7 +138,12 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 		return nil, core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_DEPOSIT,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: created.Id,
+		UserId:   created.UserId,
+	})
 
 	return created, nil
 }
@@ -145,11 +151,18 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 func (s *DepositService) Replenish(ctx context.Context, id int64, amount int) error {
 	// todo: replenish service
 
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_DEPOSIT,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: id,
+		UserId:   0, // todo: user id form replenish service
+	})
+
 	return nil
 }
 
 func (s *DepositService) Delete(ctx context.Context, id int64) error {
-	err := s.depositRepository.Delete(ctx, id)
+	userId, err := s.depositRepository.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
 			return core.NotFound
@@ -158,7 +171,12 @@ func (s *DepositService) Delete(ctx context.Context, id int64) error {
 		return core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_DEPOSIT,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: id,
+		UserId:   userId,
+	})
 
 	return nil
 }

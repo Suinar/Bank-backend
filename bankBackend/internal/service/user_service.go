@@ -15,7 +15,8 @@ type UserService struct {
 	notificationService notificationService.NotificationServiceClient
 }
 
-func NewUserService(userRepository repository.IUserRepository,
+func NewUserService(
+	userRepository repository.IUserRepository,
 	notificationService notificationService.NotificationServiceClient) *UserService {
 	return &UserService{
 		userRepository:      userRepository,
@@ -105,7 +106,12 @@ func (s *UserService) Create(ctx context.Context, input *core.UserCreateInput) (
 		return nil, core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_USER,
+		Action:   notificationService.ActionType_CREATE,
+		EntityId: created.Id,
+		UserId:   0,
+	})
 
 	return created, nil
 }
@@ -168,6 +174,13 @@ func (s *UserService) ChangePassword(ctx context.Context, id int64, newPassword 
 		return core.InternalServerError
 	}
 
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_USER,
+		Action:   notificationService.ActionType_CHANGE_PASSWORD,
+		EntityId: id,
+		UserId:   0,
+	})
+
 	return nil
 }
 
@@ -181,7 +194,12 @@ func (s *UserService) Delete(ctx context.Context, id int64) error {
 		return core.InternalServerError
 	}
 
-	// todo: notification
+	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
+		Entity:   notificationService.EntityType_USER,
+		Action:   notificationService.ActionType_DELETE,
+		EntityId: id,
+		UserId:   0,
+	})
 
 	return nil
 }

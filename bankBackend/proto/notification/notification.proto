@@ -39,10 +39,8 @@ message NotificationEventRequest {
   EntityType entity = 1;
   ActionType action = 2;
 
-  uint64 entity_id = 3;
-  uint64 user_id = 4;
-
-  int64 timestamp = 5;
+  int64 entity_id = 3;
+  int64 user_id = 4;
 }
 
 // ===== RESPONSE =====
