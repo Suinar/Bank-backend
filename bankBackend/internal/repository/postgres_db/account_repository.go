@@ -96,50 +96,52 @@ RETURNING id, user_id, currency_id, name, balance, status;`
 	return nil, core.InternalServerError
 }
 
-func (r *AccountRepository) Blocking(ctx context.Context, id int64) error {
+func (r *AccountRepository) Blocking(ctx context.Context, id int64) (core.Account, error) {
 	query := `
-UPDATE accounts
-SET status = $1, updated_at = $2
-where id = $3`
+	UPDATE accounts
+	SET status = $1, updated_at = $2
+	WHERE id = $3
+	RETURNING id, user_id, currency_id, name, balance, status
+	`
 
-	result, err := r.db.ExecContext(ctx, query, core.AccountStatusBlocked, time.Now(), id)
+	var account core.Account
+
+	err := r.db.QueryRowContext(ctx, query, core.AccountStatusBlocked, time.Now(), id).
+		Scan(&account.Id, &account.UserId, &account.CurrencyId, &account.Name, &account.Balance, &account.Status)
+
 	if err != nil {
-		return core.InternalServerError
+		if errors.Is(err, sql.ErrNoRows) {
+			return core.Account{}, core.NotFound
+		}
+
+		return core.Account{}, core.InternalServerError
 	}
 
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return core.InternalServerError
-	}
-
-	if rows == 0 {
-		return core.NotFound
-	}
-
-	return nil
+	return account, nil
 }
 
-func (r *AccountRepository) Close(ctx context.Context, id int64) error {
+func (r *AccountRepository) Close(ctx context.Context, id int64) (core.Account, error) {
 	query := `
-UPDATE accounts
-SET status = $1, updated_at = $2
-where id = $3`
+	UPDATE accounts
+	SET status = $1, updated_at = $2
+	WHERE id = $3
+	RETURNING id, user_id, currency_id, name, balance, status
+	`
 
-	result, err := r.db.ExecContext(ctx, query, core.AccountStatusClosed, time.Now(), id)
+	var account core.Account
+
+	err := r.db.QueryRowContext(ctx, query, core.AccountStatusClosed, time.Now(), id).
+		Scan(&account.Id, &account.UserId, &account.CurrencyId, &account.Name, &account.Balance, &account.Status)
+
 	if err != nil {
-		return core.InternalServerError
+		if errors.Is(err, sql.ErrNoRows) {
+			return core.Account{}, core.NotFound
+		}
+
+		return core.Account{}, core.InternalServerError
 	}
 
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return core.InternalServerError
-	}
-
-	if rows == 0 {
-		return core.NotFound
-	}
-
-	return nil
+	return account, nil
 }
 
 func (r *AccountRepository) Update(ctx context.Context, id int64, input *core.AccountUpdateInput) (*core.Account, error) {
@@ -183,24 +185,23 @@ RETURNING id, user_id, currency_id, name, balance, status
 	return &updated, nil
 }
 
-func (r *AccountRepository) Delete(ctx context.Context, id int64) error {
+func (r *AccountRepository) Delete(ctx context.Context, id int64) (int64, error) {
 	query := `
-DELETE FROM accounts 
-WHERE id = $1`
+	DELETE FROM accounts
+	WHERE id = $1
+	RETURNING user_id
+	`
 
-	result, err := r.db.ExecContext(ctx, query, id)
+	var userId int64
+
+	err := r.db.QueryRowContext(ctx, query, id).Scan(&userId)
 	if err != nil {
-		return core.InternalServerError
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, core.NotFound
+		}
+
+		return 0, core.InternalServerError
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return core.InternalServerError
-	}
-
-	if rowsAffected == 0 {
-		return core.NotFound
-	}
-
-	return nil
+	return userId, nil
 }
