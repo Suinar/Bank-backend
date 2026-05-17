@@ -89,27 +89,28 @@ WHERE number = $1`
 	return &card, nil
 }
 
-func (r *CardRepository) Blocking(ctx context.Context, id int64) error {
+func (r *CardRepository) Blocking(ctx context.Context, id int64) (core.Card, error) {
 	query := `
-UPDATE cards
-SET status = $1, updated_at = $2
-where id = $3`
+	UPDATE cards
+	SET status = $1, updated_at = $2
+	WHERE id = $3
+	RETURNING id, user_id, account_id, number, expiry_month, expiry_year, status
+	`
 
-	result, err := r.db.ExecContext(ctx, query, core.CardStatusBlocked, time.Now(), id)
+	var card core.Card
+
+	err := r.db.QueryRowContext(ctx, query, core.CardStatusBlocked, time.Now(), id).
+		Scan(&card.Id, &card.UserId, &card.AccountId, &card.Number, &card.ExpiryMonth, &card.ExpiryYear, &card.Status)
+
 	if err != nil {
-		return core.InternalServerError
+		if errors.Is(err, sql.ErrNoRows) {
+			return core.Card{}, core.NotFound
+		}
+
+		return core.Card{}, core.InternalServerError
 	}
 
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return core.InternalServerError
-	}
-
-	if rows == 0 {
-		return core.NotFound
-	}
-
-	return nil
+	return card, nil
 }
 
 func (r *CardRepository) Create(ctx context.Context, input *core.Card) (*core.Card, error) {
@@ -135,24 +136,23 @@ RETURNING id, user_id, account_id, number, expiry_month, expiry_year, status;`
 	return nil, core.InternalServerError
 }
 
-func (r *CardRepository) Delete(ctx context.Context, id int64) error {
+func (r *CardRepository) Delete(ctx context.Context, id int64) (int64, error) {
 	query := `
-DELETE FROM cards 
-WHERE id = $1`
+	DELETE FROM cards
+	WHERE id = $1
+	RETURNING user_id
+	`
 
-	result, err := r.db.ExecContext(ctx, query, id)
+	var userId int64
+
+	err := r.db.QueryRowContext(ctx, query, id).Scan(&userId)
 	if err != nil {
-		return core.InternalServerError
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, core.NotFound
+		}
+
+		return 0, core.InternalServerError
 	}
 
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		return core.InternalServerError
-	}
-
-	if rowsAffected == 0 {
-		return core.NotFound
-	}
-
-	return nil
+	return userId, nil
 }
