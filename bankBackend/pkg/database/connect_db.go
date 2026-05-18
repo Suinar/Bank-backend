@@ -7,7 +7,7 @@ import (
 )
 
 func ConnectToDb(cfg *configs.Config) (*sqlx.DB, error) {
-	db, err := sqlx.Connect("postgres", cfg.DbUrl)
+	db, err := sqlx.Connect("postgres", cfg.Postgres.DbUrl)
 	if err != nil {
 		return nil, err
 	}

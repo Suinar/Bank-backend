@@ -3,8 +3,6 @@
 import "github.com/spf13/viper"
 
 type Config struct {
-	DbUrl string
-
 	Redis struct {
 		Address      string
 		Password     string
@@ -14,6 +12,7 @@ type Config struct {
 	}
 
 	Postgres struct {
+		DbUrl string
 		MaxOpenConns int
 		MaxIdleConns int
 	}
@@ -34,15 +33,17 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
-	cfg := &Config{
-		DbUrl: viper.GetString("DB_URL"),
-	}
+	cfg := &Config{}
 
 	cfg.Redis.Address = viper.GetString("REDIS_ADDR")
 	cfg.Redis.Password = viper.GetString("REDIS_PASSWORD")
 	cfg.Redis.Db = viper.GetInt("REDIS_DB")
 	cfg.Redis.PoolSize = viper.GetInt("REDIS_POOL_SIZE")
 	cfg.Redis.MinIdleConns = viper.GetInt("REDIS_MIN_IDLE")
+
+	cfg.Postgres.DbUrl = viper.GetString("DB_URL")
+	cfg.Postgres.MaxOpenConns = viper.GetInt("DB_MAX_OPEN_CONNS")
+	cfg.Postgres.MaxIdleConns = viper.GetInt("DB_MAX_IDLE_CONNS")
 
 	cfg.Grpc.CurrencyRankingUrl = viper.GetString("GRPC_CURRENCY_RANKING_URL")
 	cfg.Grpc.NotificationUrl = viper.GetString("GRPC_NOTIFICATION_URL")
