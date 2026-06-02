@@ -43,6 +43,7 @@ type ICreditRepository interface {
 	GetByUser(ctx context.Context, idUser int64) ([]core.Credit, error)
 	GetById(ctx context.Context, id int64) (*core.Credit, error)
 	Create(ctx context.Context, input *core.Credit) (*core.Credit, error)
+	Repay(ctx context.Context, id int64, amount int) (*core.Credit, error)
 	Delete(ctx context.Context, id int64) (int64, error)
 }
 
@@ -51,6 +52,7 @@ type IDepositRepository interface {
 	GetByUser(ctx context.Context, idUser int64) ([]core.Deposit, error)
 	GetById(ctx context.Context, id int64) (*core.Deposit, error)
 	Create(ctx context.Context, input *core.Deposit) (*core.Deposit, error)
+	Replenish(ctx context.Context, id int64, amount int) (*core.Deposit, error)
 	Delete(ctx context.Context, id int64) (int64, error)
 }
 

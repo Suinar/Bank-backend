@@ -92,6 +92,28 @@ RETURNING user_id, currency_id, amount, interest_rate, term_month, monthly_payme
 	return nil, core.InternalServerError
 }
 
+func (r *DepositRepository) Replenish(ctx context.Context, id int64, amount int) (*core.Deposit, error) {
+	query := `
+UPDATE deposits
+SET amount = amount + $2
+WHERE id = $1
+AND status = 1
+RETURNING id, user_id, currency_id, amount, interest_rate, term_month, status`
+
+	var deposit core.Deposit
+
+	err := r.db.GetContext(ctx, &deposit, query, id, amount)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, core.NotFound
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	return &deposit, nil
+}
+
 func (r *DepositRepository) Delete(ctx context.Context, id int64) (int64, error) {
 	query := `
 	DELETE FROM deposits
