@@ -92,6 +92,28 @@ Returning id, user_id, currency_id, amount, interest_rate, term_month, monthly_p
 	return nil, core.InternalServerError
 }
 
+func (r *CreditRepository) Repay(ctx context.Context, id int64, amount int) (*core.Credit, error) {
+	query := `
+UPDATE credits
+SET amount = amount - $2
+WHERE id = $1
+AND amount >= $2
+RETURNING id, user_id, currency_id, amount, interest_rate, term_month, monthly_payment, status`
+
+	var credit core.Credit
+
+	err := r.db.GetContext(ctx, &credit, query, id, amount)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, core.NotFound
+		}
+
+		return nil, core.InternalServerError
+	}
+
+	return &credit, nil
+}
+
 func (r *CreditRepository) Delete(ctx context.Context, id int64) (int64, error) {
 	query := `
 	DELETE FROM credits

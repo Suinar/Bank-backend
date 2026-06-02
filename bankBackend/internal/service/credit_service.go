@@ -152,13 +152,20 @@ func (s *CreditService) Create(ctx context.Context, input *core.CreditCreateInpu
 }
 
 func (s *CreditService) Repay(ctx context.Context, id int64, amount int) error {
-	// todo: repay service
+	credit, err := s.creditRepository.Repay(ctx, id, amount)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
 
 	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
 		Entity:   notificationService.EntityType_CREDIT,
 		Action:   notificationService.ActionType_REPAY,
-		EntityId: id,
-		UserId:   0, // todo: user id by repay service
+		EntityId: credit.Id,
+		UserId:   credit.UserId,
 	})
 
 	return nil

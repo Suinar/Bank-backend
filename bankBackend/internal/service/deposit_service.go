@@ -109,7 +109,7 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 	_, err = s.currencyRepository.GetById(ctx, parsedCurrencyId)
 	if err != nil {
 		if errors.Is(err, core.NotFound) {
-			return nil, core.BadRequest
+			return nil, core.NotFound
 		}
 
 		return nil, core.InternalServerError
@@ -149,13 +149,20 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 }
 
 func (s *DepositService) Replenish(ctx context.Context, id int64, amount int) error {
-	// todo: replenish service
+	deposit, err := s.depositRepository.Replenish(ctx, id, amount)
+	if err != nil {
+		if errors.Is(err, core.NotFound) {
+			return core.NotFound
+		}
+
+		return core.InternalServerError
+	}
 
 	s.notificationService.SendEvent(ctx, &notificationService.NotificationEventRequest{
 		Entity:   notificationService.EntityType_DEPOSIT,
-		Action:   notificationService.ActionType_CREATE,
-		EntityId: id,
-		UserId:   0, // todo: user id form replenish service
+		Action:   notificationService.ActionType_REPLENISH,
+		EntityId: deposit.Id,
+		UserId:   deposit.UserId,
 	})
 
 	return nil
