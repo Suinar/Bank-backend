@@ -1,10 +1,134 @@
 package currency
 
-import "testing"
+import (
+	"net/http"
+	"testing"
 
-func TestNewCurrencyHandler(t *testing.T) {
-	handler := NewCurrencyHandler(nil, nil, nil)
-	if handler == nil {
-		t.Fatal("expected handler instance")
-	}
+	"github.com/golang/mock/gomock"
+	mocks "github.com/kVinsom/Bank-backend/internal/mocks/services"
+	"github.com/kVinsom/Bank-backend/internal/test/fixture"
+)
+
+func TestCurrencyHandler_GetAll_Success(t *testing.T) {
+	t.Parallel()
+
+	service, sut := NewCurrencySUT(t)
+
+	expected := fixture.CurrencyListCore()
+
+	service.EXPECT().GetAll(gomock.Any()).Return(expected, nil).Times(1)
+
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/currencies", nil)
+
+	sut.GetAll(ctx)
+
+	fixture.AssertHTTPResponse(t, recorder, http.StatusOK, expected)
+}
+
+func TestCurrencyHandler_GetById_Success(t *testing.T) {
+	t.Parallel()
+
+	service, sut := NewCurrencySUT(t)
+
+	expected := fixture.CurrencyCore()
+
+	service.EXPECT().GetById(gomock.Any(), fixture.CurrencyId).Return(&expected, nil).Times(1)
+
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/currencies/1", nil)
+	ctx.AddParam("id", "1")
+
+	sut.GetById(ctx)
+
+	fixture.AssertHTTPResponse(t, recorder, http.StatusOK, expected)
+}
+
+func TestCurrencyHandler_GetByIso_Success(t *testing.T) {
+	t.Parallel()
+
+	service, sut := NewCurrencySUT(t)
+
+	expected := fixture.CurrencyCore()
+
+	service.EXPECT().GetByIso(gomock.Any(), fixture.CurrencyISOCode).Return(&expected, nil).Times(1)
+
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/currencies/iso/USD", nil)
+	ctx.AddParam("iso_code", fixture.CurrencyISOCode)
+
+	sut.GetByIso(ctx)
+
+	fixture.AssertHTTPResponse(t, recorder, http.StatusOK, expected)
+}
+
+func TestCurrencyHandler_GetBySymbol_Success(t *testing.T) {
+	t.Parallel()
+
+	service, sut := NewCurrencySUT(t)
+
+	expected := fixture.CurrencyCore()
+
+	service.EXPECT().GetBySymbol(gomock.Any(), fixture.CurrencySymbol).Return(&expected, nil).Times(1)
+
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/currencies/symbol/$", nil)
+	ctx.AddParam("symbol", string(fixture.CurrencySymbol))
+
+	sut.GetBySymbol(ctx)
+
+	fixture.AssertHTTPResponse(t, recorder, http.StatusOK, expected)
+}
+
+func TestCurrencyHandler_Create_Success(t *testing.T) {
+	t.Parallel()
+
+	service, sut := NewCurrencySUT(t)
+
+	input := fixture.CurrencyCreateInputCore()
+	expected := fixture.CurrencyCore()
+
+	service.EXPECT().Create(gomock.Any(), gomock.Eq(&input)).Return(&expected, nil).Times(1)
+
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPost, "/currencies", input)
+
+	sut.Create(ctx)
+
+	fixture.AssertHTTPResponse(t, recorder, http.StatusOK, expected)
+}
+
+func TestCurrencyHandler_UpdateById_Success(t *testing.T) {
+	t.Parallel()
+
+	service, sut := NewCurrencySUT(t)
+
+	input := fixture.CurrencyUpdateInputCore()
+	expected := fixture.CurrencyCore()
+
+	service.EXPECT().Update(gomock.Any(), fixture.CurrencyId, gomock.Eq(&input)).Return(&expected, nil).Times(1)
+
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/currencies/1", input)
+	ctx.AddParam("id", "1")
+
+	sut.UpdateById(ctx)
+
+	fixture.AssertHTTPResponse(t, recorder, http.StatusOK, expected)
+}
+
+func TestCurrencyHandler_DeleteById_Success(t *testing.T) {
+	t.Parallel()
+
+	service, sut := NewCurrencySUT(t)
+
+	service.EXPECT().Delete(gomock.Any(), fixture.CurrencyId).Return(nil).Times(1)
+
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/currencies/1", nil)
+	ctx.AddParam("id", "1")
+
+	sut.DeleteById(ctx)
+
+	fixture.AssertHTTPResponse(t, recorder, http.StatusOK, nil)
+}
+
+func NewCurrencySUT(t *testing.T) (*mocks.MockICurrencyService, *CurrencyHandler) {
+	t.Helper()
+	return fixture.NewMockSUT(t, mocks.NewMockICurrencyService, func(service *mocks.MockICurrencyService) *CurrencyHandler {
+		return NewCurrencyHandler(service)
+	})
 }

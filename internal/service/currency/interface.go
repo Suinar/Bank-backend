@@ -6,6 +6,9 @@ import (
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
 
+//go:generate go run github.com/golang/mock/mockgen@v1.6.0 -source=interface.go -destination=../../../internal/mocks/services/currency.go -package=mocks
+
+// ICurrencyService defines currency operations required by HTTP delivery.
 type ICurrencyService interface {
 	GetAll(context.Context) ([]core.Currency, error)
 	GetById(context.Context, int64) (*core.Currency, error)
@@ -14,13 +17,4 @@ type ICurrencyService interface {
 	Create(context.Context, *core.CurrencyCreateInput) (*core.Currency, error)
 	Update(context.Context, int64, *core.CurrencyUpdateInput) (*core.Currency, error)
 	Delete(context.Context, int64) error
-}
-
-type IExchangeRateService interface {
-	GetAllRanking(context.Context, int64) ([]core.ExchangeRate, error)
-	GetRelativeRanking(context.Context, int64, int64) (*core.ExchangeRate, error)
-}
-
-type IConvertService interface {
-	Convert(context.Context, int64, int, int64) (float64, error)
 }

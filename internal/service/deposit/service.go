@@ -3,8 +3,9 @@ package deposit
 import (
 	"context"
 	"errors"
-	"strconv"
+	log "github.com/kVinsom/Bank-backend/internal/logging/service/deposit"
 
+	"github.com/kVinsom/Bank-proto/repository/common"
 	currencyRepository "github.com/kVinsom/Bank-proto/repository/currency"
 	depositRepository "github.com/kVinsom/Bank-proto/repository/deposit"
 	userRepository "github.com/kVinsom/Bank-proto/repository/user"
@@ -12,12 +13,14 @@ import (
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
 
+// DepositService implements deposit lifecycle use cases.
 type DepositService struct {
 	depositRepository  depositRepository.DepositRepositoryClient
 	userRepository     userRepository.UserRepositoryClient
 	currencyRepository currencyRepository.CurrencyRepositoryClient
 }
 
+// NewDepositService creates a deposit service with its required repositories.
 func NewDepositService(
 	depositRepository depositRepository.DepositRepositoryClient,
 	userRepository userRepository.UserRepositoryClient,
@@ -30,16 +33,19 @@ func NewDepositService(
 }
 
 func (s *DepositService) GetAll(ctx context.Context) ([]core.Deposit, error) {
-	deposits, err := s.depositRepository.GetAll(ctx)
+	const operation = "get_all"
+	defer log.OperationStarted(operation)()
+	response, err := s.depositRepository.GetAll(ctx, &common.Empty{})
 	if err != nil {
 		return nil, coreErrors.InternalServerError
 	}
 
+	deposits := DepositsToCore(response.Deposits)
 	filtered := make([]core.Deposit, 0, len(deposits))
 
 	for _, deposit := range deposits {
 		if deposit.Status != core.DepositStatusClosed {
-			deposits = append(deposits, deposit)
+			filtered = append(filtered, deposit)
 		}
 	}
 
@@ -47,7 +53,9 @@ func (s *DepositService) GetAll(ctx context.Context) ([]core.Deposit, error) {
 }
 
 func (s *DepositService) GetByUser(ctx context.Context, userId int64) ([]core.Deposit, error) {
-	deposits, err := s.depositRepository.GetByUser(ctx, userId)
+	const operation = "get_by_user"
+	defer log.OperationStarted(operation)()
+	response, err := s.depositRepository.GetByUser(ctx, &common.UserIdRequest{UserId: userId})
 	if err != nil {
 		if errors.Is(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
@@ -56,7 +64,8 @@ func (s *DepositService) GetByUser(ctx context.Context, userId int64) ([]core.De
 		return nil, coreErrors.InternalServerError
 	}
 
-	filtered := make([]core.Deposit, len(deposits))
+	deposits := DepositsToCore(response.Deposits)
+	filtered := make([]core.Deposit, 0, len(deposits))
 
 	for _, deposit := range deposits {
 		if deposit.Status != core.DepositStatusClosed {
@@ -68,7 +77,9 @@ func (s *DepositService) GetByUser(ctx context.Context, userId int64) ([]core.De
 }
 
 func (s *DepositService) GetById(ctx context.Context, id int64) (*core.Deposit, error) {
-	deposit, err := s.depositRepository.GetById(ctx, id)
+	const operation = "get_by_id"
+	defer log.OperationStarted(operation)()
+	deposit, err := s.depositRepository.GetById(ctx, &common.IdRequest{Id: id})
 	if err != nil {
 		if errors.Is(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
@@ -77,26 +88,18 @@ func (s *DepositService) GetById(ctx context.Context, id int64) (*core.Deposit, 
 		return nil, coreErrors.InternalServerError
 	}
 
-	return deposit, nil
+	return DepositToCore(deposit), nil
 }
 
 func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateInput) (*core.Deposit, error) {
-	if input == nil || input.UserId == "" || input.CurrencyId == "" || input.Amount < 1000 ||
+	const operation = "create"
+	defer log.OperationStarted(operation)()
+	if input == nil || input.UserId <= 0 || input.CurrencyId <= 0 || input.Amount < 1000 ||
 		input.Amount > 10000 || input.TermMonths < 1 || input.TermMonths > 24 {
 		return nil, coreErrors.BadRequest
 	}
 
-	parsedUserId, err := strconv.ParseInt(input.UserId, 10, 64)
-	if err != nil {
-		return nil, coreErrors.BadRequest
-	}
-
-	parsedCurrencyId, err := strconv.ParseInt(input.CurrencyId, 10, 64)
-	if err != nil {
-		return nil, coreErrors.BadRequest
-	}
-
-	_, err = s.userRepository.GetById(ctx, parsedUserId)
+	_, err := s.userRepository.GetById(ctx, &common.IdRequest{Id: input.UserId})
 	if err != nil {
 		if errors.Is(err, coreErrors.NotFound) {
 			return nil, coreErrors.BadRequest
@@ -105,7 +108,7 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 		return nil, coreErrors.InternalServerError
 	}
 
-	_, err = s.currencyRepository.GetById(ctx, parsedCurrencyId)
+	_, err = s.currencyRepository.GetById(ctx, &common.IdRequest{Id: input.CurrencyId})
 	if err != nil {
 		if errors.Is(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
@@ -124,24 +127,26 @@ func (s *DepositService) Create(ctx context.Context, input *core.DepositCreateIn
 	}
 
 	deposit := &core.Deposit{
-		UserId:       parsedUserId,
-		CurrencyId:   parsedCurrencyId,
+		UserId:       input.UserId,
+		CurrencyId:   input.CurrencyId,
 		Amount:       input.Amount,
 		InterestRate: interestRate,
 		TermMonths:   input.TermMonths,
 		Status:       core.DepositStatusActive,
 	}
 
-	created, err := s.depositRepository.Create(ctx, deposit)
+	created, err := s.depositRepository.Create(ctx, DepositToProto(deposit))
 	if err != nil {
 		return nil, coreErrors.InternalServerError
 	}
 
-	return created, nil
+	return DepositToCore(created), nil
 }
 
 func (s *DepositService) Replenish(ctx context.Context, id int64, amount int) error {
-	deposit, err := s.depositRepository.Replenish(ctx, id, amount)
+	const operation = "replenish"
+	defer log.OperationStarted(operation)()
+	_, err := s.depositRepository.Replenish(ctx, &common.AmountRequest{Id: id, Amount: int64(amount)})
 	if err != nil {
 		if errors.Is(err, coreErrors.NotFound) {
 			return coreErrors.NotFound
@@ -154,7 +159,9 @@ func (s *DepositService) Replenish(ctx context.Context, id int64, amount int) er
 }
 
 func (s *DepositService) Delete(ctx context.Context, id int64) error {
-	userId, err := s.depositRepository.Delete(ctx, id)
+	const operation = "delete"
+	defer log.OperationStarted(operation)()
+	_, err := s.depositRepository.Delete(ctx, &common.IdRequest{Id: id})
 	if err != nil {
 		if errors.Is(err, coreErrors.NotFound) {
 			return coreErrors.NotFound

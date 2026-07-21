@@ -2,6 +2,7 @@ package user
 
 import "github.com/gin-gonic/gin"
 
+// IUserHandler defines the user endpoints registered by the router.
 type IUserHandler interface {
 	GetAll(*gin.Context)
 	GetById(*gin.Context)

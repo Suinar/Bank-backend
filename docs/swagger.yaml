@@ -1,0 +1,1388 @@
+basePath: /api/v1
+definitions:
+  core.Account:
+    properties:
+      balance:
+        type: integer
+      currency_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/core.AccountStatus'
+      user_id:
+        type: integer
+    type: object
+  core.AccountCreateInput:
+    properties:
+      currency_id:
+        type: integer
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  core.AccountStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - AccountStatusClosed
+    - AccountStatusActive
+    - AccountStatusBlocked
+  core.AccountUpdateInput:
+    properties:
+      name:
+        type: string
+    type: object
+  core.Card:
+    properties:
+      account_id:
+        type: integer
+      expiry_month:
+        type: integer
+      expiry_year:
+        type: integer
+      id:
+        type: integer
+      number:
+        type: string
+      status:
+        $ref: '#/definitions/core.CardStatus'
+      user_id:
+        type: integer
+    type: object
+  core.CardCreateInput:
+    properties:
+      account_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  core.CardStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - CardStatusClosed
+    - CardStatusActive
+    - CardStatusBlocked
+    - StatusExpired
+  core.Credit:
+    properties:
+      amount:
+        type: integer
+      currency_id:
+        type: integer
+      id:
+        type: integer
+      interest_rate:
+        type: number
+      monthly_payment:
+        type: integer
+      status:
+        $ref: '#/definitions/core.CreditStatus'
+      term_months:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  core.CreditCreateInput:
+    properties:
+      amount:
+        type: integer
+      currency_id:
+        type: integer
+      term_months:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  core.CreditStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - CreditStatusClosed
+    - CreditStatusActive
+    - CreditStatusRejected
+  core.Currency:
+    properties:
+      id:
+        type: integer
+      iso_code:
+        type: string
+      minor_units:
+        type: integer
+      name:
+        type: string
+      symbol:
+        type: integer
+    type: object
+  core.CurrencyCreateInput:
+    properties:
+      iso_code:
+        type: string
+      minor_units:
+        type: integer
+      name:
+        type: string
+      symbol:
+        type: integer
+    type: object
+  core.CurrencyUpdateInput:
+    properties:
+      iso_code:
+        type: string
+      minor_units:
+        type: integer
+      name:
+        type: string
+      symbol:
+        type: integer
+    type: object
+  core.Deposit:
+    properties:
+      amount:
+        type: integer
+      currency_id:
+        type: integer
+      id:
+        type: integer
+      interest_rate:
+        type: number
+      status:
+        $ref: '#/definitions/core.DepositStatus'
+      term_months:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  core.DepositCreateInput:
+    properties:
+      amount:
+        type: integer
+      currency_id:
+        type: integer
+      term_months:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  core.DepositStatus:
+    enum:
+    - 0
+    - 1
+    - 2
+    type: integer
+    x-enum-varnames:
+    - DepositStatusClosed
+    - DepositStatusActive
+    - DepositStatusRejected
+  core.User:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      middle_name:
+        type: string
+      password_hash:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  core.UserCreateInput:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      middle_name:
+        type: string
+      password_hash:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  core.UserUpdateInput:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      middle_name:
+        type: string
+    type: object
+  internal_delivery_http_handler_exchange_rate.RankingResponse:
+    properties:
+      currency_iso_from:
+        type: integer
+      currency_iso_to:
+        type: integer
+      date:
+        type: string
+      rate_buy:
+        type: number
+      rate_cross:
+        type: number
+      rate_sell:
+        type: number
+    type: object
+info:
+  contact: {}
+  description: HTTP API for users, accounts, cards, credits, deposits, currencies,
+    and exchange rates.
+  title: Bank Backend API
+  version: "1.0"
+paths:
+  /accounts:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Account'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List accounts
+      tags:
+      - accounts
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Account data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.AccountCreateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Account'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create account
+      tags:
+      - accounts
+  /accounts/{id}:
+    delete:
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete account
+      tags:
+      - accounts
+    get:
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Account'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get account by ID
+      tags:
+      - accounts
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Account changes
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.AccountUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Account'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update account
+      tags:
+      - accounts
+  /accounts/{id}/block:
+    patch:
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Block account
+      tags:
+      - accounts
+  /accounts/{id}/close:
+    patch:
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Close account
+      tags:
+      - accounts
+  /accounts/user/{user_id}:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Account'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List accounts by user
+      tags:
+      - accounts
+  /cards:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Card'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List cards
+      tags:
+      - cards
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Card data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.CardCreateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Card'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create card
+      tags:
+      - cards
+  /cards/{id}:
+    delete:
+      parameters:
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete card
+      tags:
+      - cards
+    get:
+      parameters:
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Card'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get card by ID
+      tags:
+      - cards
+  /cards/{id}/block:
+    patch:
+      parameters:
+      - description: Card ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Block card
+      tags:
+      - cards
+  /cards/number/{number}:
+    get:
+      parameters:
+      - description: Card number
+        in: path
+        name: number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Card'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get card by number
+      tags:
+      - cards
+  /cards/user/{user_id}:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Card'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List cards by user
+      tags:
+      - cards
+  /credits:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Credit'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List credits
+      tags:
+      - credits
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Credit data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.CreditCreateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Credit'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create credit
+      tags:
+      - credits
+  /credits/{id}:
+    delete:
+      parameters:
+      - description: Credit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete credit
+      tags:
+      - credits
+    get:
+      parameters:
+      - description: Credit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Credit'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get credit by ID
+      tags:
+      - credits
+  /credits/{id}/repay/{amount}:
+    post:
+      parameters:
+      - description: Credit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Repayment amount
+        in: path
+        name: amount
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Repay credit
+      tags:
+      - credits
+  /credits/user/{user_id}:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Credit'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List credits by user
+      tags:
+      - credits
+  /currencies:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Currency'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List currencies
+      tags:
+      - currencies
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Currency data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.CurrencyCreateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Currency'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create currency
+      tags:
+      - currencies
+  /currencies/{id}:
+    delete:
+      parameters:
+      - description: Currency ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete currency
+      tags:
+      - currencies
+    get:
+      parameters:
+      - description: Currency ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Currency'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get currency by ID
+      tags:
+      - currencies
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Currency ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Currency changes
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.CurrencyUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Currency'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update currency
+      tags:
+      - currencies
+  /currencies/iso/{iso_code}:
+    get:
+      parameters:
+      - description: ISO code
+        in: path
+        name: iso_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Currency'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get currency by ISO code
+      tags:
+      - currencies
+  /currencies/symbol/{symbol}:
+    get:
+      parameters:
+      - description: Currency symbol
+        in: path
+        name: symbol
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Currency'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get currency by symbol
+      tags:
+      - currencies
+  /deposits:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Deposit'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List deposits
+      tags:
+      - deposits
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Deposit data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.DepositCreateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Deposit'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create deposit
+      tags:
+      - deposits
+  /deposits/{id}:
+    delete:
+      parameters:
+      - description: Deposit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete deposit
+      tags:
+      - deposits
+    get:
+      parameters:
+      - description: Deposit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.Deposit'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get deposit by ID
+      tags:
+      - deposits
+  /deposits/{id}/replenish/{amount}:
+    post:
+      parameters:
+      - description: Deposit ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Replenishment amount
+        in: path
+        name: amount
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Replenish deposit
+      tags:
+      - deposits
+  /deposits/user/{user_id}:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.Deposit'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List deposits by user
+      tags:
+      - deposits
+  /exchange-rates/{currency_iso_from}:
+    get:
+      parameters:
+      - description: Source numeric ISO code
+        in: path
+        name: currency_iso_from
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_delivery_http_handler_exchange_rate.RankingResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List exchange-rate rankings
+      tags:
+      - exchange-rates
+  /exchange-rates/{currency_iso_from}/{currency_iso_to}:
+    get:
+      parameters:
+      - description: Source numeric ISO code
+        in: path
+        name: currency_iso_from
+        required: true
+        type: integer
+      - description: Target numeric ISO code
+        in: path
+        name: currency_iso_to
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_delivery_http_handler_exchange_rate.RankingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get relative exchange rate
+      tags:
+      - exchange-rates
+  /users:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/core.User'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User data
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.UserCreateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete user
+      tags:
+      - users
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.User'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User changes
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/core.UserUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update user
+      tags:
+      - users
+  /users/{id}/password:
+    patch:
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: New password
+        in: formData
+        name: hash_password
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Change user password
+      tags:
+      - users
+  /users/email/{email}:
+    get:
+      parameters:
+      - description: Email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.User'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get user by email
+      tags:
+      - users
+  /users/phone/{phone_number}:
+    get:
+      parameters:
+      - description: Phone number
+        in: path
+        name: phone_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/core.User'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get user by phone number
+      tags:
+      - users
+schemes:
+- http
+- https
+swagger: "2.0"
