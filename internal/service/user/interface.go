@@ -6,6 +6,9 @@ import (
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
 
+//go:generate go run github.com/golang/mock/mockgen@v1.6.0 -source=interface.go -destination=../../../internal/mocks/services/user.go -package=mocks
+
+// IUserService defines user operations required by HTTP delivery.
 type IUserService interface {
 	GetAll(context.Context) ([]core.User, error)
 	GetById(context.Context, int64) (*core.User, error)

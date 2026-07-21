@@ -3,7 +3,8 @@ package client
 import (
 	"context"
 
-	"github.com/kVinsom/Bank-backend/configs"
+	configs "github.com/kVinsom/Bank-backend/internal/configs"
+	log "github.com/kVinsom/Bank-backend/internal/logging/client"
 	accountPr "github.com/kVinsom/Bank-proto/repository/account"
 	cardPr "github.com/kVinsom/Bank-proto/repository/card"
 	creditPr "github.com/kVinsom/Bank-proto/repository/credit"
@@ -13,6 +14,7 @@ import (
 	"google.golang.org/grpc"
 )
 
+// RepositoryClients groups the typed clients exposed by the repository service.
 type RepositoryClients struct {
 	Account  accountPr.AccountRepositoryClient
 	Card     cardPr.CardRepositoryClient
@@ -22,12 +24,17 @@ type RepositoryClients struct {
 	User     userPr.UserRepositoryClient
 }
 
+// NewRepositoryClient establishes one shared connection for all repository clients.
 func NewRepositoryClient(
 	ctx context.Context,
 	cfg configs.Config,
 ) (*RepositoryClients, *grpc.ClientConn, error) {
-	conn, err := dial(ctx, cfg.Grpc.RepositoryURL)
+	const clientName = "repository"
+	log.Initializing(clientName, cfg.GRPCConfig.RepositoryURL)
+
+	conn, err := Dial(ctx, cfg.GRPCConfig.RepositoryURL)
 	if err != nil {
+		log.InitializationFailed(clientName, cfg.GRPCConfig.RepositoryURL, err)
 		return nil, nil, err
 	}
 
@@ -39,6 +46,7 @@ func NewRepositoryClient(
 		Deposit:  depositPr.NewDepositRepositoryClient(conn),
 		User:     userPr.NewUserRepositoryClient(conn),
 	}
+	log.Initialized(clientName, cfg.GRPCConfig.RepositoryURL)
 
 	return clients, conn, nil
 }

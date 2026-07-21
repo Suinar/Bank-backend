@@ -2,6 +2,7 @@ package deposit
 
 import "github.com/gin-gonic/gin"
 
+// IDebitHandler defines the deposit endpoints registered by the router.
 type IDebitHandler interface {
 	GetAll(*gin.Context)
 	GetByUser(*gin.Context)

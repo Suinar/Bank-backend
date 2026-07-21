@@ -1,0 +1,7 @@
+.git
+.gitignore
+.idea
+.env
+README.md
+k8s
+bank-backend

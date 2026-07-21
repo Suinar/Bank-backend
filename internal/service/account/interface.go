@@ -6,6 +6,9 @@ import (
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
 
+//go:generate go run github.com/golang/mock/mockgen@v1.6.0 -source=interface.go -destination=../../../internal/mocks/services/account.go -package=mocks
+
+// IAccountService defines account operations required by HTTP delivery.
 type IAccountService interface {
 	GetAll(context.Context) ([]core.Account, error)
 	GetByUser(context.Context, int64) ([]core.Account, error)

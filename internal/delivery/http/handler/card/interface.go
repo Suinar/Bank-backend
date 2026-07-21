@@ -2,6 +2,7 @@ package card
 
 import "github.com/gin-gonic/gin"
 
+// ICardHandler defines the card endpoints registered by the router.
 type ICardHandler interface {
 	GetAll(*gin.Context)
 	GetByUser(*gin.Context)

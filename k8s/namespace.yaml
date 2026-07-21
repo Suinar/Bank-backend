@@ -1,0 +1,5 @@
+# Isolate all bank application resources in a dedicated namespace.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bank
