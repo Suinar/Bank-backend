@@ -1,10 +1,11 @@
 APP_NAME := bank-backend
 GO_MAIN := ./cmd/app
 DOCKER_IMAGE := $(APP_NAME):local
+DOCKER_COMPOSE := docker compose -f docker/docker-compose.yml
 K8S_NAMESPACE := bank
 K8S_DIR := k8s
-KAFKA_TOPIC ?= bank-events
-KAFKA_PARTITIONS ?= 1
+KAFKA_TOPIC ?=
+KAFKA_PARTITIONS ?= 3
 KAFKA_REPLICATION_FACTOR ?= 1
 SWAG_VERSION := v1.16.6
 REPOSITORY_DIR := $(abspath ../Bank-repository-service)
@@ -14,7 +15,7 @@ EXCHANGE_RATE_DIR := $(abspath ../Bank-exhange-rate-service)
 
 .PHONY: help run build test fmt vet tidy check swagger \
 	docker-build docker-up docker-down docker-restart docker-logs docker-ps \
-	kafka-up kafka-logs kafka-topics kafka-topic-create \
+	kafka-up kafka-down kafka-logs kafka-topics kafka-topic-create \
 	k8s-apply k8s-delete k8s-status k8s-logs k8s-port-forward
 
 help: ## Показати список доступних команд
@@ -44,33 +45,37 @@ swagger: ## Generate Swagger documentation
 	go run github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION) init -g cmd/app/main.go -o docs --parseDependency --parseInternal
 
 docker-build: ## Зібрати Docker-образ застосунку
-	docker build -t $(DOCKER_IMAGE) .
+	docker build -f docker/app/Dockerfile -t $(DOCKER_IMAGE) .
 
 docker-up: ## Запустити застосунок і Kafka через Docker Compose
-	docker compose up -d --build
+	$(DOCKER_COMPOSE) up -d --build
 
 docker-down: ## Зупинити Docker Compose без видалення Kafka-даних
-	docker compose down
+	$(DOCKER_COMPOSE) down
 
 docker-restart: docker-down docker-up ## Перезапустити Docker Compose
 
 docker-logs: ## Показувати логи всіх Compose-сервісів
-	docker compose logs -f
+	$(DOCKER_COMPOSE) logs -f
 
 docker-ps: ## Показати стан Compose-сервісів
-	docker compose ps
+	$(DOCKER_COMPOSE) ps
 
 kafka-up: ## Запустити лише Kafka через Docker Compose
-	docker compose up -d kafka
+	$(DOCKER_COMPOSE) up -d --build app
+
+kafka-down: ## Зупинити окремий контейнер Kafka без видалення даних
+	$(DOCKER_COMPOSE) stop app
 
 kafka-logs: ## Показувати логи Kafka
-	docker compose logs -f kafka
+	$(DOCKER_COMPOSE) logs -f app
 
 kafka-topics: ## Показати список Kafka-топіків
-	docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+	$(DOCKER_COMPOSE) exec app /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 
 kafka-topic-create: ## Створити топік; KAFKA_TOPIC=name make kafka-topic-create
-	docker compose exec kafka /opt/kafka/bin/kafka-topics.sh \
+	@test -n "$(KAFKA_TOPIC)" || (echo "KAFKA_TOPIC is required"; exit 1)
+	$(DOCKER_COMPOSE) exec app /opt/kafka/bin/kafka-topics.sh \
 		--bootstrap-server localhost:9092 \
 		--create --if-not-exists \
 		--topic $(KAFKA_TOPIC) \
@@ -96,7 +101,7 @@ k8s-port-forward: ## Відкрити Kubernetes-застосунок на local
 
 .PHONY: manual-up
 manual-up: ## Start infrastructure and all Go services in separate PowerShell windows
-	docker compose down
+	$(DOCKER_COMPOSE) down
 	docker compose -f "$(REPOSITORY_DIR)/compose.yaml" --profile kafka up -d --wait postgres redis kafka
 	powershell.exe -NoProfile -Command "Start-Process powershell.exe -ArgumentList '-NoExit','-Command','Set-Location ''$(REPOSITORY_DIR)''; go run ./cmd/app'"
 	powershell.exe -NoProfile -Command "Start-Process powershell.exe -ArgumentList '-NoExit','-Command','Set-Location ''$(EXCHANGE_RATE_DIR)''; $$env:KAFKA_BROKERS=''localhost:9092''; go run ./cmd/app'"

@@ -1,9 +1,11 @@
+name: bank-backend
+
 services:
-  # HTTP API and the two gRPC services form one local application stack.
   app:
+    container_name: bank-backend
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/app/Dockerfile
     image: bank-backend:local
     restart: unless-stopped
     environment:
@@ -13,12 +15,13 @@ services:
       GRPC_REPOSITORY_URL: repository-service:50052
       GRPC_EXCHANGE_RATE_URL: exchange-rate-service:50053
       CARD_BIN: ${CARD_BIN:-537541}
-      KAFKA_BROKERS: kafka:9092
+      KAFKA_BROKERS: localhost:9092
     ports:
       - "${HTTP_PORT:-8080}:8080"
+      - "${KAFKA_HOST_PORT:-29092}:29092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
     depends_on:
-      kafka:
-        condition: service_healthy
       repository-service:
         condition: service_started
       exchange-rate-service:
@@ -26,7 +29,7 @@ services:
 
   repository-service:
     build:
-      context: ../Bank-repository-service
+      context: ../../Bank-repository-service
       dockerfile: Dockerfile
     image: bank-repository-service:local
     restart: unless-stopped
@@ -52,7 +55,7 @@ services:
       REDIS_POOL_SIZE: 10
       REDIS_MIN_IDLE: 2
       KAFKA_ENABLED: "false"
-      KAFKA_BROKERS: kafka:9092
+      KAFKA_BROKERS: app:9092
       KAFKA_CLIENT_ID: bank-repository-service
       KAFKA_CONSUMER_GROUP: bank-repository-service
     depends_on:
@@ -64,8 +67,7 @@ services:
 
   exchange-rate-service:
     build:
-      # The directory currently has "exhange" (without the second "c") in its name.
-      context: ../Bank-exhange-rate-service
+      context: ../../Bank-exhange-rate-service
       dockerfile: Dockerfile
     image: ${EXCHANGE_RATE_IMAGE:-bank-exchange-rate-service:local}
     init: true
@@ -75,16 +77,13 @@ services:
       GRPC_NETWORK: tcp
       MONOBANK_BASE_URL: ${MONOBANK_BASE_URL:-https://api.monobank.ua}
       MONOBANK_CURRENCY_ENDPOINT: ${MONOBANK_CURRENCY_ENDPOINT:-/bank/currency}
-      KAFKA_BROKERS: kafka:9092
+      KAFKA_BROKERS: app:9092
     healthcheck:
       test: ["CMD", "/app/bank-exchange-rate-service", "healthcheck"]
       interval: 10s
       timeout: 5s
       start_period: 10s
       retries: 3
-    depends_on:
-      kafka:
-        condition: service_healthy
     stop_grace_period: 30s
     read_only: true
     tmpfs:
@@ -118,36 +117,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-
-  # Single-node KRaft broker intended for local development only.
-  kafka:
-    image: apache/kafka:4.0.0
-    hostname: kafka
-    extra_hosts:
-      - "kafka:127.0.0.1"
-    restart: unless-stopped
-    environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-    volumes:
-      - kafka-data:/var/lib/kafka/data
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
 
 volumes:
   kafka-data:

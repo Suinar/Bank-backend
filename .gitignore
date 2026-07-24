@@ -1,10 +1,2 @@
 ﻿.idea/
 .env
-bank-backend
-
-# Go coverage profiles
-.coverage/
-coverage.out
-/currency_handler
-/handler
-/service
