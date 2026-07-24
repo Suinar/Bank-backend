@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -32,7 +33,7 @@ func TestCreditHandler_GetByUser_Error(t *testing.T) {
 
 	service, sut := NewCreditSUT(t)
 
-	service.EXPECT().GetByUser(gomock.Any(), fixture.UserId).Return(nil, creditHandlerTestError).Times(1)
+	service.EXPECT().GetByUser(gomock.Any(), test.UserId).Return(nil, creditHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/1/credits", nil)
 	ctx.AddParam("user_id", "1")
@@ -47,7 +48,7 @@ func TestCreditHandler_GetById_Error(t *testing.T) {
 
 	service, sut := NewCreditSUT(t)
 
-	service.EXPECT().GetById(gomock.Any(), fixture.CreditId).Return(nil, creditHandlerTestError).Times(1)
+	service.EXPECT().GetById(gomock.Any(), test.CreditId).Return(nil, creditHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/credits/1", nil)
 	ctx.AddParam("id", "1")
@@ -78,11 +79,11 @@ func TestCreditHandler_RepayById_Error(t *testing.T) {
 
 	service, sut := NewCreditSUT(t)
 
-	service.EXPECT().Repay(gomock.Any(), fixture.CreditId, fixture.TransactionAmount).Return(creditHandlerTestError).Times(1)
+	service.EXPECT().Repay(gomock.Any(), test.CreditId, test.TransactionAmount).Return(creditHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/credits/1/repay/1000", nil)
 	ctx.AddParam("id", "1")
-	ctx.AddParam("amount", strconv.Itoa(fixture.TransactionAmount))
+	ctx.AddParam("amount", strconv.Itoa(test.TransactionAmount))
 
 	sut.RepayById(ctx)
 
@@ -94,7 +95,7 @@ func TestCreditHandler_DeleteById_Error(t *testing.T) {
 
 	service, sut := NewCreditSUT(t)
 
-	service.EXPECT().Delete(gomock.Any(), fixture.CreditId).Return(creditHandlerTestError).Times(1)
+	service.EXPECT().Delete(gomock.Any(), test.CreditId).Return(creditHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/credits/1", nil)
 	ctx.AddParam("id", "1")

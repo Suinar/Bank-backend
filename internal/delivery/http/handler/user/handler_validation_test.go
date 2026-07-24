@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 )
 
@@ -57,7 +58,7 @@ func TestUserHandler_ChangePasswordById_InvalidId(t *testing.T) {
 
 	_, sut := NewUserSUT(t)
 
-	form := url.Values{"hash_password": {fixture.UserPasswordHash}}
+	form := url.Values{"hash_password": {test.UserPasswordHash}}
 	ctx, recorder := fixture.NewFormHTTPContext(t, http.MethodPatch, "/users/invalid/password", form)
 	ctx.AddParam("id", "invalid")
 

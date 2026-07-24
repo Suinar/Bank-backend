@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	coreErrors "github.com/kVinsom/Bank-repository-service/pkg"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
@@ -60,25 +61,25 @@ func TestUserService_RepositoryErrors(t *testing.T) {
 		}, invoke: func(s *UserService) (any, error) { return s.GetAll(context.Background()) }, want: coreErrors.InternalServerError},
 		{name: "get by id not found", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *UserService) (any, error) { return s.GetById(context.Background(), fixture.UserId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *UserService) (any, error) { return s.GetById(context.Background(), test.UserId) }, want: coreErrors.NotFound},
 		{name: "get by id failure", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(nil, userRepositoryError)
-		}, invoke: func(s *UserService) (any, error) { return s.GetById(context.Background(), fixture.UserId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *UserService) (any, error) { return s.GetById(context.Background(), test.UserId) }, want: coreErrors.InternalServerError},
 		{name: "get by email", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().GetByEmail(gomock.Any(), gomock.Any()).Return(nil, userRepositoryError)
-		}, invoke: func(s *UserService) (any, error) { return s.GetByEmail(context.Background(), fixture.UserEmail) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *UserService) (any, error) { return s.GetByEmail(context.Background(), test.UserEmail) }, want: coreErrors.InternalServerError},
 		{name: "get by email not found", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().GetByEmail(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *UserService) (any, error) { return s.GetByEmail(context.Background(), fixture.UserEmail) }, want: coreErrors.NotFound},
+		}, invoke: func(s *UserService) (any, error) { return s.GetByEmail(context.Background(), test.UserEmail) }, want: coreErrors.NotFound},
 		{name: "get by phone not found", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().GetByPhoneNumber(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
 		}, invoke: func(s *UserService) (any, error) {
-			return s.GetByPhoneNumber(context.Background(), fixture.UserPhoneNumber)
+			return s.GetByPhoneNumber(context.Background(), test.UserPhoneNumber)
 		}, want: coreErrors.NotFound},
 		{name: "get by phone failure", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().GetByPhoneNumber(gomock.Any(), gomock.Any()).Return(nil, userRepositoryError)
 		}, invoke: func(s *UserService) (any, error) {
-			return s.GetByPhoneNumber(context.Background(), fixture.UserPhoneNumber)
+			return s.GetByPhoneNumber(context.Background(), test.UserPhoneNumber)
 		}, want: coreErrors.InternalServerError},
 		{name: "create", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil, userRepositoryError)
@@ -90,26 +91,26 @@ func TestUserService_RepositoryErrors(t *testing.T) {
 			m.User.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
 		}, invoke: func(s *UserService) (any, error) {
 			input := fixture.UserUpdateInputCore()
-			return s.Update(context.Background(), fixture.UserId, &input)
+			return s.Update(context.Background(), test.UserId, &input)
 		}, want: coreErrors.NotFound},
 		{name: "update bad request", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil, coreErrors.BadRequest)
 		}, invoke: func(s *UserService) (any, error) {
 			input := fixture.UserUpdateInputCore()
-			return s.Update(context.Background(), fixture.UserId, &input)
+			return s.Update(context.Background(), test.UserId, &input)
 		}, want: coreErrors.BadRequest},
 		{name: "update failure", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil, userRepositoryError)
 		}, invoke: func(s *UserService) (any, error) {
 			input := fixture.UserUpdateInputCore()
-			return s.Update(context.Background(), fixture.UserId, &input)
+			return s.Update(context.Background(), test.UserId, &input)
 		}, want: coreErrors.InternalServerError},
 		{name: "delete", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil, userRepositoryError)
-		}, invoke: func(s *UserService) (any, error) { return nil, s.Delete(context.Background(), fixture.UserId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *UserService) (any, error) { return nil, s.Delete(context.Background(), test.UserId) }, want: coreErrors.InternalServerError},
 		{name: "delete not found", expect: func(m *fixture.UserRepositoryMocks) {
 			m.User.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *UserService) (any, error) { return nil, s.Delete(context.Background(), fixture.UserId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *UserService) (any, error) { return nil, s.Delete(context.Background(), test.UserId) }, want: coreErrors.NotFound},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -122,7 +123,7 @@ func TestUserService_RepositoryErrors(t *testing.T) {
 
 func TestUserService_UpdateAndPassword_InvalidInput(t *testing.T) {
 	t.Parallel()
-	assertUserError(t, func() (any, error) { return (&UserService{}).Update(context.Background(), fixture.UserId, nil) }, coreErrors.BadRequest)
+	assertUserError(t, func() (any, error) { return (&UserService{}).Update(context.Background(), test.UserId, nil) }, coreErrors.BadRequest)
 	empty := ""
 	long := strings.Repeat("a", 51)
 	for _, input := range []*core.UserUpdateInput{
@@ -132,14 +133,14 @@ func TestUserService_UpdateAndPassword_InvalidInput(t *testing.T) {
 	} {
 		input := input
 		assertUserError(t, func() (any, error) {
-			return (&UserService{}).Update(context.Background(), fixture.UserId, input)
+			return (&UserService{}).Update(context.Background(), test.UserId, input)
 		}, coreErrors.BadRequest)
 	}
 	for _, password := range []string{"", "12345", strings.Repeat("a", 21)} {
 		password := password
 		t.Run("password length", func(t *testing.T) {
 			assertUserError(t, func() (any, error) {
-				return nil, (&UserService{}).ChangePassword(context.Background(), fixture.UserId, password)
+				return nil, (&UserService{}).ChangePassword(context.Background(), test.UserId, password)
 			}, coreErrors.BadRequest)
 		})
 	}
@@ -149,7 +150,7 @@ func TestUserService_ChangePassword_Errors(t *testing.T) {
 	t.Parallel()
 
 	assertUserError(t, func() (any, error) {
-		return nil, NewUserService(nil).ChangePassword(context.Background(), fixture.UserId, "secret12")
+		return nil, NewUserService(nil).ChangePassword(context.Background(), test.UserId, "secret12")
 	}, coreErrors.InternalServerError)
 
 	for _, tt := range []struct {
@@ -164,7 +165,7 @@ func TestUserService_ChangePassword_Errors(t *testing.T) {
 			mocks, sut := newUserServiceSUT(t)
 			mocks.User.EXPECT().ChangePassword(gomock.Any(), gomock.Any()).Return(nil, tt.repository)
 			assertUserError(t, func() (any, error) {
-				return nil, sut.ChangePassword(context.Background(), fixture.UserId, "secret12")
+				return nil, sut.ChangePassword(context.Background(), test.UserId, "secret12")
 			}, tt.want)
 		})
 	}

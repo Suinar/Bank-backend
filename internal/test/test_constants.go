@@ -1,4 +1,4 @@
-package fixture
+package test
 
 import "github.com/kVinsom/Bank-repository-service/pkg/core"
 

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	cardRepository "github.com/kVinsom/Bank-proto/repository/card"
 	"github.com/kVinsom/Bank-proto/repository/common"
@@ -30,14 +31,14 @@ func TestCardService_Read_Success(t *testing.T) {
 			m.Card.EXPECT().GetAll(gomock.Any(), gomock.Any()).Return(fixture.CardListProto(fixture.CardProto(), closed), nil)
 		}, invoke: func(s *CardService) (any, error) { return s.GetAll(context.Background()) }, want: fixture.CardListCore()},
 		{name: "get by user", expect: func(m *fixture.CardRepositoryMocks) {
-			m.Card.EXPECT().GetByUser(gomock.Any(), &common.UserIdRequest{UserId: fixture.UserId}).Return(fixture.CardListProto(fixture.CardProto()), nil)
-		}, invoke: func(s *CardService) (any, error) { return s.GetByUser(context.Background(), fixture.UserId) }, want: fixture.CardListCore()},
+			m.Card.EXPECT().GetByUser(gomock.Any(), &common.UserIdRequest{UserId: test.UserId}).Return(fixture.CardListProto(fixture.CardProto()), nil)
+		}, invoke: func(s *CardService) (any, error) { return s.GetByUser(context.Background(), test.UserId) }, want: fixture.CardListCore()},
 		{name: "get by id", expect: func(m *fixture.CardRepositoryMocks) {
-			m.Card.EXPECT().GetById(gomock.Any(), &common.IdRequest{Id: fixture.CardId}).Return(fixture.CardProto(), nil)
-		}, invoke: func(s *CardService) (any, error) { return s.GetById(context.Background(), fixture.CardId) }, want: cardCorePointer()},
+			m.Card.EXPECT().GetById(gomock.Any(), &common.IdRequest{Id: test.CardId}).Return(fixture.CardProto(), nil)
+		}, invoke: func(s *CardService) (any, error) { return s.GetById(context.Background(), test.CardId) }, want: cardCorePointer()},
 		{name: "get by number", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().GetByNumber(gomock.Any(), gomock.Any()).Return(fixture.CardProto(), nil)
-		}, invoke: func(s *CardService) (any, error) { return s.GetByNumber(context.Background(), fixture.CardNumber) }, want: cardCorePointer()},
+		}, invoke: func(s *CardService) (any, error) { return s.GetByNumber(context.Background(), test.CardNumber) }, want: cardCorePointer()},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -68,10 +69,10 @@ func TestCardService_Write_Success(t *testing.T) {
 	}{
 		{name: "blocking", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().Blocking(gomock.Any(), gomock.Any()).Return(fixture.CardProto(), nil)
-		}, invoke: func(s *CardService) error { return s.Blocking(context.Background(), fixture.CardId) }},
+		}, invoke: func(s *CardService) error { return s.Blocking(context.Background(), test.CardId) }},
 		{name: "delete", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(&common.Empty{}, nil)
-		}, invoke: func(s *CardService) error { return s.Delete(context.Background(), fixture.CardId) }},
+		}, invoke: func(s *CardService) error { return s.Delete(context.Background(), test.CardId) }},
 	} {
 		t.Run(operation.name, func(t *testing.T) {
 			mocks, sut := newCardServiceSUT(t)

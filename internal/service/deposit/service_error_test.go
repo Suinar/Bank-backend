@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	coreErrors "github.com/kVinsom/Bank-repository-service/pkg"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
@@ -36,18 +37,18 @@ func TestDepositService_RepositoryErrors(t *testing.T) {
 		}, invoke: func(s *DepositService) (any, error) { return s.GetAll(context.Background()) }, want: coreErrors.InternalServerError},
 		{name: "get by user not found", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().GetByUser(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *DepositService) (any, error) { return s.GetByUser(context.Background(), fixture.UserId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *DepositService) (any, error) { return s.GetByUser(context.Background(), test.UserId) }, want: coreErrors.NotFound},
 		{name: "get by id", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(nil, depositRepositoryError)
-		}, invoke: func(s *DepositService) (any, error) { return s.GetById(context.Background(), fixture.DepositId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *DepositService) (any, error) { return s.GetById(context.Background(), test.DepositId) }, want: coreErrors.InternalServerError},
 		{name: "replenish not found", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().Replenish(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
 		}, invoke: func(s *DepositService) (any, error) {
-			return nil, s.Replenish(context.Background(), fixture.DepositId, fixture.TransactionAmount)
+			return nil, s.Replenish(context.Background(), test.DepositId, test.TransactionAmount)
 		}, want: coreErrors.NotFound},
 		{name: "delete", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil, depositRepositoryError)
-		}, invoke: func(s *DepositService) (any, error) { return nil, s.Delete(context.Background(), fixture.DepositId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *DepositService) (any, error) { return nil, s.Delete(context.Background(), test.DepositId) }, want: coreErrors.InternalServerError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -117,18 +118,18 @@ func TestDepositService_RepositoryErrorBranches(t *testing.T) {
 	}{
 		{name: "get by user failure", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().GetByUser(gomock.Any(), gomock.Any()).Return(nil, depositRepositoryError)
-		}, invoke: func(s *DepositService) (any, error) { return s.GetByUser(context.Background(), fixture.UserId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *DepositService) (any, error) { return s.GetByUser(context.Background(), test.UserId) }, want: coreErrors.InternalServerError},
 		{name: "get by id not found", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *DepositService) (any, error) { return s.GetById(context.Background(), fixture.DepositId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *DepositService) (any, error) { return s.GetById(context.Background(), test.DepositId) }, want: coreErrors.NotFound},
 		{name: "replenish failure", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().Replenish(gomock.Any(), gomock.Any()).Return(nil, depositRepositoryError)
 		}, invoke: func(s *DepositService) (any, error) {
-			return nil, s.Replenish(context.Background(), fixture.DepositId, fixture.TransactionAmount)
+			return nil, s.Replenish(context.Background(), test.DepositId, test.TransactionAmount)
 		}, want: coreErrors.InternalServerError},
 		{name: "delete not found", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *DepositService) (any, error) { return nil, s.Delete(context.Background(), fixture.DepositId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *DepositService) (any, error) { return nil, s.Delete(context.Background(), test.DepositId) }, want: coreErrors.NotFound},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

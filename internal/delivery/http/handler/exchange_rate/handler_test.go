@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	mocks "github.com/kVinsom/Bank-backend/internal/mocks/services"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 )
 
@@ -17,10 +18,10 @@ func TestExchangeRateHandler_GetAllRanking_Success(t *testing.T) {
 
 	expected := fixture.RankingListCore()
 
-	service.EXPECT().GetAllRanking(gomock.Any(), fixture.ExchangeISOFrom).Return(expected, nil).Times(1)
+	service.EXPECT().GetAllRanking(gomock.Any(), test.ExchangeISOFrom).Return(expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/exchange-rates/840", nil)
-	ctx.AddParam("currency_iso_from", strconv.Itoa(fixture.ExchangeISOFrom))
+	ctx.AddParam("currency_iso_from", strconv.Itoa(test.ExchangeISOFrom))
 
 	sut.GetAllRanking(ctx)
 
@@ -34,11 +35,11 @@ func TestExchangeRateHandler_GetRelativeRanking_Success(t *testing.T) {
 
 	expected := fixture.RankingCore()
 
-	service.EXPECT().GetRelativeRanking(gomock.Any(), fixture.ExchangeISOFrom, fixture.ExchangeISOTo).Return(&expected, nil).Times(1)
+	service.EXPECT().GetRelativeRanking(gomock.Any(), test.ExchangeISOFrom, test.ExchangeISOTo).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/exchange-rates/840/978", nil)
-	ctx.AddParam("currency_iso_from", strconv.Itoa(fixture.ExchangeISOFrom))
-	ctx.AddParam("currency_iso_to", strconv.Itoa(fixture.ExchangeISOTo))
+	ctx.AddParam("currency_iso_from", strconv.Itoa(test.ExchangeISOFrom))
+	ctx.AddParam("currency_iso_to", strconv.Itoa(test.ExchangeISOTo))
 
 	sut.GetRelativeRanking(ctx)
 

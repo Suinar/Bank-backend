@@ -1,6 +1,7 @@
 package fixture
 
 import (
+	"github.com/kVinsom/Bank-backend/internal/test"
 	creditRepository "github.com/kVinsom/Bank-proto/repository/credit"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -8,14 +9,14 @@ import (
 // CreditCore returns a valid credit fixture.
 func CreditCore() core.Credit {
 	return core.Credit{
-		Id:             CreditId,
-		UserId:         UserId,
-		CurrencyId:     CurrencyId,
-		Amount:         CreditAmount,
-		InterestRate:   CreditInterestRate,
-		TermMonths:     CreditTermMonths,
-		MonthlyPayment: CreditMonthlyPayment,
-		Status:         CreditStatus,
+		Id:             test.CreditId,
+		UserId:         test.UserId,
+		CurrencyId:     test.CurrencyId,
+		Amount:         test.CreditAmount,
+		InterestRate:   test.CreditInterestRate,
+		TermMonths:     test.CreditTermMonths,
+		MonthlyPayment: test.CreditMonthlyPayment,
+		Status:         test.CreditStatus,
 	}
 }
 
@@ -44,9 +45,9 @@ func CreditListProto(credits ...*creditRepository.Credit) *creditRepository.Cred
 // CreditCreateInputCore returns a valid credit creation fixture.
 func CreditCreateInputCore() core.CreditCreateInput {
 	return core.CreditCreateInput{
-		UserId:     UserId,
-		CurrencyId: CurrencyId,
-		Amount:     CreditAmount,
-		TermMonths: CreditTermMonths,
+		UserId:     test.UserId,
+		CurrencyId: test.CurrencyId,
+		Amount:     test.CreditAmount,
+		TermMonths: test.CreditTermMonths,
 	}
 }

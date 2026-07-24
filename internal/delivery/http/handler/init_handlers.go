@@ -29,7 +29,7 @@ type Handlers struct {
 }
 
 // InitHandlers builds the HTTP delivery layer and registers all routes.
-func InitHandlers(services *serviceContainer.Services) *gin.Engine {
+func InitHandlers(services *serviceContainer.Services, middleware ...gin.HandlerFunc) *gin.Engine {
 	handlers := &Handlers{
 		Account:      accountHandler.NewAccountHandler(services.Account),
 		Card:         cardHandler.NewCardHandler(services.Card),
@@ -42,6 +42,7 @@ func InitHandlers(services *serviceContainer.Services) *gin.Engine {
 
 	router := gin.New()
 	router.Use(gin.Logger(), gin.Recovery())
+	router.Use(middleware...)
 	_ = router.SetTrustedProxies(nil)
 
 	router.GET("/health", func(ctx *gin.Context) {

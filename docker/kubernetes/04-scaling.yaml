@@ -1,0 +1,50 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: bank-backend
+  namespace: bank
+  labels:
+    app.kubernetes.io/name: bank-backend
+    app.kubernetes.io/part-of: bank
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: bank-backend
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: bank-backend
+  namespace: bank
+  labels:
+    app.kubernetes.io/name: bank-backend
+    app.kubernetes.io/part-of: bank
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bank-backend
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: kafka
+  namespace: bank
+  labels:
+    app.kubernetes.io/name: kafka
+    app.kubernetes.io/part-of: bank
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kafka

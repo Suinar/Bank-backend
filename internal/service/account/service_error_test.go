@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	accountRepository "github.com/kVinsom/Bank-proto/repository/account"
 	"github.com/kVinsom/Bank-proto/repository/common"
@@ -51,11 +52,11 @@ func TestAccountService_GetByUser_Errors(t *testing.T) {
 
 			mocks, sut := NewAccountServiceSUT(t)
 			mocks.Account.EXPECT().
-				GetByUser(gomock.Any(), gomock.Eq(&common.UserIdRequest{UserId: fixture.UserId})).
+				GetByUser(gomock.Any(), gomock.Eq(&common.UserIdRequest{UserId: test.UserId})).
 				Return(nil, tt.repository).
 				Times(1)
 
-			got, err := sut.GetByUser(context.Background(), fixture.UserId)
+			got, err := sut.GetByUser(context.Background(), test.UserId)
 			assertAccountServiceError(t, got, err, tt.want)
 		})
 	}
@@ -81,11 +82,11 @@ func TestAccountService_GetById_Errors(t *testing.T) {
 
 			mocks, sut := NewAccountServiceSUT(t)
 			mocks.Account.EXPECT().
-				GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: fixture.AccountId})).
+				GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: test.AccountId})).
 				Return(nil, tt.repository).
 				Times(1)
 
-			got, err := sut.GetById(context.Background(), fixture.AccountId)
+			got, err := sut.GetById(context.Background(), test.AccountId)
 			assertAccountServiceError(t, got, err, tt.want)
 		})
 	}
@@ -191,7 +192,7 @@ func TestAccountService_StateChangeErrors(t *testing.T) {
 				mocks.Account.EXPECT().Blocking(gomock.Any(), gomock.Any()).Return(nil, err)
 			},
 			invoke: func(sut *AccountService) error {
-				return sut.Blocking(context.Background(), fixture.AccountId)
+				return sut.Blocking(context.Background(), test.AccountId)
 			},
 		},
 		{
@@ -200,7 +201,7 @@ func TestAccountService_StateChangeErrors(t *testing.T) {
 				mocks.Account.EXPECT().Close(gomock.Any(), gomock.Any()).Return(nil, err)
 			},
 			invoke: func(sut *AccountService) error {
-				return sut.Close(context.Background(), fixture.AccountId)
+				return sut.Close(context.Background(), test.AccountId)
 			},
 		},
 		{
@@ -209,7 +210,7 @@ func TestAccountService_StateChangeErrors(t *testing.T) {
 				mocks.Account.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil, err)
 			},
 			invoke: func(sut *AccountService) error {
-				return sut.Delete(context.Background(), fixture.AccountId)
+				return sut.Delete(context.Background(), test.AccountId)
 			},
 		},
 	}
@@ -263,7 +264,7 @@ func TestAccountService_Update_InvalidInput(t *testing.T) {
 			t.Parallel()
 
 			_, sut := NewAccountServiceSUT(t)
-			got, err := sut.Update(context.Background(), fixture.AccountId, tt.input)
+			got, err := sut.Update(context.Background(), test.AccountId, tt.input)
 			assertAccountServiceError(t, got, err, coreErrors.BadRequest)
 		})
 	}
@@ -295,7 +296,7 @@ func TestAccountService_Update_RepositoryErrors(t *testing.T) {
 				Times(1)
 			input := fixture.AccountUpdateInputCore()
 
-			got, err := sut.Update(context.Background(), fixture.AccountId, &input)
+			got, err := sut.Update(context.Background(), test.AccountId, &input)
 			assertAccountServiceError(t, got, err, tt.want)
 		})
 	}

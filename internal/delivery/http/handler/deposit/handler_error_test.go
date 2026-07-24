@@ -3,11 +3,11 @@ package deposit
 import (
 	"errors"
 	"net/http"
-	"net/url"
 	"strconv"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -33,7 +33,7 @@ func TestDepositHandler_GetByUser_Error(t *testing.T) {
 
 	service, sut := NewDepositSUT(t)
 
-	service.EXPECT().GetByUser(gomock.Any(), fixture.UserId).Return(nil, depositHandlerTestError).Times(1)
+	service.EXPECT().GetByUser(gomock.Any(), test.UserId).Return(nil, depositHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/1/deposits", nil)
 	ctx.AddParam("user_id", "1")
@@ -48,7 +48,7 @@ func TestDepositHandler_GetById_Error(t *testing.T) {
 
 	service, sut := NewDepositSUT(t)
 
-	service.EXPECT().GetById(gomock.Any(), fixture.DepositId).Return(nil, depositHandlerTestError).Times(1)
+	service.EXPECT().GetById(gomock.Any(), test.DepositId).Return(nil, depositHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/deposits/1", nil)
 	ctx.AddParam("id", "1")
@@ -79,11 +79,11 @@ func TestDepositHandler_ReplenishById_Error(t *testing.T) {
 
 	service, sut := NewDepositSUT(t)
 
-	service.EXPECT().Replenish(gomock.Any(), fixture.DepositId, fixture.TransactionAmount).Return(depositHandlerTestError).Times(1)
+	service.EXPECT().Replenish(gomock.Any(), test.DepositId, test.TransactionAmount).Return(depositHandlerTestError).Times(1)
 
-	form := url.Values{"amount": {strconv.Itoa(fixture.TransactionAmount)}}
-	ctx, recorder := fixture.NewFormHTTPContext(t, http.MethodPatch, "/deposits/1/replenish", form)
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPost, "/deposits/1/replenish/1000", nil)
 	ctx.AddParam("id", "1")
+	ctx.AddParam("amount", strconv.Itoa(test.TransactionAmount))
 
 	sut.ReplenishById(ctx)
 
@@ -95,7 +95,7 @@ func TestDepositHandler_DeleteById_Error(t *testing.T) {
 
 	service, sut := NewDepositSUT(t)
 
-	service.EXPECT().Delete(gomock.Any(), fixture.DepositId).Return(depositHandlerTestError).Times(1)
+	service.EXPECT().Delete(gomock.Any(), test.DepositId).Return(depositHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/deposits/1", nil)
 	ctx.AddParam("id", "1")
@@ -110,9 +110,9 @@ func TestDepositHandler_ReplenishById_InvalidAmount(t *testing.T) {
 
 	_, sut := NewDepositSUT(t)
 
-	form := url.Values{"amount": {"invalid"}}
-	ctx, recorder := fixture.NewFormHTTPContext(t, http.MethodPatch, "/deposits/1/replenish", form)
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPost, "/deposits/1/replenish/invalid", nil)
 	ctx.AddParam("id", "1")
+	ctx.AddParam("amount", "invalid")
 
 	sut.ReplenishById(ctx)
 

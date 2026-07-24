@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	"github.com/kVinsom/Bank-proto/repository/common"
 	userRepository "github.com/kVinsom/Bank-proto/repository/user"
@@ -24,15 +25,15 @@ func TestUserService_Read_Success(t *testing.T) {
 			m.User.EXPECT().GetAll(gomock.Any(), &common.Empty{}).Return(fixture.UserListProto(fixture.UserProto()), nil)
 		}, invoke: func(s *UserService) (any, error) { return s.GetAll(context.Background()) }, want: fixture.UserListCore()},
 		{name: "get by id", expect: func(m *fixture.UserRepositoryMocks) {
-			m.User.EXPECT().GetById(gomock.Any(), &common.IdRequest{Id: fixture.UserId}).Return(fixture.UserProto(), nil)
-		}, invoke: func(s *UserService) (any, error) { return s.GetById(context.Background(), fixture.UserId) }, want: userCorePointer()},
+			m.User.EXPECT().GetById(gomock.Any(), &common.IdRequest{Id: test.UserId}).Return(fixture.UserProto(), nil)
+		}, invoke: func(s *UserService) (any, error) { return s.GetById(context.Background(), test.UserId) }, want: userCorePointer()},
 		{name: "get by email", expect: func(m *fixture.UserRepositoryMocks) {
-			m.User.EXPECT().GetByEmail(gomock.Any(), &userRepository.EmailRequest{Email: fixture.UserEmail}).Return(fixture.UserProto(), nil)
-		}, invoke: func(s *UserService) (any, error) { return s.GetByEmail(context.Background(), fixture.UserEmail) }, want: userCorePointer()},
+			m.User.EXPECT().GetByEmail(gomock.Any(), &userRepository.EmailRequest{Email: test.UserEmail}).Return(fixture.UserProto(), nil)
+		}, invoke: func(s *UserService) (any, error) { return s.GetByEmail(context.Background(), test.UserEmail) }, want: userCorePointer()},
 		{name: "get by phone", expect: func(m *fixture.UserRepositoryMocks) {
-			m.User.EXPECT().GetByPhoneNumber(gomock.Any(), &userRepository.PhoneNumberRequest{PhoneNumber: fixture.UserPhoneNumber}).Return(fixture.UserProto(), nil)
+			m.User.EXPECT().GetByPhoneNumber(gomock.Any(), &userRepository.PhoneNumberRequest{PhoneNumber: test.UserPhoneNumber}).Return(fixture.UserProto(), nil)
 		}, invoke: func(s *UserService) (any, error) {
-			return s.GetByPhoneNumber(context.Background(), fixture.UserPhoneNumber)
+			return s.GetByPhoneNumber(context.Background(), test.UserPhoneNumber)
 		}, want: userCorePointer()},
 	}
 
@@ -62,22 +63,22 @@ func TestUserService_Write_Success(t *testing.T) {
 		mocks, sut := newUserServiceSUT(t)
 		input := fixture.UserUpdateInputCore()
 		mocks.User.EXPECT().Update(gomock.Any(), gomock.Any()).Return(fixture.UserProto(), nil)
-		got, err := sut.Update(context.Background(), fixture.UserId, &input)
+		got, err := sut.Update(context.Background(), test.UserId, &input)
 		assertUserResult(t, got, userCorePointer(), err)
 	})
 
 	t.Run("change password", func(t *testing.T) {
 		mocks, sut := newUserServiceSUT(t)
 		mocks.User.EXPECT().ChangePassword(gomock.Any(), gomock.Any()).Return(fixture.UserProto(), nil)
-		if err := sut.ChangePassword(context.Background(), fixture.UserId, "secret12"); err != nil {
+		if err := sut.ChangePassword(context.Background(), test.UserId, "secret12"); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	})
 
 	t.Run("delete", func(t *testing.T) {
 		mocks, sut := newUserServiceSUT(t)
-		mocks.User.EXPECT().Delete(gomock.Any(), &common.IdRequest{Id: fixture.UserId}).Return(&common.Empty{}, nil)
-		if err := sut.Delete(context.Background(), fixture.UserId); err != nil {
+		mocks.User.EXPECT().Delete(gomock.Any(), &common.IdRequest{Id: test.UserId}).Return(&common.Empty{}, nil)
+		if err := sut.Delete(context.Background(), test.UserId); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	})

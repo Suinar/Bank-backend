@@ -1,6 +1,7 @@
 package fixture
 
 import (
+	"github.com/kVinsom/Bank-backend/internal/test"
 	cardRepository "github.com/kVinsom/Bank-proto/repository/card"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -8,13 +9,13 @@ import (
 // CardCore returns a valid card fixture.
 func CardCore() core.Card {
 	return core.Card{
-		Id:          CardId,
-		UserId:      UserId,
-		AccountId:   AccountId,
-		Number:      CardNumber,
-		ExpiryMonth: CardExpiryMonth,
-		ExpiryYear:  CardExpiryYear,
-		Status:      CardStatus,
+		Id:          test.CardId,
+		UserId:      test.UserId,
+		AccountId:   test.AccountId,
+		Number:      test.CardNumber,
+		ExpiryMonth: test.CardExpiryMonth,
+		ExpiryYear:  test.CardExpiryYear,
+		Status:      test.CardStatus,
 	}
 }
 
@@ -42,7 +43,7 @@ func CardListProto(cards ...*cardRepository.Card) *cardRepository.CardList {
 // CardCreateInputCore returns a valid card creation fixture.
 func CardCreateInputCore() core.CardCreateInput {
 	return core.CardCreateInput{
-		UserId:    UserId,
-		AccountId: AccountId,
+		UserId:    test.UserId,
+		AccountId: test.AccountId,
 	}
 }

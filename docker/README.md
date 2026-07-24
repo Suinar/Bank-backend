@@ -16,16 +16,23 @@ so it still applies when the build context is the repository root.
 
 ## Kafka
 
-Kafka is not a separate container. Its KRaft configuration is stored in
-`kafka/server.properties`, and Kafka runs alongside the Go application inside
-the `bank-backend` container. Start or rebuild that container with:
+Kafka is not a separate container. Its KRaft properties are defined by
+`KAFKA_SERVER_PROPERTIES` in `docker-compose.yml`, and Kafka runs alongside the
+Go application inside the `bank-backend-service` container. Start or rebuild
+that container with:
 
 ```sh
 make kafka-up
 ```
 
-Host applications connect to `localhost:29092`. Services in the complete
-Docker Compose stack connect to `app:9092`.
+Host applications use `localhost:39092,localhost:39093,localhost:39094`.
+Services in the complete Docker Compose stack use
+`app:9092,kafka-2:9092,kafka-3:9092`.
+
+The application is exposed on `localhost:18080`. Override the service-specific
+host ports with `BANK_BACKEND_HTTP_PORT` and `BANK_BACKEND_KAFKA_PORT`.
+Set `BANK_BACKEND_START_APPLICATION=false` when Kafka must run without the Go
+application and its gRPC dependencies.
 
 Because Kafka and the application share one container, this stops both:
 

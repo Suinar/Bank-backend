@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 )
 
@@ -15,7 +16,7 @@ func TestExchangeRateHandler_GetRelativeRanking_InvalidIsoFrom(t *testing.T) {
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/exchange-rates/invalid/978", nil)
 	ctx.AddParam("currency_iso_from", "invalid")
-	ctx.AddParam("currency_iso_to", strconv.Itoa(fixture.ExchangeISOTo))
+	ctx.AddParam("currency_iso_to", strconv.Itoa(test.ExchangeISOTo))
 
 	sut.GetRelativeRanking(ctx)
 
@@ -30,7 +31,7 @@ func TestExchangeRateHandler_GetRelativeRanking_InvalidIsoTo(t *testing.T) {
 	_, sut := NewExchangeRateSUT(t)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/exchange-rates/840/invalid", nil)
-	ctx.AddParam("currency_iso_from", strconv.Itoa(fixture.ExchangeISOFrom))
+	ctx.AddParam("currency_iso_from", strconv.Itoa(test.ExchangeISOFrom))
 	ctx.AddParam("currency_iso_to", "invalid")
 
 	sut.GetRelativeRanking(ctx)

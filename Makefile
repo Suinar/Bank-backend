@@ -3,7 +3,7 @@ GO_MAIN := ./cmd/app
 DOCKER_IMAGE := $(APP_NAME):local
 DOCKER_COMPOSE := docker compose -f docker/docker-compose.yml
 K8S_NAMESPACE := bank
-K8S_DIR := k8s
+K8S_DIR := docker/kubernetes
 KAFKA_TOPIC ?=
 KAFKA_PARTITIONS ?= 3
 KAFKA_REPLICATION_FACTOR ?= 1
@@ -18,62 +18,62 @@ EXCHANGE_RATE_DIR := $(abspath ../Bank-exhange-rate-service)
 	kafka-up kafka-down kafka-logs kafka-topics kafka-topic-create \
 	k8s-apply k8s-delete k8s-status k8s-logs k8s-port-forward
 
-help: ## Показати список доступних команд
+help: ## Show available commands
 	@awk 'BEGIN {FS = ":.*## "; printf "Usage: make <target>\n\nTargets:\n"} /^[a-zA-Z0-9_-]+:.*## / {printf "  %-22s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-run: ## Запустити застосунок локально
+run: ## Run the application locally
 	go run $(GO_MAIN)
 
-build: ## Зібрати Go-бінарний файл
+build: ## Build the Go binary
 	go build -trimpath -o $(APP_NAME)$(if $(filter Windows_NT,$(OS)),.exe,) $(GO_MAIN)
 
-test: ## Запустити всі Go-тести
+test: ## Run all Go tests
 	go test ./...
 
-fmt: ## Відформатувати Go-код
+fmt: ## Format Go code
 	go fmt ./...
 
-vet: ## Запустити статичну перевірку Go
+vet: ## Run Go static analysis
 	go vet ./...
 
-tidy: ## Оновити go.mod і go.sum
+tidy: ## Update go.mod and go.sum
 	go mod tidy
 
-check: fmt vet test ## Форматування, vet і тести
+check: fmt vet test ## Format, vet, and test
 
 swagger: ## Generate Swagger documentation
 	go run github.com/swaggo/swag/cmd/swag@$(SWAG_VERSION) init -g cmd/app/main.go -o docs --parseDependency --parseInternal
 
-docker-build: ## Зібрати Docker-образ застосунку
+docker-build: ## Build the application Docker image
 	docker build -f docker/app/Dockerfile -t $(DOCKER_IMAGE) .
 
-docker-up: ## Запустити застосунок і Kafka через Docker Compose
+docker-up: ## Start the application and Kafka with Docker Compose
 	$(DOCKER_COMPOSE) up -d --build
 
-docker-down: ## Зупинити Docker Compose без видалення Kafka-даних
+docker-down: ## Stop Docker Compose without deleting Kafka data
 	$(DOCKER_COMPOSE) down
 
-docker-restart: docker-down docker-up ## Перезапустити Docker Compose
+docker-restart: docker-down docker-up ## Restart Docker Compose
 
-docker-logs: ## Показувати логи всіх Compose-сервісів
+docker-logs: ## Follow logs from all Compose services
 	$(DOCKER_COMPOSE) logs -f
 
-docker-ps: ## Показати стан Compose-сервісів
+docker-ps: ## Show Compose service status
 	$(DOCKER_COMPOSE) ps
 
-kafka-up: ## Запустити лише Kafka через Docker Compose
-	$(DOCKER_COMPOSE) up -d --build app
+kafka-up: ## Start only Kafka with Docker Compose
+	BANK_BACKEND_START_APPLICATION=false $(DOCKER_COMPOSE) up -d --build --no-deps app
 
-kafka-down: ## Зупинити окремий контейнер Kafka без видалення даних
+kafka-down: ## Stop the Kafka container without deleting data
 	$(DOCKER_COMPOSE) stop app
 
-kafka-logs: ## Показувати логи Kafka
+kafka-logs: ## Follow Kafka logs
 	$(DOCKER_COMPOSE) logs -f app
 
-kafka-topics: ## Показати список Kafka-топіків
+kafka-topics: ## List Kafka topics
 	$(DOCKER_COMPOSE) exec app /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
 
-kafka-topic-create: ## Створити топік; KAFKA_TOPIC=name make kafka-topic-create
+kafka-topic-create: ## Create a topic; KAFKA_TOPIC=name make kafka-topic-create
 	@test -n "$(KAFKA_TOPIC)" || (echo "KAFKA_TOPIC is required"; exit 1)
 	$(DOCKER_COMPOSE) exec app /opt/kafka/bin/kafka-topics.sh \
 		--bootstrap-server localhost:9092 \
@@ -82,21 +82,19 @@ kafka-topic-create: ## Створити топік; KAFKA_TOPIC=name make kafka-
 		--partitions $(KAFKA_PARTITIONS) \
 		--replication-factor $(KAFKA_REPLICATION_FACTOR)
 
-k8s-apply: ## Застосувати всі Kubernetes-маніфести
-	kubectl apply -f $(K8S_DIR)/namespace.yaml
-	kubectl apply -f $(K8S_DIR)/kafka.yaml -f $(K8S_DIR)/app.yaml
+k8s-apply: ## Apply all Kubernetes manifests
+	kubectl apply -f $(K8S_DIR)
 
-k8s-delete: ## Видалити ресурси та namespace з Kubernetes
-	kubectl delete -f $(K8S_DIR)/app.yaml -f $(K8S_DIR)/kafka.yaml --ignore-not-found
-	kubectl delete -f $(K8S_DIR)/namespace.yaml --ignore-not-found
+k8s-delete: ## Delete Kubernetes resources and namespace
+	kubectl delete -f $(K8S_DIR) --ignore-not-found
 
-k8s-status: ## Показати pod, service, deployment і StatefulSet
+k8s-status: ## Show pods, services, deployments, and StatefulSets
 	kubectl get pods,services,deployments,statefulsets -n $(K8S_NAMESPACE)
 
-k8s-logs: ## Показувати логи bank-backend у Kubernetes
+k8s-logs: ## Follow bank-backend logs in Kubernetes
 	kubectl logs -f deployment/$(APP_NAME) -n $(K8S_NAMESPACE)
 
-k8s-port-forward: ## Відкрити Kubernetes-застосунок на localhost:8080
+k8s-port-forward: ## Expose the Kubernetes application on localhost:8080
 	kubectl port-forward service/$(APP_NAME) 8080:8080 -n $(K8S_NAMESPACE)
 
 .PHONY: manual-up
@@ -111,3 +109,7 @@ manual-up: ## Start infrastructure and all Go services in separate PowerShell wi
 test-cover: ## Run tests and keep the coverage profile outside the repository root
 	powershell.exe -NoProfile -Command "New-Item -ItemType Directory -Force '.coverage' | Out-Null"
 	go test -coverprofile=.coverage/coverage.out ./...
+
+.PHONY: postman-test
+postman-test: ## Run Postman integration tests against the local Docker stack
+	powershell.exe -NoProfile -ExecutionPolicy Bypass -File test/postman/run.ps1

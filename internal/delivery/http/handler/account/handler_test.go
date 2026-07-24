@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	mocks "github.com/kVinsom/Bank-backend/internal/mocks/services"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 )
 
@@ -33,10 +34,10 @@ func TestAccountHandler_GetByUser_Success(t *testing.T) {
 
 	expected := fixture.AccountListCore()
 
-	service.EXPECT().GetByUser(gomock.Any(), fixture.UserId).Return(expected, nil).Times(1)
+	service.EXPECT().GetByUser(gomock.Any(), test.UserId).Return(expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/1/accounts", nil)
-	ctx.AddParam("user_id", strconv.FormatInt(fixture.UserId, 10))
+	ctx.AddParam("user_id", strconv.FormatInt(test.UserId, 10))
 
 	sut.GetByUser(ctx)
 
@@ -50,10 +51,10 @@ func TestAccountHandler_GetById_Success(t *testing.T) {
 
 	expected := fixture.AccountCore()
 
-	service.EXPECT().GetById(gomock.Any(), fixture.AccountId).Return(&expected, nil).Times(1)
+	service.EXPECT().GetById(gomock.Any(), test.AccountId).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/accounts/1", nil)
-	ctx.AddParam("id", strconv.FormatInt(fixture.AccountId, 10))
+	ctx.AddParam("id", strconv.FormatInt(test.AccountId, 10))
 
 	sut.GetById(ctx)
 
@@ -82,10 +83,10 @@ func TestAccountHandler_BlockingById_Success(t *testing.T) {
 
 	service, sut := NewAccountSUT(t)
 
-	service.EXPECT().Blocking(gomock.Any(), fixture.AccountId).Return(nil).Times(1)
+	service.EXPECT().Blocking(gomock.Any(), test.AccountId).Return(nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/accounts/1/block", nil)
-	ctx.AddParam("id", strconv.FormatInt(fixture.AccountId, 10))
+	ctx.AddParam("id", strconv.FormatInt(test.AccountId, 10))
 
 	sut.BlockingById(ctx)
 
@@ -97,10 +98,10 @@ func TestAccountHandler_CloseById_Success(t *testing.T) {
 
 	service, sut := NewAccountSUT(t)
 
-	service.EXPECT().Close(gomock.Any(), fixture.AccountId).Return(nil).Times(1)
+	service.EXPECT().Close(gomock.Any(), test.AccountId).Return(nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/accounts/1/close", nil)
-	ctx.AddParam("id", strconv.FormatInt(fixture.AccountId, 10))
+	ctx.AddParam("id", strconv.FormatInt(test.AccountId, 10))
 
 	sut.CloseById(ctx)
 
@@ -115,10 +116,10 @@ func TestAccountHandler_UpdateById_Success(t *testing.T) {
 	input := fixture.AccountUpdateInputCore()
 	expected := fixture.AccountCore()
 
-	service.EXPECT().Update(gomock.Any(), fixture.AccountId, gomock.Eq(&input)).Return(&expected, nil).Times(1)
+	service.EXPECT().Update(gomock.Any(), test.AccountId, gomock.Eq(&input)).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/accounts/1", input)
-	ctx.AddParam("id", strconv.FormatInt(fixture.AccountId, 10))
+	ctx.AddParam("id", strconv.FormatInt(test.AccountId, 10))
 
 	sut.UpdateById(ctx)
 
@@ -130,10 +131,10 @@ func TestAccountHandler_DeleteById_Success(t *testing.T) {
 
 	service, sut := NewAccountSUT(t)
 
-	service.EXPECT().Delete(gomock.Any(), fixture.AccountId).Return(nil).Times(1)
+	service.EXPECT().Delete(gomock.Any(), test.AccountId).Return(nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/accounts/1", nil)
-	ctx.AddParam("id", strconv.FormatInt(fixture.AccountId, 10))
+	ctx.AddParam("id", strconv.FormatInt(test.AccountId, 10))
 
 	sut.DeleteById(ctx)
 

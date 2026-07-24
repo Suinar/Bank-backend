@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	exchangeRateProto "github.com/kVinsom/Bank-proto/exchange_rate"
 )
@@ -15,8 +16,8 @@ func TestExchangeRateService_Success(t *testing.T) {
 
 	t.Run("get all", func(t *testing.T) {
 		mocks, sut := newExchangeRateServiceSUT(t)
-		mocks.Ranking.EXPECT().GetAllRanking(gomock.Any(), &exchangeRateProto.GetAllRankingRequest{CurrencyIsoFrom: fixture.ExchangeISOFrom}).Return(fixture.RankingListProto(fixture.RankingProto()), nil)
-		got, err := sut.GetAllRanking(context.Background(), fixture.ExchangeISOFrom)
+		mocks.Ranking.EXPECT().GetAllRanking(gomock.Any(), &exchangeRateProto.GetAllRankingRequest{CurrencyIsoFrom: test.ExchangeISOFrom}).Return(fixture.RankingListProto(fixture.RankingProto()), nil)
+		got, err := sut.GetAllRanking(context.Background(), test.ExchangeISOFrom)
 		if err != nil || !reflect.DeepEqual(got, fixture.RankingListCore()) {
 			t.Fatalf("want %#v and nil error, got %#v and %v", fixture.RankingListCore(), got, err)
 		}
@@ -24,8 +25,8 @@ func TestExchangeRateService_Success(t *testing.T) {
 
 	t.Run("get relative", func(t *testing.T) {
 		mocks, sut := newExchangeRateServiceSUT(t)
-		mocks.Ranking.EXPECT().GetRelativeRanking(gomock.Any(), &exchangeRateProto.GetRelativeRankingRequest{CurrencyIsoFrom: fixture.ExchangeISOFrom, CurrencyIsoTo: fixture.ExchangeISOTo}).Return(fixture.RankingProto(), nil)
-		got, err := sut.GetRelativeRanking(context.Background(), fixture.ExchangeISOFrom, fixture.ExchangeISOTo)
+		mocks.Ranking.EXPECT().GetRelativeRanking(gomock.Any(), &exchangeRateProto.GetRelativeRankingRequest{CurrencyIsoFrom: test.ExchangeISOFrom, CurrencyIsoTo: test.ExchangeISOTo}).Return(fixture.RankingProto(), nil)
+		got, err := sut.GetRelativeRanking(context.Background(), test.ExchangeISOFrom, test.ExchangeISOTo)
 		want := fixture.RankingCore()
 		if err != nil || !reflect.DeepEqual(got, &want) {
 			t.Fatalf("want %#v and nil error, got %#v and %v", &want, got, err)

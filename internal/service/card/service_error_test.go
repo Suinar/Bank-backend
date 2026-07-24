@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	coreErrors "github.com/kVinsom/Bank-repository-service/pkg"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
@@ -35,19 +36,19 @@ func TestCardService_RepositoryErrors(t *testing.T) {
 		}, invoke: func(s *CardService) (any, error) { return s.GetAll(context.Background()) }, want: coreErrors.InternalServerError},
 		{name: "get by user not found", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().GetByUser(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *CardService) (any, error) { return s.GetByUser(context.Background(), fixture.UserId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *CardService) (any, error) { return s.GetByUser(context.Background(), test.UserId) }, want: coreErrors.NotFound},
 		{name: "get by id", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(nil, cardRepositoryError)
-		}, invoke: func(s *CardService) (any, error) { return s.GetById(context.Background(), fixture.CardId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *CardService) (any, error) { return s.GetById(context.Background(), test.CardId) }, want: coreErrors.InternalServerError},
 		{name: "get by number not found", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().GetByNumber(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *CardService) (any, error) { return s.GetByNumber(context.Background(), fixture.CardNumber) }, want: coreErrors.NotFound},
+		}, invoke: func(s *CardService) (any, error) { return s.GetByNumber(context.Background(), test.CardNumber) }, want: coreErrors.NotFound},
 		{name: "blocking", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().Blocking(gomock.Any(), gomock.Any()).Return(nil, cardRepositoryError)
-		}, invoke: func(s *CardService) (any, error) { return nil, s.Blocking(context.Background(), fixture.CardId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *CardService) (any, error) { return nil, s.Blocking(context.Background(), test.CardId) }, want: coreErrors.InternalServerError},
 		{name: "delete not found", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *CardService) (any, error) { return nil, s.Delete(context.Background(), fixture.CardId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *CardService) (any, error) { return nil, s.Delete(context.Background(), test.CardId) }, want: coreErrors.NotFound},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -125,19 +126,19 @@ func TestCardService_RepositoryErrorBranches(t *testing.T) {
 	}{
 		{name: "get by user failure", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().GetByUser(gomock.Any(), gomock.Any()).Return(nil, cardRepositoryError)
-		}, invoke: func(s *CardService) (any, error) { return s.GetByUser(context.Background(), fixture.UserId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *CardService) (any, error) { return s.GetByUser(context.Background(), test.UserId) }, want: coreErrors.InternalServerError},
 		{name: "get by id not found", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *CardService) (any, error) { return s.GetById(context.Background(), fixture.CardId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *CardService) (any, error) { return s.GetById(context.Background(), test.CardId) }, want: coreErrors.NotFound},
 		{name: "get by number failure", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().GetByNumber(gomock.Any(), gomock.Any()).Return(nil, cardRepositoryError)
-		}, invoke: func(s *CardService) (any, error) { return s.GetByNumber(context.Background(), fixture.CardNumber) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *CardService) (any, error) { return s.GetByNumber(context.Background(), test.CardNumber) }, want: coreErrors.InternalServerError},
 		{name: "blocking not found", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().Blocking(gomock.Any(), gomock.Any()).Return(nil, coreErrors.NotFound)
-		}, invoke: func(s *CardService) (any, error) { return nil, s.Blocking(context.Background(), fixture.CardId) }, want: coreErrors.NotFound},
+		}, invoke: func(s *CardService) (any, error) { return nil, s.Blocking(context.Background(), test.CardId) }, want: coreErrors.NotFound},
 		{name: "delete failure", expect: func(m *fixture.CardRepositoryMocks) {
 			m.Card.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil, cardRepositoryError)
-		}, invoke: func(s *CardService) (any, error) { return nil, s.Delete(context.Background(), fixture.CardId) }, want: coreErrors.InternalServerError},
+		}, invoke: func(s *CardService) (any, error) { return nil, s.Delete(context.Background(), test.CardId) }, want: coreErrors.InternalServerError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

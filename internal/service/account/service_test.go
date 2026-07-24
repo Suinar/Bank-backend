@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	accountRepository "github.com/kVinsom/Bank-proto/repository/account"
 	"github.com/kVinsom/Bank-proto/repository/common"
@@ -35,11 +36,11 @@ func TestAccountService_GetByUser_Success(t *testing.T) {
 
 	mocks, sut := NewAccountServiceSUT(t)
 	mocks.Account.EXPECT().
-		GetByUser(gomock.Any(), gomock.Eq(&common.UserIdRequest{UserId: fixture.UserId})).
+		GetByUser(gomock.Any(), gomock.Eq(&common.UserIdRequest{UserId: test.UserId})).
 		Return(fixture.AccountListProto(fixture.AccountProto()), nil).
 		Times(1)
 
-	got, err := sut.GetByUser(context.Background(), fixture.UserId)
+	got, err := sut.GetByUser(context.Background(), test.UserId)
 	assertAccountServiceResult(t, got, fixture.AccountListCore(), err)
 }
 
@@ -48,11 +49,11 @@ func TestAccountService_GetById_Success(t *testing.T) {
 
 	mocks, sut := NewAccountServiceSUT(t)
 	mocks.Account.EXPECT().
-		GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: fixture.AccountId})).
+		GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: test.AccountId})).
 		Return(fixture.AccountProto(), nil).
 		Times(1)
 
-	got, err := sut.GetById(context.Background(), fixture.AccountId)
+	got, err := sut.GetById(context.Background(), test.AccountId)
 	want := fixture.AccountCore()
 	assertAccountServiceResult(t, got, &want, err)
 }
@@ -64,18 +65,18 @@ func TestAccountService_Create_Success(t *testing.T) {
 	input := fixture.AccountCreateInputCore()
 
 	mocks.User.EXPECT().
-		GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: fixture.UserId})).
+		GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: test.UserId})).
 		Return(fixture.UserProto(), nil).
 		Times(1)
 	mocks.Currency.EXPECT().
-		GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: fixture.CurrencyId})).
+		GetById(gomock.Any(), gomock.Eq(&common.IdRequest{Id: test.CurrencyId})).
 		Return(fixture.CurrencyProto(), nil).
 		Times(1)
 	mocks.Account.EXPECT().
 		Create(gomock.Any(), gomock.Eq(&accountRepository.Account{
-			UserId:     fixture.UserId,
-			CurrencyId: fixture.CurrencyId,
-			Name:       fixture.AccountName,
+			UserId:     test.UserId,
+			CurrencyId: test.CurrencyId,
+			Name:       test.AccountName,
 			Status:     accountRepository.AccountStatus(core.AccountStatusActive),
 		})).
 		Return(fixture.AccountProto(), nil).
@@ -91,11 +92,11 @@ func TestAccountService_Blocking_Success(t *testing.T) {
 
 	mocks, sut := NewAccountServiceSUT(t)
 	mocks.Account.EXPECT().
-		Blocking(gomock.Any(), gomock.Eq(&common.IdRequest{Id: fixture.AccountId})).
+		Blocking(gomock.Any(), gomock.Eq(&common.IdRequest{Id: test.AccountId})).
 		Return(fixture.AccountProto(), nil).
 		Times(1)
 
-	if err := sut.Blocking(context.Background(), fixture.AccountId); err != nil {
+	if err := sut.Blocking(context.Background(), test.AccountId); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -105,11 +106,11 @@ func TestAccountService_Close_Success(t *testing.T) {
 
 	mocks, sut := NewAccountServiceSUT(t)
 	mocks.Account.EXPECT().
-		Close(gomock.Any(), gomock.Eq(&common.IdRequest{Id: fixture.AccountId})).
+		Close(gomock.Any(), gomock.Eq(&common.IdRequest{Id: test.AccountId})).
 		Return(fixture.AccountProto(), nil).
 		Times(1)
 
-	if err := sut.Close(context.Background(), fixture.AccountId); err != nil {
+	if err := sut.Close(context.Background(), test.AccountId); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -121,7 +122,7 @@ func TestAccountService_Update_Success(t *testing.T) {
 	input := fixture.AccountUpdateInputCore()
 	mocks.Account.EXPECT().
 		Update(gomock.Any(), gomock.Eq(&accountRepository.UpdateAccountRequest{
-			Id: fixture.AccountId,
+			Id: test.AccountId,
 			Input: &accountRepository.AccountUpdateInput{
 				Name: input.Name,
 			},
@@ -129,7 +130,7 @@ func TestAccountService_Update_Success(t *testing.T) {
 		Return(fixture.AccountProto(), nil).
 		Times(1)
 
-	got, err := sut.Update(context.Background(), fixture.AccountId, &input)
+	got, err := sut.Update(context.Background(), test.AccountId, &input)
 	want := fixture.AccountCore()
 	assertAccountServiceResult(t, got, &want, err)
 }
@@ -139,11 +140,11 @@ func TestAccountService_Delete_Success(t *testing.T) {
 
 	mocks, sut := NewAccountServiceSUT(t)
 	mocks.Account.EXPECT().
-		Delete(gomock.Any(), gomock.Eq(&common.IdRequest{Id: fixture.AccountId})).
+		Delete(gomock.Any(), gomock.Eq(&common.IdRequest{Id: test.AccountId})).
 		Return(&common.Empty{}, nil).
 		Times(1)
 
-	if err := sut.Delete(context.Background(), fixture.AccountId); err != nil {
+	if err := sut.Delete(context.Background(), test.AccountId); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
