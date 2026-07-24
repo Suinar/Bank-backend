@@ -2,7 +2,6 @@ package deposit
 
 import (
 	"net/http"
-	"net/url"
 	"testing"
 
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
@@ -42,9 +41,9 @@ func TestDepositHandler_ReplenishById_InvalidId(t *testing.T) {
 
 	_, sut := NewDepositSUT(t)
 
-	form := url.Values{"amount": {"1000"}}
-	ctx, recorder := fixture.NewFormHTTPContext(t, http.MethodPatch, "/deposits/invalid/replenish", form)
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPost, "/deposits/invalid/replenish/1000", nil)
 	ctx.AddParam("id", "invalid")
+	ctx.AddParam("amount", "1000")
 
 	sut.ReplenishById(ctx)
 

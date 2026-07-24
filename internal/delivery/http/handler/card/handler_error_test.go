@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -31,7 +32,7 @@ func TestCardHandler_GetByUser_Error(t *testing.T) {
 
 	service, sut := NewCardSUT(t)
 
-	service.EXPECT().GetByUser(gomock.Any(), fixture.UserId).Return(nil, cardHandlerTestError).Times(1)
+	service.EXPECT().GetByUser(gomock.Any(), test.UserId).Return(nil, cardHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/1/cards", nil)
 	ctx.AddParam("user_id", "1")
@@ -46,7 +47,7 @@ func TestCardHandler_GetById_Error(t *testing.T) {
 
 	service, sut := NewCardSUT(t)
 
-	service.EXPECT().GetById(gomock.Any(), fixture.CardId).Return(nil, cardHandlerTestError).Times(1)
+	service.EXPECT().GetById(gomock.Any(), test.CardId).Return(nil, cardHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/cards/1", nil)
 	ctx.AddParam("id", "1")
@@ -61,10 +62,10 @@ func TestCardHandler_GetByNumber_Error(t *testing.T) {
 
 	service, sut := NewCardSUT(t)
 
-	service.EXPECT().GetByNumber(gomock.Any(), fixture.CardNumber).Return(nil, cardHandlerTestError).Times(1)
+	service.EXPECT().GetByNumber(gomock.Any(), test.CardNumber).Return(nil, cardHandlerTestError).Times(1)
 
-	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/cards/"+fixture.CardNumber, nil)
-	ctx.AddParam("number", fixture.CardNumber)
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/cards/"+test.CardNumber, nil)
+	ctx.AddParam("number", test.CardNumber)
 
 	sut.GetByNumber(ctx)
 
@@ -92,7 +93,7 @@ func TestCardHandler_BlockingById_Error(t *testing.T) {
 
 	service, sut := NewCardSUT(t)
 
-	service.EXPECT().Blocking(gomock.Any(), fixture.CardId).Return(cardHandlerTestError).Times(1)
+	service.EXPECT().Blocking(gomock.Any(), test.CardId).Return(cardHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/cards/1/block", nil)
 	ctx.AddParam("id", "1")
@@ -107,7 +108,7 @@ func TestCardHandler_DeleteById_Error(t *testing.T) {
 
 	service, sut := NewCardSUT(t)
 
-	service.EXPECT().Delete(gomock.Any(), fixture.CardId).Return(cardHandlerTestError).Times(1)
+	service.EXPECT().Delete(gomock.Any(), test.CardId).Return(cardHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/cards/1", nil)
 	ctx.AddParam("id", "1")

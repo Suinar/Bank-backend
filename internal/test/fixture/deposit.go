@@ -1,6 +1,7 @@
 package fixture
 
 import (
+	"github.com/kVinsom/Bank-backend/internal/test"
 	depositRepository "github.com/kVinsom/Bank-proto/repository/deposit"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -8,13 +9,13 @@ import (
 // DepositCore returns a valid deposit fixture.
 func DepositCore() core.Deposit {
 	return core.Deposit{
-		Id:           DepositId,
-		UserId:       UserId,
-		CurrencyId:   CurrencyId,
-		Amount:       DepositAmount,
-		InterestRate: DepositInterestRate,
-		TermMonths:   DepositTermMonths,
-		Status:       DepositStatus,
+		Id:           test.DepositId,
+		UserId:       test.UserId,
+		CurrencyId:   test.CurrencyId,
+		Amount:       test.DepositAmount,
+		InterestRate: test.DepositInterestRate,
+		TermMonths:   test.DepositTermMonths,
+		Status:       test.DepositStatus,
 	}
 }
 
@@ -42,9 +43,9 @@ func DepositListProto(deposits ...*depositRepository.Deposit) *depositRepository
 // DepositCreateInputCore returns a valid deposit creation fixture.
 func DepositCreateInputCore() core.DepositCreateInput {
 	return core.DepositCreateInput{
-		UserId:     UserId,
-		CurrencyId: CurrencyId,
+		UserId:     test.UserId,
+		CurrencyId: test.CurrencyId,
 		Amount:     10_000,
-		TermMonths: DepositTermMonths,
+		TermMonths: test.DepositTermMonths,
 	}
 }

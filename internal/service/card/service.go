@@ -3,11 +3,11 @@ package card
 import (
 	"context"
 	"crypto/rand"
-	"errors"
 	log "github.com/kVinsom/Bank-backend/internal/logging/service/card"
 	"math/big"
 	"strconv"
 
+	serviceCommon "github.com/kVinsom/Bank-backend/internal/service/common"
 	accountRepository "github.com/kVinsom/Bank-proto/repository/account"
 	cardRepository "github.com/kVinsom/Bank-proto/repository/card"
 	"github.com/kVinsom/Bank-proto/repository/common"
@@ -63,7 +63,7 @@ func (s *CardService) GetByUser(ctx context.Context, userId int64) ([]core.Card,
 	defer log.OperationStarted(operation)()
 	response, err := s.cardRepository.GetByUser(ctx, &common.UserIdRequest{UserId: userId})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -87,7 +87,7 @@ func (s *CardService) GetById(ctx context.Context, id int64) (*core.Card, error)
 	defer log.OperationStarted(operation)()
 	card, err := s.cardRepository.GetById(ctx, &common.IdRequest{Id: id})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -102,7 +102,7 @@ func (s *CardService) GetByNumber(ctx context.Context, number string) (*core.Car
 	defer log.OperationStarted(operation)()
 	card, err := s.cardRepository.GetByNumber(ctx, &cardRepository.CardNumberRequest{Number: number})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -121,7 +121,7 @@ func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (
 
 	_, err := s.userRepository.GetById(ctx, &common.IdRequest{Id: input.UserId})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -135,7 +135,7 @@ func (s *CardService) Create(ctx context.Context, input *core.CardCreateInput) (
 
 	_, err = s.accountRepository.GetById(ctx, &common.IdRequest{Id: input.AccountId})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.BadRequest
 		}
 
@@ -164,7 +164,7 @@ func (s *CardService) Blocking(ctx context.Context, id int64) error {
 	defer log.OperationStarted(operation)()
 	_, err := s.cardRepository.Blocking(ctx, &common.IdRequest{Id: id})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return coreErrors.NotFound
 		}
 
@@ -179,7 +179,7 @@ func (s *CardService) Delete(ctx context.Context, id int64) error {
 	defer log.OperationStarted(operation)()
 	_, err := s.cardRepository.Delete(ctx, &common.IdRequest{Id: id})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return coreErrors.NotFound
 		}
 
@@ -233,10 +233,10 @@ func (s *CardService) GenerateCardNumber(ctx context.Context) (string, error) {
 
 		cardNumber := partial + strconv.Itoa(checkDigit)
 
-		// 3. РїРµСЂРµРІС–СЂРєР° СѓРЅС–РєР°Р»СЊРЅРѕСЃС‚С–
+		// Verify that the generated card number is unique.
 		_, err := s.cardRepository.GetByNumber(ctx, &cardRepository.CardNumberRequest{Number: cardNumber})
 		if err != nil {
-			if errors.Is(err, coreErrors.NotFound) {
+			if serviceCommon.IsError(err, coreErrors.NotFound) {
 				return cardNumber, nil
 			}
 

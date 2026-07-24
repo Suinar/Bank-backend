@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	mocks "github.com/kVinsom/Bank-backend/internal/mocks/services"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 )
 
@@ -33,7 +34,7 @@ func TestUserHandler_GetById_Success(t *testing.T) {
 
 	expected := fixture.UserCore()
 
-	service.EXPECT().GetById(gomock.Any(), fixture.UserId).Return(&expected, nil).Times(1)
+	service.EXPECT().GetById(gomock.Any(), test.UserId).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/1", nil)
 	ctx.AddParam("id", "1")
@@ -50,10 +51,10 @@ func TestUserHandler_GetByEmail_Success(t *testing.T) {
 
 	expected := fixture.UserCore()
 
-	service.EXPECT().GetByEmail(gomock.Any(), fixture.UserEmail).Return(&expected, nil).Times(1)
+	service.EXPECT().GetByEmail(gomock.Any(), test.UserEmail).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/email", nil)
-	ctx.AddParam("email", fixture.UserEmail)
+	ctx.AddParam("email", test.UserEmail)
 
 	sut.GetByEmail(ctx)
 
@@ -67,10 +68,10 @@ func TestUserHandler_GetByPhoneNumber_Success(t *testing.T) {
 
 	expected := fixture.UserCore()
 
-	service.EXPECT().GetByPhoneNumber(gomock.Any(), fixture.UserPhoneNumber).Return(&expected, nil).Times(1)
+	service.EXPECT().GetByPhoneNumber(gomock.Any(), test.UserPhoneNumber).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/phone", nil)
-	ctx.AddParam("phone_number", fixture.UserPhoneNumber)
+	ctx.AddParam("phone_number", test.UserPhoneNumber)
 
 	sut.GetByPhoneNumber(ctx)
 
@@ -102,7 +103,7 @@ func TestUserHandler_UpdateById_Success(t *testing.T) {
 	input := fixture.UserUpdateInputCore()
 	expected := fixture.UserCore()
 
-	service.EXPECT().Update(gomock.Any(), fixture.UserId, gomock.Eq(&input)).Return(&expected, nil).Times(1)
+	service.EXPECT().Update(gomock.Any(), test.UserId, gomock.Eq(&input)).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/users/1", input)
 	ctx.AddParam("id", "1")
@@ -117,9 +118,9 @@ func TestUserHandler_ChangePasswordById_Success(t *testing.T) {
 
 	service, sut := NewUserSUT(t)
 
-	service.EXPECT().ChangePassword(gomock.Any(), fixture.UserId, fixture.UserPasswordHash).Return(nil).Times(1)
+	service.EXPECT().ChangePassword(gomock.Any(), test.UserId, test.UserPasswordHash).Return(nil).Times(1)
 
-	form := url.Values{"hash_password": {fixture.UserPasswordHash}}
+	form := url.Values{"hash_password": {test.UserPasswordHash}}
 	ctx, recorder := fixture.NewFormHTTPContext(t, http.MethodPatch, "/users/1/password", form)
 	ctx.AddParam("id", "1")
 
@@ -133,7 +134,7 @@ func TestUserHandler_DeleteById_Success(t *testing.T) {
 
 	service, sut := NewUserSUT(t)
 
-	service.EXPECT().Delete(gomock.Any(), fixture.UserId).Return(nil).Times(1)
+	service.EXPECT().Delete(gomock.Any(), test.UserId).Return(nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/users/1", nil)
 	ctx.AddParam("id", "1")

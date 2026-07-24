@@ -1,6 +1,7 @@
 package fixture
 
 import (
+	"github.com/kVinsom/Bank-backend/internal/test"
 	currencyRepository "github.com/kVinsom/Bank-proto/repository/currency"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -8,11 +9,11 @@ import (
 // CurrencyCore returns a valid currency fixture.
 func CurrencyCore() core.Currency {
 	return core.Currency{
-		Id:         CurrencyId,
-		Name:       CurrencyName,
-		Symbol:     CurrencySymbol,
-		IsoCode:    CurrencyISOCode,
-		MinorUnits: CurrencyMinorUnits,
+		Id:         test.CurrencyId,
+		Name:       test.CurrencyName,
+		Symbol:     test.CurrencySymbol,
+		IsoCode:    test.CurrencyISOCode,
+		MinorUnits: test.CurrencyMinorUnits,
 	}
 }
 
@@ -38,19 +39,19 @@ func CurrencyListProto(currencies ...*currencyRepository.Currency) *currencyRepo
 // CurrencyCreateInputCore returns a valid currency creation fixture.
 func CurrencyCreateInputCore() core.CurrencyCreateInput {
 	return core.CurrencyCreateInput{
-		Name:       CurrencyName,
-		Symbol:     CurrencySymbol,
-		IsoCode:    CurrencyISOCode,
-		MinorUnits: CurrencyMinorUnits,
+		Name:       test.CurrencyName,
+		Symbol:     test.CurrencySymbol,
+		IsoCode:    test.CurrencyISOCode,
+		MinorUnits: test.CurrencyMinorUnits,
 	}
 }
 
 // CurrencyUpdateInputCore returns a valid currency update fixture.
 func CurrencyUpdateInputCore() core.CurrencyUpdateInput {
 	return core.CurrencyUpdateInput{
-		Name:       StringPointer(CurrencyName),
-		Symbol:     RunePointer(CurrencySymbol),
-		IsoCode:    StringPointer(CurrencyISOCode),
-		MinorUnits: Int8Pointer(CurrencyMinorUnits),
+		Name:       StringPointer(test.CurrencyName),
+		Symbol:     RunePointer(test.CurrencySymbol),
+		IsoCode:    StringPointer(test.CurrencyISOCode),
+		MinorUnits: Int8Pointer(test.CurrencyMinorUnits),
 	}
 }

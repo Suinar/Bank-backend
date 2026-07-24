@@ -15,9 +15,8 @@ USER root
 WORKDIR /app
 COPY --from=builder /out/bank-backend ./bank-backend
 COPY --chmod=755 docker/app/entrypoint.sh ./entrypoint.sh
-COPY docker/kafka/server.properties /opt/kafka/config/bank-server.properties
 RUN mkdir -p /var/lib/kafka/data \
-    && chown -R appuser:appuser /app /var/lib/kafka/data /opt/kafka/config/bank-server.properties
+    && chown -R appuser:appuser /app /var/lib/kafka/data
 
 USER appuser
 EXPOSE 8080 9092 29092

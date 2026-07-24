@@ -1,12 +1,19 @@
 #!/bin/bash
 set -euo pipefail
 
-KAFKA_CONFIG=/opt/kafka/config/bank-server.properties
+if [[ "${START_KAFKA:-true}" != "true" ]]; then
+  exec /app/bank-backend
+fi
+
+KAFKA_CONFIG=/tmp/bank-backend-kafka.properties
 KAFKA_DATA=/var/lib/kafka/data
 app_pid=""
 
+: "${KAFKA_SERVER_PROPERTIES:?KAFKA_SERVER_PROPERTIES must be set}"
+printf '%s\n' "$KAFKA_SERVER_PROPERTIES" > "$KAFKA_CONFIG"
+
 if [[ ! -f "$KAFKA_DATA/meta.properties" ]]; then
-  cluster_id="$(/opt/kafka/bin/kafka-storage.sh random-uuid)"
+  cluster_id="${KAFKA_CLUSTER_ID:-$(/opt/kafka/bin/kafka-storage.sh random-uuid)}"
   /opt/kafka/bin/kafka-storage.sh format --cluster-id "$cluster_id" --config "$KAFKA_CONFIG"
 fi
 
@@ -39,11 +46,28 @@ if ! /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/d
   exit 1
 fi
 
-/app/bank-backend &
-app_pid=$!
+if [[ "${START_APPLICATION:-true}" != "true" ]]; then
+  wait "$kafka_pid"
+  exit $?
+fi
 
 set +e
-wait -n "$kafka_pid" "$app_pid"
+while kill -0 "$kafka_pid" 2>/dev/null; do
+  /app/bank-backend &
+  app_pid=$!
+  wait "$app_pid"
+  app_status=$?
+  app_pid=""
+
+  if ! kill -0 "$kafka_pid" 2>/dev/null; then
+    break
+  fi
+
+  echo "Application exited with status $app_status; restarting in 2 seconds" >&2
+  sleep 2
+done
+
+wait "$kafka_pid"
 status=$?
 shutdown
 exit "$status"

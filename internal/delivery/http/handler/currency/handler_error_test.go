@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	core "github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -31,7 +32,7 @@ func TestCurrencyHandler_GetById_Error(t *testing.T) {
 
 	service, sut := NewCurrencySUT(t)
 
-	service.EXPECT().GetById(gomock.Any(), fixture.CurrencyId).Return(nil, currencyHandlerTestError).Times(1)
+	service.EXPECT().GetById(gomock.Any(), test.CurrencyId).Return(nil, currencyHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/currencies/1", nil)
 	ctx.AddParam("id", "1")
@@ -46,10 +47,10 @@ func TestCurrencyHandler_GetByIso_Error(t *testing.T) {
 
 	service, sut := NewCurrencySUT(t)
 
-	service.EXPECT().GetByIso(gomock.Any(), fixture.CurrencyISOCode).Return(nil, currencyHandlerTestError).Times(1)
+	service.EXPECT().GetByIso(gomock.Any(), test.CurrencyISOCode).Return(nil, currencyHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/currencies/iso/USD", nil)
-	ctx.AddParam("iso_code", fixture.CurrencyISOCode)
+	ctx.AddParam("iso_code", test.CurrencyISOCode)
 
 	sut.GetByIso(ctx)
 
@@ -61,10 +62,10 @@ func TestCurrencyHandler_GetBySymbol_Error(t *testing.T) {
 
 	service, sut := NewCurrencySUT(t)
 
-	service.EXPECT().GetBySymbol(gomock.Any(), fixture.CurrencySymbol).Return(nil, currencyHandlerTestError).Times(1)
+	service.EXPECT().GetBySymbol(gomock.Any(), test.CurrencySymbol).Return(nil, currencyHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/currencies/symbol/$", nil)
-	ctx.AddParam("symbol", string(fixture.CurrencySymbol))
+	ctx.AddParam("symbol", string(test.CurrencySymbol))
 
 	sut.GetBySymbol(ctx)
 
@@ -94,7 +95,7 @@ func TestCurrencyHandler_UpdateById_Error(t *testing.T) {
 
 	input := core.CurrencyUpdateInput{}
 
-	service.EXPECT().Update(gomock.Any(), fixture.CurrencyId, gomock.Eq(&input)).Return(nil, currencyHandlerTestError).Times(1)
+	service.EXPECT().Update(gomock.Any(), test.CurrencyId, gomock.Eq(&input)).Return(nil, currencyHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPatch, "/currencies/1", input)
 	ctx.AddParam("id", "1")
@@ -109,7 +110,7 @@ func TestCurrencyHandler_DeleteById_Error(t *testing.T) {
 
 	service, sut := NewCurrencySUT(t)
 
-	service.EXPECT().Delete(gomock.Any(), fixture.CurrencyId).Return(currencyHandlerTestError).Times(1)
+	service.EXPECT().Delete(gomock.Any(), test.CurrencyId).Return(currencyHandlerTestError).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/currencies/1", nil)
 	ctx.AddParam("id", "1")

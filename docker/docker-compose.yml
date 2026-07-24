@@ -2,7 +2,7 @@ name: bank-backend
 
 services:
   app:
-    container_name: bank-backend
+    container_name: bank-backend-service
     build:
       context: ..
       dockerfile: docker/app/Dockerfile
@@ -10,27 +10,122 @@ services:
     restart: unless-stopped
     environment:
       APP_ENV: docker
+      START_APPLICATION: ${BANK_BACKEND_START_APPLICATION:-true}
       HTTP_HOST: 0.0.0.0
       HTTP_PORT: 8080
       GRPC_REPOSITORY_URL: repository-service:50052
       GRPC_EXCHANGE_RATE_URL: exchange-rate-service:50053
       CARD_BIN: ${CARD_BIN:-537541}
-      KAFKA_BROKERS: localhost:9092
+      KAFKA_BROKERS: localhost:9092,kafka-2:9092,kafka-3:9092
+      KAFKA_ENABLED: "true"
+      KAFKA_CLIENT_ID: bank-backend
+      KAFKA_AUDIT_TOPIC: bank.backend.audit.v1
+      KAFKA_TOPIC_PARTITIONS: 3
+      KAFKA_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_SERVER_PROPERTIES: |
+        process.roles=broker,controller
+        node.id=1
+        controller.quorum.voters=1@app:9093,2@kafka-2:9093,3@kafka-3:9093
+        controller.listener.names=CONTROLLER
+        listeners=INTERNAL://:9092,CONTROLLER://:9093,HOST://:29092
+        advertised.listeners=INTERNAL://app:9092,HOST://localhost:${BANK_BACKEND_KAFKA_PORT:-39092}
+        listener.security.protocol.map=CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,HOST:PLAINTEXT
+        inter.broker.listener.name=INTERNAL
+        log.dirs=/var/lib/kafka/data
+        num.partitions=3
+        offsets.topic.replication.factor=1
+        transaction.state.log.replication.factor=1
+        transaction.state.log.min.isr=1
+        group.initial.rebalance.delay.ms=0
+        auto.create.topics.enable=false
     ports:
-      - "${HTTP_PORT:-8080}:8080"
-      - "${KAFKA_HOST_PORT:-29092}:29092"
+      - "${BANK_BACKEND_HTTP_PORT:-18080}:8080"
+      - "${BANK_BACKEND_KAFKA_PORT:-39092}:29092"
     volumes:
-      - kafka-data:/var/lib/kafka/data
+      - kafka-1-data:/var/lib/kafka/data
     depends_on:
       repository-service:
         condition: service_started
       exchange-rate-service:
-        condition: service_healthy
+        condition: service_started
+      kafka-2:
+        condition: service_started
+      kafka-3:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 6
+
+  kafka-2:
+    image: apache/kafka:4.0.0
+    restart: unless-stopped
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@app:9093,2@kafka-2:9093,3@kafka-3:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:9092,HOST://localhost:${BANK_BACKEND_KAFKA_2_PORT:-39093}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    ports:
+      - "${BANK_BACKEND_KAFKA_2_PORT:-39093}:29092"
+    volumes:
+      - kafka-2-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 10
+
+  kafka-3:
+    image: apache/kafka:4.0.0
+    restart: unless-stopped
+    environment:
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@app:9093,2@kafka-2:9093,3@kafka-3:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENERS: INTERNAL://:9092,CONTROLLER://:9093,HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-3:9092,HOST://localhost:${BANK_BACKEND_KAFKA_3_PORT:-39094}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    ports:
+      - "${BANK_BACKEND_KAFKA_3_PORT:-39094}:29092"
+    volumes:
+      - kafka-3-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 10
 
   repository-service:
     build:
       context: ../../Bank-repository-service
-      dockerfile: Dockerfile
+      dockerfile: docker/app/Dockerfile
     image: bank-repository-service:local
     restart: unless-stopped
     environment:
@@ -54,8 +149,9 @@ services:
       REDIS_DB: 0
       REDIS_POOL_SIZE: 10
       REDIS_MIN_IDLE: 2
-      KAFKA_ENABLED: "false"
-      KAFKA_BROKERS: app:9092
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: app:9092,kafka-2:9092,kafka-3:9092
+      KAFKA_TOPICS: bank.user.events,bank.account.events,bank.card.events,bank.credit.events,bank.deposit.events,bank.currency.events
       KAFKA_CLIENT_ID: bank-repository-service
       KAFKA_CONSUMER_GROUP: bank-repository-service
     depends_on:
@@ -68,7 +164,7 @@ services:
   exchange-rate-service:
     build:
       context: ../../Bank-exhange-rate-service
-      dockerfile: Dockerfile
+      dockerfile: docker/app/Dockerfile
     image: ${EXCHANGE_RATE_IMAGE:-bank-exchange-rate-service:local}
     init: true
     restart: unless-stopped
@@ -77,7 +173,15 @@ services:
       GRPC_NETWORK: tcp
       MONOBANK_BASE_URL: ${MONOBANK_BASE_URL:-https://api.monobank.ua}
       MONOBANK_CURRENCY_ENDPOINT: ${MONOBANK_CURRENCY_ENDPOINT:-/bank/currency}
-      KAFKA_BROKERS: app:9092
+      KAFKA_BROKERS: app:9092,kafka-2:9092,kafka-3:9092
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ""
+      REDIS_DB: 0
+      REDIS_POOL_SIZE: 10
+      REDIS_MIN_IDLE_CONNS: 2
+    depends_on:
+      redis:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "/app/bank-exchange-rate-service", "healthcheck"]
       interval: 10s
@@ -100,6 +204,7 @@ services:
       POSTGRES_DB: ${DB_NAME:-bank}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ../../Bank-repository-service/docker/postgres/migration/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -120,5 +225,8 @@ services:
 
 volumes:
   kafka-data:
+  kafka-1-data:
+  kafka-2-data:
+  kafka-3-data:
   postgres-data:
   redis-data:

@@ -5,6 +5,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	repositoryMocks "github.com/kVinsom/Bank-backend/internal/mocks/repositories"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	accountRepository "github.com/kVinsom/Bank-proto/repository/account"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -30,12 +31,12 @@ func NewAccountRepositoryMocks(t *testing.T) *AccountRepositoryMocks {
 // AccountCore returns a valid account fixture.
 func AccountCore() core.Account {
 	return core.Account{
-		Id:         AccountId,
-		UserId:     UserId,
-		CurrencyId: CurrencyId,
-		Name:       AccountName,
-		Balance:    AccountBalance,
-		Status:     AccountStatus,
+		Id:         test.AccountId,
+		UserId:     test.UserId,
+		CurrencyId: test.CurrencyId,
+		Name:       test.AccountName,
+		Balance:    test.AccountBalance,
+		Status:     test.AccountStatus,
 	}
 }
 
@@ -66,15 +67,15 @@ func AccountListProto(accounts ...*accountRepository.Account) *accountRepository
 // AccountCreateInputCore returns a valid account creation fixture.
 func AccountCreateInputCore() core.AccountCreateInput {
 	return core.AccountCreateInput{
-		UserId:     UserId,
-		CurrencyId: CurrencyId,
-		Name:       AccountName,
+		UserId:     test.UserId,
+		CurrencyId: test.CurrencyId,
+		Name:       test.AccountName,
 	}
 }
 
 // AccountUpdateInputCore returns a valid account update fixture.
 func AccountUpdateInputCore() core.AccountUpdateInput {
 	return core.AccountUpdateInput{
-		Name: StringPointer(AccountName),
+		Name: StringPointer(test.AccountName),
 	}
 }

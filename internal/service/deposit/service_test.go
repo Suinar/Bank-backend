@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 	"github.com/kVinsom/Bank-proto/repository/common"
 	depositRepository "github.com/kVinsom/Bank-proto/repository/deposit"
@@ -27,22 +28,22 @@ func TestDepositService_Success(t *testing.T) {
 		}, invoke: func(s *DepositService) (any, error) { return s.GetAll(context.Background()) }, want: fixture.DepositListCore()},
 		{name: "get by user", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().GetByUser(gomock.Any(), gomock.Any()).Return(fixture.DepositListProto(fixture.DepositProto()), nil)
-		}, invoke: func(s *DepositService) (any, error) { return s.GetByUser(context.Background(), fixture.UserId) }, want: fixture.DepositListCore()},
+		}, invoke: func(s *DepositService) (any, error) { return s.GetByUser(context.Background(), test.UserId) }, want: fixture.DepositListCore()},
 		{name: "get by id", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().GetById(gomock.Any(), gomock.Any()).Return(fixture.DepositProto(), nil)
-		}, invoke: func(s *DepositService) (any, error) { return s.GetById(context.Background(), fixture.DepositId) }, want: depositCorePointer()},
+		}, invoke: func(s *DepositService) (any, error) { return s.GetById(context.Background(), test.DepositId) }, want: depositCorePointer()},
 		{name: "create", expect: expectDepositCreateSuccess, invoke: func(s *DepositService) (any, error) {
 			input := fixture.DepositCreateInputCore()
 			return s.Create(context.Background(), &input)
 		}, want: depositCorePointer()},
 		{name: "replenish", expect: func(m *fixture.DepositRepositoryMocks) {
-			m.Deposit.EXPECT().Replenish(gomock.Any(), &common.AmountRequest{Id: fixture.DepositId, Amount: fixture.TransactionAmount}).Return(fixture.DepositProto(), nil)
+			m.Deposit.EXPECT().Replenish(gomock.Any(), &common.AmountRequest{Id: test.DepositId, Amount: test.TransactionAmount}).Return(fixture.DepositProto(), nil)
 		}, invoke: func(s *DepositService) (any, error) {
-			return nil, s.Replenish(context.Background(), fixture.DepositId, fixture.TransactionAmount)
+			return nil, s.Replenish(context.Background(), test.DepositId, test.TransactionAmount)
 		}, want: nil},
 		{name: "delete", expect: func(m *fixture.DepositRepositoryMocks) {
 			m.Deposit.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(&common.Empty{}, nil)
-		}, invoke: func(s *DepositService) (any, error) { return nil, s.Delete(context.Background(), fixture.DepositId) }, want: nil},
+		}, invoke: func(s *DepositService) (any, error) { return nil, s.Delete(context.Background(), test.DepositId) }, want: nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

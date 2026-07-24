@@ -2,12 +2,12 @@ package deposit
 
 import (
 	"net/http"
-	"net/url"
 	"strconv"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	mocks "github.com/kVinsom/Bank-backend/internal/mocks/services"
+	"github.com/kVinsom/Bank-backend/internal/test"
 	"github.com/kVinsom/Bank-backend/internal/test/fixture"
 )
 
@@ -34,7 +34,7 @@ func TestDepositHandler_GetByUser_Success(t *testing.T) {
 
 	expected := fixture.DepositListCore()
 
-	service.EXPECT().GetByUser(gomock.Any(), fixture.UserId).Return(expected, nil).Times(1)
+	service.EXPECT().GetByUser(gomock.Any(), test.UserId).Return(expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/users/1/deposits", nil)
 	ctx.AddParam("user_id", "1")
@@ -51,7 +51,7 @@ func TestDepositHandler_GetById_Success(t *testing.T) {
 
 	expected := fixture.DepositCore()
 
-	service.EXPECT().GetById(gomock.Any(), fixture.DepositId).Return(&expected, nil).Times(1)
+	service.EXPECT().GetById(gomock.Any(), test.DepositId).Return(&expected, nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodGet, "/deposits/1", nil)
 	ctx.AddParam("id", "1")
@@ -83,11 +83,11 @@ func TestDepositHandler_ReplenishById_Success(t *testing.T) {
 
 	service, sut := NewDepositSUT(t)
 
-	service.EXPECT().Replenish(gomock.Any(), fixture.DepositId, fixture.TransactionAmount).Return(nil).Times(1)
+	service.EXPECT().Replenish(gomock.Any(), test.DepositId, test.TransactionAmount).Return(nil).Times(1)
 
-	form := url.Values{"amount": {strconv.Itoa(fixture.TransactionAmount)}}
-	ctx, recorder := fixture.NewFormHTTPContext(t, http.MethodPatch, "/deposits/1/replenish", form)
+	ctx, recorder := fixture.NewHTTPContext(t, http.MethodPost, "/deposits/1/replenish/1000", nil)
 	ctx.AddParam("id", "1")
+	ctx.AddParam("amount", strconv.Itoa(test.TransactionAmount))
 
 	sut.ReplenishById(ctx)
 
@@ -99,7 +99,7 @@ func TestDepositHandler_DeleteById_Success(t *testing.T) {
 
 	service, sut := NewDepositSUT(t)
 
-	service.EXPECT().Delete(gomock.Any(), fixture.DepositId).Return(nil).Times(1)
+	service.EXPECT().Delete(gomock.Any(), test.DepositId).Return(nil).Times(1)
 
 	ctx, recorder := fixture.NewHTTPContext(t, http.MethodDelete, "/deposits/1", nil)
 	ctx.AddParam("id", "1")

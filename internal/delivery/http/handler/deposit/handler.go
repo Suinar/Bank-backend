@@ -145,7 +145,7 @@ func (h *DepositHandler) ReplenishById(ctx *gin.Context) {
 	const operation = "replenish_by_id"
 	defer log.RequestStarted(ctx, operation)()
 	id := ctx.Param("id")
-	amount := ctx.PostForm("amount")
+	amount := ctx.Param("amount")
 
 	parsedAmount, err := strconv.Atoi(amount)
 	if err != nil {

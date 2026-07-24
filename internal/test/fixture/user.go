@@ -1,6 +1,7 @@
 package fixture
 
 import (
+	"github.com/kVinsom/Bank-backend/internal/test"
 	userRepository "github.com/kVinsom/Bank-proto/repository/user"
 	"github.com/kVinsom/Bank-repository-service/pkg/core"
 )
@@ -8,13 +9,13 @@ import (
 // UserCore returns a valid user fixture.
 func UserCore() core.User {
 	return core.User{
-		Id:           UserId,
-		FirstName:    UserFirstName,
-		MiddleName:   StringPointer(UserMiddleName),
-		LastName:     UserLastName,
-		Email:        UserEmail,
-		PhoneNumber:  UserPhoneNumber,
-		PasswordHash: UserPasswordHash,
+		Id:           test.UserId,
+		FirstName:    test.UserFirstName,
+		MiddleName:   StringPointer(test.UserMiddleName),
+		LastName:     test.UserLastName,
+		Email:        test.UserEmail,
+		PhoneNumber:  test.UserPhoneNumber,
+		PasswordHash: test.UserPasswordHash,
 	}
 }
 
@@ -42,20 +43,20 @@ func UserListProto(users ...*userRepository.User) *userRepository.UserList {
 // UserCreateInputCore returns a valid user creation fixture.
 func UserCreateInputCore() core.UserCreateInput {
 	return core.UserCreateInput{
-		FirstName:    UserFirstName,
-		MiddleName:   StringPointer(UserMiddleName),
-		LastName:     UserLastName,
-		Email:        UserEmail,
-		PhoneNumber:  UserPhoneNumber,
-		PasswordHash: UserPasswordHash,
+		FirstName:    test.UserFirstName,
+		MiddleName:   StringPointer(test.UserMiddleName),
+		LastName:     test.UserLastName,
+		Email:        test.UserEmail,
+		PhoneNumber:  test.UserPhoneNumber,
+		PasswordHash: test.UserPasswordHash,
 	}
 }
 
 // UserUpdateInputCore returns a valid user update fixture.
 func UserUpdateInputCore() core.UserUpdateInput {
 	return core.UserUpdateInput{
-		FirstName:  StringPointer(UserFirstName),
-		MiddleName: StringPointer(UserMiddleName),
-		LastName:   StringPointer(UserLastName),
+		FirstName:  StringPointer(test.UserFirstName),
+		MiddleName: StringPointer(test.UserMiddleName),
+		LastName:   StringPointer(test.UserLastName),
 	}
 }

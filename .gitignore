@@ -1,2 +1,44 @@
-﻿.idea/
+# Local environment and secrets
 .env
+.env.*
+!.env.example
+*.local
+*.secret
+*.secret.yaml
+*.secret.yml
+
+# Go build outputs
+/bank-backend
+/bank-backend.exe
+*.test
+*.out
+coverage.*
+/.coverage/
+/bin/
+/dist/
+
+# Runtime data and logs
+*.log
+/data/
+/tmp/
+/temp/
+
+# Docker Compose local overrides
+docker-compose.override.yml
+compose.override.yml
+
+# IDE and editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Go workspace files are developer-local in this repository
+go.work
+go.work.sum

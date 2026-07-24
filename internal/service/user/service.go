@@ -2,9 +2,9 @@ package user
 
 import (
 	"context"
-	"errors"
 	log "github.com/kVinsom/Bank-backend/internal/logging/service/user"
 
+	serviceCommon "github.com/kVinsom/Bank-backend/internal/service/common"
 	"github.com/kVinsom/Bank-proto/repository/common"
 	userRepository "github.com/kVinsom/Bank-proto/repository/user"
 	coreErrors "github.com/kVinsom/Bank-repository-service/pkg"
@@ -41,7 +41,7 @@ func (s *UserService) GetById(ctx context.Context, id int64) (*core.User, error)
 	defer log.OperationStarted(operation)()
 	user, err := s.userRepository.GetById(ctx, &common.IdRequest{Id: id})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -56,7 +56,7 @@ func (s *UserService) GetByEmail(ctx context.Context, email string) (*core.User,
 	defer log.OperationStarted(operation)()
 	user, err := s.userRepository.GetByEmail(ctx, &userRepository.EmailRequest{Email: email})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -71,7 +71,7 @@ func (s *UserService) GetByPhoneNumber(ctx context.Context, phoneNumber string) 
 	defer log.OperationStarted(operation)()
 	user, err := s.userRepository.GetByPhoneNumber(ctx, &userRepository.PhoneNumberRequest{PhoneNumber: phoneNumber})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -154,11 +154,11 @@ func (s *UserService) Update(ctx context.Context, id int64, input *core.UserUpda
 		},
 	})
 	if err != nil {
-		if errors.Is(err, coreErrors.BadRequest) {
+		if serviceCommon.IsError(err, coreErrors.BadRequest) {
 			return nil, coreErrors.BadRequest
 		}
 
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return nil, coreErrors.NotFound
 		}
 
@@ -189,7 +189,7 @@ func (s *UserService) ChangePassword(ctx context.Context, id int64, newPassword 
 		NewPassword: string(hashedPassword),
 	})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return coreErrors.NotFound
 		}
 
@@ -204,7 +204,7 @@ func (s *UserService) Delete(ctx context.Context, id int64) error {
 	defer log.OperationStarted(operation)()
 	_, err := s.userRepository.Delete(ctx, &common.IdRequest{Id: id})
 	if err != nil {
-		if errors.Is(err, coreErrors.NotFound) {
+		if serviceCommon.IsError(err, coreErrors.NotFound) {
 			return coreErrors.NotFound
 		}
 
